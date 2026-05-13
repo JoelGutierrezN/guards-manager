@@ -1,5 +1,5 @@
 export interface UserRepository {
-      login(phone: string, password: string): Promise<string>
-      login(email: string, password: string): Promise<string>
+      authenticate(emailOrPhone: string, password: string): Promise<string>
+      findByEmail(email: string, password: string): Promise<string>
 
 }
