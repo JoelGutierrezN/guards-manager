@@ -29,24 +29,6 @@ export default function AuthPage() {
                 y eficientes.
               </p>
             </div>
-            {/* 
-            <div className="grid grid-cols-3 gap-6">
-              <FeatureCard
-                icon={<Boxes className="w-5 h-5" />}
-                title="Inventario"
-                description="Control total"
-              />
-              <FeatureCard
-                icon={<TrendingUp className="w-5 h-5" />}
-                title="Reportes"
-                description="En tiempo real"
-              />
-              <FeatureCard
-                icon={<Shield className="w-5 h-5" />}
-                title="Seguridad"
-                description="Datos protegidos"
-              />
-            </div> */}
           </div>
           <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-primary-foreground/5 blur-3xl" />
           <div className="absolute top-1/4 -right-16 w-64 h-64 rounded-full bg-accent/20 blur-2xl" />
