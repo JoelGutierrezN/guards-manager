@@ -1,0 +1,57 @@
+.bento-cell {
+  box-shadow: 0 1px 2px rgba(14, 15, 60, 0.04);
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bento-cell:hover {
+  box-shadow:
+    0 8px 20px -6px rgba(14, 15, 60, 0.1),
+    0 2px 6px -1px rgba(14, 15, 60, 0.05);
+  transform: translateY(-2px);
+}
+.bento-cell--cream {
+  background: var(--color-cream);
+  border-color: rgba(26, 19, 38, 0.06);
+}
+.bento-cell--lavender {
+  background: linear-gradient(160deg, var(--color-lavender-bg) 0%, var(--color-lavender-bg-2) 100%);
+  border-color: var(--color-lavender-line);
+}
+.bento-cell--dark {
+  background: linear-gradient(155deg, #221735 0%, #14091f 100%);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+.bento-cell--accent {
+  background: linear-gradient(160deg, var(--color-brand-mid) 0%, var(--color-brand) 55%, var(--color-brand-active) 100%);
+  border-color: transparent;
+  box-shadow: 0 14px 32px -10px rgba(39, 40, 113, 0.45);
+}
+.bento-cell--cream::after,
+.bento-cell--lavender::after {
+  content: "";
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  right: -80px;
+  top: -80px;
+  background: radial-gradient(circle, rgba(139, 109, 245, 0.18) 0%, transparent 65%);
+  pointer-events: none;
+  border-radius: 50%;
+}
+.panel-bubble {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 8px 20px -8px rgba(58, 30, 160, 0.25),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  animation: panel-bubble-bob 3s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+@keyframes panel-bubble-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel-bubble { animation: none; }
+}

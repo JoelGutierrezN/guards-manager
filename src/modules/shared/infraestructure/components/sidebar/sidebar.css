@@ -1,0 +1,50 @@
+.sidebar-surface {
+  box-shadow:
+    0 2px 4px rgba(58, 30, 160, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.sidebar-surface::before {
+  content: "";
+  position: absolute;
+  inset: -20% -30% auto auto;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(184, 157, 250, 0.5) 0%, rgba(184, 157, 250, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sidebar-logo {
+  background: linear-gradient(155deg, #4244a3 0%, #272871 60%, #15164a 100%);
+  box-shadow:
+    0 6px 14px -4px rgba(111, 78, 242, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.nav-item-active-shadow {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 2px 6px -1px rgba(111, 78, 242, 0.18);
+}
+.nav-item-featured-shadow {
+  box-shadow: 0 2px 8px -1px rgba(39, 40, 113, 0.35);
+}
+.collapse-btn-shadow {
+  box-shadow: 0 2px 6px -1px rgba(58, 30, 160, 0.12);
+}
+.sidebar-scroll {
+  overflow-y: auto;
+}
+.sidebar-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(26, 19, 38, 0.13);
+  border-radius: 999px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #aea7bb;
+}

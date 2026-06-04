@@ -9,8 +9,16 @@ import {
 } from "@heroui/react";
 import { PackageIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useNavigate } from "react-router";
 
 export const AuthForm = (): JSX.Element => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    navigate("/dashboard");
+  };
+
   return (
     <div className="flex">
       <div className="flex-1 flex items-center justify-center p-6 sm:p-8 lg:p-12">
@@ -34,7 +42,7 @@ export const AuthForm = (): JSX.Element => {
           </div>
           <Form
             className="flex w-96 flex-col gap-4"
-            render={(props) => <form {...props} data-custom="foo" />}
+            render={(props) => <form {...props} data-custom="foo" onSubmit={handleSubmit} />}
           >
             <TextField isRequired name="email" type="email">
               <Label>Email</Label>
