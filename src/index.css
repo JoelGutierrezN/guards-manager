@@ -2,9 +2,6 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 
-/* ── Design tokens (ETTS · Blindajes) ──────────────────────────
-   Expuestos como tokens de Tailwind v4: generan utilidades
-   `bg-brand`, `text-ink-3`, `border-lavender-line`, `font-mono`, … */
 @theme {
   --color-brand: #272871;
   --color-brand-mid: #4244a3;
