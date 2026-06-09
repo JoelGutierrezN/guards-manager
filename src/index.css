@@ -1,2 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 @import "@heroui/styles";
+
+@theme {
+  --color-brand: #272871;
+  --color-brand-mid: #4244a3;
+  --color-brand-active: #15164a;
+  --color-brand-hover: #1c1d5a;
+  --color-brand-soft: rgba(39, 40, 113, 0.08);
+  --color-brand-soft-2: rgba(39, 40, 113, 0.16);
+
+  --color-lavender-bg: #ecedf9;
+  --color-lavender-bg-2: #dcdcf3;
+  --color-lavender-line: #d7d7ee;
+
+  --color-hairline: rgba(26, 19, 38, 0.07);
+  --color-hairline-strong: rgba(26, 19, 38, 0.13);
+
+  --color-ink: #1a1326;
+  --color-ink-2: #2f2540;
+  --color-ink-3: #524563;
+  --color-muted: #7b7388;
+  --color-muted-soft: #aea7bb;
+  --color-cream: #fbf8f3;
+  --color-cream-2: #f1ecdf;
+
+  --color-ok: #1e9e57;
+  --color-ok-soft: rgba(30, 158, 87, 0.1);
+  --color-warn: #b88600;
+  --color-warn-soft: rgba(184, 134, 0, 0.1);
+  --color-danger: #c0392b;
+  --color-danger-soft: rgba(192, 57, 43, 0.1);
+
+  --color-paper-tint: #fbf9fc;
+  --color-bg-app: #f7f3ec;
+
+  --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Instrument Serif", serif;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
