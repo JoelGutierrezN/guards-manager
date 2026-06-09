@@ -22,9 +22,11 @@ src/modules/<feature>/
   infraestructure/ # componentes, servicios, helpers, adaptadores
 ```
 
-Módulos actuales: `auth`, `shared`.
+Módulos actuales: `auth`, `shared`, `tools`.
 
 Componentes UI compartidos: `src/modules/shared/infraestructure/components/ui/`
+
+Datos falsos (mock) en `<módulo>/infraestructure/mocks/` para poder borrarlos de un golpe al integrar la API; marca cada endpoint pendiente con `// TODO API:`. Usa `src/modules/tools` como implementación de referencia (capas DDD, `useReducer` en hook, helpers/servicios como clases).
 
 ### Convención de nombres de archivos
 
