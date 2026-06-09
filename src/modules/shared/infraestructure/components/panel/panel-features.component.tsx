@@ -1,5 +1,5 @@
 import { type JSX } from 'react'
-import { CornerDownRightIcon } from '@hugeicons/core-free-icons'
+import {CornerDownRight } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { FEATURES } from './panel.data'
 
@@ -12,7 +12,7 @@ export function PanelFeatures(): JSX.Element {
           className="flex flex-col gap-3 rounded-[26px] border border-hairline bg-white p-5"
         >
           <span className="text-brand">
-            <HugeiconsIcon icon={CornerDownRightIcon} size={22} strokeWidth={1.8} />
+            <HugeiconsIcon icon={CornerDownRight} size={22} strokeWidth={1.8} />
           </span>
           <h3 className="m-0 text-[18px] font-medium tracking-[-0.015em] text-ink">
             {feat.title}
