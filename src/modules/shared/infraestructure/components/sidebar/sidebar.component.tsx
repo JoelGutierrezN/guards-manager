@@ -1,19 +1,19 @@
-import { type JSX } from 'react'
+import { useMemo, type JSX } from 'react'
+import { useLocation } from 'react-router'
 import './sidebar.css'
 import { SidebarBrand } from './sidebar-brand.component'
 import { SidebarNav } from './sidebar-nav.component'
 import { SidebarUserCard } from './sidebar-user-card.component'
 import { SidebarCollapseButton } from './sidebar-collapse-button.component'
 import { useSidebarCollapse } from './use-sidebar-collapse.hook'
+import { DashboardRouteHelper } from '../../router/dashboard-route.helper'
 
 interface SidebarUser {
   name: string
   role: string
 }
 
-interface SidebarProps {
-  activeId: string
-  onSelect: (id: string) => void
+interface Props {
   user?: SidebarUser
 }
 
@@ -22,12 +22,10 @@ const DEFAULT_USER: SidebarUser = {
   role: 'Almacén · Admin',
 }
 
-export function Sidebar({
-  activeId,
-  onSelect,
-  user = DEFAULT_USER,
-}: SidebarProps): JSX.Element {
+export function Sidebar({ user = DEFAULT_USER }: Props): JSX.Element {
   const { collapsed, toggle } = useSidebarCollapse()
+  const { pathname } = useLocation()
+  const activeId = useMemo(() => DashboardRouteHelper.activeIdFromPath(pathname), [pathname])
 
   return (
     <div
@@ -36,7 +34,7 @@ export function Sidebar({
     >
       <aside className="sidebar-surface relative flex h-full flex-col overflow-hidden rounded-[32px] border border-lavender-line bg-lavender-bg px-2.5 py-3 text-ink [&>*]:relative [&>*]:z-[1]">
         <SidebarBrand />
-        <SidebarNav activeId={activeId} collapsed={collapsed} onSelect={onSelect} />
+        <SidebarNav activeId={activeId} collapsed={collapsed} />
         <SidebarUserCard name={user.name} role={user.role} />
       </aside>
       <SidebarCollapseButton onToggle={toggle} />

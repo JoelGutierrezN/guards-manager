@@ -1,0 +1,47 @@
+@keyframes reveal {
+  from {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  animation: reveal 0.35s cubic-bezier(0, 0, 0.2, 1) both;
+}
+.reveal.d1 {
+  animation-delay: 30ms;
+}
+.reveal.d2 {
+  animation-delay: 80ms;
+}
+.reveal.d3 {
+  animation-delay: 130ms;
+}
+.reveal.d4 {
+  animation-delay: 180ms;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tools-spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border: 2.5px solid rgba(14, 15, 60, 0.12);
+  border-top-color: var(--color-brand);
+  animation: spin 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
+  .tools-spinner {
+    animation: none;
+  }
+}
