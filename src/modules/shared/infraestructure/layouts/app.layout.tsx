@@ -3,7 +3,7 @@ import { Outlet } from 'react-router'
 import { Sidebar } from '../components/sidebar'
 import { Topbar } from '../components/topbar'
 
-export function DashboardLayout(): JSX.Element {
+export function AppLayout(): JSX.Element {
   return (
     <div className="flex min-h-screen gap-2.5 bg-bg-app p-2.5">
       <Sidebar />

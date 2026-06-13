@@ -6,7 +6,7 @@ import { SidebarNav } from './sidebar-nav.component'
 import { SidebarUserCard } from './sidebar-user-card.component'
 import { SidebarCollapseButton } from './sidebar-collapse-button.component'
 import { useSidebarCollapse } from './use-sidebar-collapse.hook'
-import { DashboardRouteHelper } from '../../router/dashboard-route.helper'
+import { AppRouteHelper } from '../../router/app-route.helper'
 
 interface SidebarUser {
   name: string
@@ -25,7 +25,7 @@ const DEFAULT_USER: SidebarUser = {
 export function Sidebar({ user = DEFAULT_USER }: Props): JSX.Element {
   const { collapsed, toggle } = useSidebarCollapse()
   const { pathname } = useLocation()
-  const activeId = useMemo(() => DashboardRouteHelper.activeIdFromPath(pathname), [pathname])
+  const activeId = useMemo(() => AppRouteHelper.activeIdFromPath(pathname), [pathname])
 
   return (
     <div

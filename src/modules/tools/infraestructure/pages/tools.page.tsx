@@ -117,7 +117,7 @@ export function ToolsPage(): JSX.Element {
               <Button
                 icon={ArrowDown01Icon}
                 size="md"
-                onClick={() => navigate('/dashboard/stockIn')}
+                onClick={() => navigate('/stockIn')}
               >
                 Ingresar inventario
               </Button>

@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router'
 import AuthPage from '../../../auth/infraestructure/pages/auth.page'
-import { DashboardLayout } from '../layouts/dashboard.layout'
+import { AppLayout } from '../layouts/app.layout'
 
 export default createBrowserRouter([
   {
@@ -8,11 +8,10 @@ export default createBrowserRouter([
     element: <AuthPage />,
   },
   {
-    path: '/dashboard',
-    Component: DashboardLayout,
+    Component: AppLayout,
     children: [
       {
-        index: true,
+        path: 'dashboard',
         lazy: async () => ({
           Component: (await import('../pages/dashboard-panel.page')).DashboardPanelPage,
         }),
