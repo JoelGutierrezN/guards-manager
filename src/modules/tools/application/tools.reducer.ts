@@ -39,11 +39,16 @@ export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState
     case 'CLOSE_NEW_TOOL':
       return { ...state, newToolOpen: false }
     case 'OPEN_INGRESO':
-      return { ...state, ingresoTool: action.tool }
+      return { ...state, ingresoOpen: true, ingresoTool: action.tool }
     case 'CLOSE_INGRESO':
-      return { ...state, ingresoTool: null }
+      return { ...state, ingresoOpen: false, ingresoTool: null }
     case 'CONFIRM_INGRESO':
-      return { ...state, ingresoTool: null, progress: { tool: action.tool, total: action.total } }
+      return {
+        ...state,
+        ingresoOpen: false,
+        ingresoTool: null,
+        progress: { tool: action.tool, total: action.total },
+      }
     case 'FINISH_INGRESO': {
       if (!state.progress) return { ...state, progress: null }
       const updatedRows = InventoryService.addStock(state.rows, state.progress.tool.id, state.progress.total)

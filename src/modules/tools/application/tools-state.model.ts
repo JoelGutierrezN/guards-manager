@@ -17,6 +17,7 @@ export interface ToolsState {
   page: number
   showFilters: boolean
   newToolOpen: boolean
+  ingresoOpen: boolean
   ingresoTool: Tool | null
   progress: ProgressEntry | null
 }
@@ -32,7 +33,7 @@ export type ToolsAction =
   | { type: 'TOGGLE_FILTERS_PANEL' }
   | { type: 'OPEN_NEW_TOOL' }
   | { type: 'CLOSE_NEW_TOOL' }
-  | { type: 'OPEN_INGRESO'; tool: Tool }
+  | { type: 'OPEN_INGRESO'; tool: Tool | null }
   | { type: 'CLOSE_INGRESO' }
   | { type: 'CONFIRM_INGRESO'; tool: Tool; total: number }
   | { type: 'FINISH_INGRESO' }

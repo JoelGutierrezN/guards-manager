@@ -16,6 +16,7 @@ const initialState: ToolsState = {
   page: 1,
   showFilters: true,
   newToolOpen: false,
+  ingresoOpen: false,
   ingresoTool: null,
   progress: null,
 }
@@ -41,7 +42,10 @@ export function useToolsInventory() {
   const toggleFiltersPanel = useCallback(() => dispatch({ type: 'TOGGLE_FILTERS_PANEL' }), [])
   const openNewTool = useCallback(() => dispatch({ type: 'OPEN_NEW_TOOL' }), [])
   const closeNewTool = useCallback(() => dispatch({ type: 'CLOSE_NEW_TOOL' }), [])
-  const openIngreso = useCallback((tool: Tool) => dispatch({ type: 'OPEN_INGRESO', tool }), [])
+  const openIngreso = useCallback(
+    (tool: Tool | null) => dispatch({ type: 'OPEN_INGRESO', tool }),
+    [],
+  )
   const closeIngreso = useCallback(() => dispatch({ type: 'CLOSE_INGRESO' }), [])
   const confirmIngreso = useCallback(
     (tool: Tool, total: number) => dispatch({ type: 'CONFIRM_INGRESO', tool, total }),
