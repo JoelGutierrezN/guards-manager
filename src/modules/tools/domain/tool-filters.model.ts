@@ -1,4 +1,5 @@
 export interface ToolFilters {
   brands: string[]
-  statuses: string[]
+  models: string[]
+  stockRange: [number, number]
 }

@@ -1,4 +1,5 @@
 import type { ToolsState, ToolsAction } from './tools-state.model'
+import { DEFAULT_STOCK_RANGE } from './tools-state.model'
 import { InventoryService } from './inventory.service'
 
 export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState {
@@ -10,37 +11,29 @@ export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState
         : [...state.filters.brands, action.brand]
       return { ...state, filters: { ...state.filters, brands: updatedBrands }, page: 1 }
     }
-    case 'TOGGLE_STATUS': {
-      const hasStatus = state.filters.statuses.includes(action.status)
-      const updatedStatuses = hasStatus
-        ? state.filters.statuses.filter((status) => status !== action.status)
-        : [...state.filters.statuses, action.status]
-      return { ...state, filters: { ...state.filters, statuses: updatedStatuses }, page: 1 }
+    case 'TOGGLE_MODEL': {
+      const hasModel = state.filters.models.includes(action.model)
+      const updatedModels = hasModel
+        ? state.filters.models.filter((model) => model !== action.model)
+        : [...state.filters.models, action.model]
+      return { ...state, filters: { ...state.filters, models: updatedModels }, page: 1 }
     }
+    case 'SET_STOCK_RANGE':
+      return { ...state, filters: { ...state.filters, stockRange: action.range }, page: 1 }
+    case 'SET_SEARCH':
+      return { ...state, searchQuery: action.query, page: 1 }
     case 'CLEAR_FILTERS':
-      return { ...state, filters: { brands: [], statuses: [] }, page: 1 }
-    case 'TOGGLE_SELECT': {
-      const nextSelected = new Set(state.selectedIds)
-      if (nextSelected.has(action.id)) {
-        nextSelected.delete(action.id)
-      } else {
-        nextSelected.add(action.id)
+      return {
+        ...state,
+        filters: { brands: [], models: [], stockRange: DEFAULT_STOCK_RANGE },
+        page: 1,
       }
-      return { ...state, selectedIds: nextSelected }
-    }
-    case 'TOGGLE_SELECT_ALL': {
-      const allCurrentlySelected = action.filteredIds.every((id) => state.selectedIds.has(id))
-      const nextSelected = allCurrentlySelected ? new Set<number>() : new Set(action.filteredIds)
-      return { ...state, selectedIds: nextSelected }
-    }
     case 'SET_TAB':
       return { ...state, tab: action.tab, page: 1 }
     case 'SET_PAGE':
       return { ...state, page: action.page }
     case 'TOGGLE_FILTERS_PANEL':
       return { ...state, showFilters: !state.showFilters }
-    case 'SET_DENSITY':
-      return { ...state, density: action.density }
     case 'OPEN_NEW_TOOL':
       return { ...state, newToolOpen: true }
     case 'CLOSE_NEW_TOOL':

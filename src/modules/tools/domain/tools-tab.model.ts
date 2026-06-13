@@ -1,1 +1,1 @@
-export type ToolsTabKey = 'all' | 'available' | 'low' | 'mantto' | 'baja'
+export type ToolsTabKey = 'all' | 'available' | 'assigned' | 'low'

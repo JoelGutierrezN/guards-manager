@@ -7,14 +7,15 @@ export interface ProgressEntry {
   total: number
 }
 
+export const DEFAULT_STOCK_RANGE: [number, number] = [0, 50]
+
 export interface ToolsState {
   rows: Tool[]
   filters: ToolFilters
-  selectedIds: Set<number>
+  searchQuery: string
   tab: ToolsTabKey
   page: number
   showFilters: boolean
-  density: 'dense' | 'comfy'
   newToolOpen: boolean
   ingresoTool: Tool | null
   progress: ProgressEntry | null
@@ -22,14 +23,13 @@ export interface ToolsState {
 
 export type ToolsAction =
   | { type: 'TOGGLE_BRAND'; brand: string }
-  | { type: 'TOGGLE_STATUS'; status: string }
+  | { type: 'TOGGLE_MODEL'; model: string }
+  | { type: 'SET_STOCK_RANGE'; range: [number, number] }
+  | { type: 'SET_SEARCH'; query: string }
   | { type: 'CLEAR_FILTERS' }
-  | { type: 'TOGGLE_SELECT'; id: number }
-  | { type: 'TOGGLE_SELECT_ALL'; filteredIds: number[] }
   | { type: 'SET_TAB'; tab: ToolsTabKey }
   | { type: 'SET_PAGE'; page: number }
   | { type: 'TOGGLE_FILTERS_PANEL' }
-  | { type: 'SET_DENSITY'; density: 'dense' | 'comfy' }
   | { type: 'OPEN_NEW_TOOL' }
   | { type: 'CLOSE_NEW_TOOL' }
   | { type: 'OPEN_INGRESO'; tool: Tool }
