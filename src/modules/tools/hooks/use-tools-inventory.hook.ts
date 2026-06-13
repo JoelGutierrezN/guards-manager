@@ -1,20 +1,20 @@
 import { useCallback, useMemo, useReducer } from 'react'
 import type { Tool } from '../domain/tool.entity'
 import type { ToolsTabKey } from '../domain/tools-tab.model'
-import type { ProgressEntry } from '../application/tools-state.model'
+import type { ProgressEntry, ToolsState } from '../application/tools-state.model'
+import { DEFAULT_STOCK_RANGE } from '../application/tools-state.model'
 import { toolsReducer } from '../application/tools.reducer'
 import { ToolFilterService } from '../application/tool-filter.service'
 // TODO API: cargar el listado desde GET /api/tools (reemplazar MOCK_TOOLS y manejar carga async con loading/error).
 import { MOCK_TOOLS } from '../infraestructure/mocks/tools.mock'
 
-const initialState = {
+const initialState: ToolsState = {
   rows: MOCK_TOOLS,
-  filters: { brands: [], statuses: [] },
-  selectedIds: new Set<number>(),
-  tab: 'all' as ToolsTabKey,
+  filters: { brands: [], models: [], stockRange: DEFAULT_STOCK_RANGE },
+  searchQuery: '',
+  tab: 'all',
   page: 1,
   showFilters: true,
-  density: 'dense' as const,
   newToolOpen: false,
   ingresoTool: null,
   progress: null,
@@ -24,35 +24,21 @@ export function useToolsInventory() {
   const [state, dispatch] = useReducer(toolsReducer, initialState)
 
   const filteredRows = useMemo(
-    () => ToolFilterService.apply(state.rows, state.filters, state.tab),
-    [state.rows, state.filters, state.tab],
-  )
-
-  const allSelected = useMemo(
-    () => filteredRows.length > 0 && filteredRows.every((tool) => state.selectedIds.has(tool.id)),
-    [filteredRows, state.selectedIds],
-  )
-
-  const someSelected = useMemo(
-    () => state.selectedIds.size > 0 && !allSelected,
-    [state.selectedIds, allSelected],
+    () => ToolFilterService.apply(state.rows, state.filters, state.tab, state.searchQuery),
+    [state.rows, state.filters, state.tab, state.searchQuery],
   )
 
   const toggleBrand = useCallback((brand: string) => dispatch({ type: 'TOGGLE_BRAND', brand }), [])
-  const toggleStatus = useCallback((status: string) => dispatch({ type: 'TOGGLE_STATUS', status }), [])
-  const clearFilters = useCallback(() => dispatch({ type: 'CLEAR_FILTERS' }), [])
-  const toggleSelect = useCallback((id: number) => dispatch({ type: 'TOGGLE_SELECT', id }), [])
-  const toggleSelectAll = useCallback(
-    () => dispatch({ type: 'TOGGLE_SELECT_ALL', filteredIds: filteredRows.map((tool) => tool.id) }),
-    [filteredRows],
+  const toggleModel = useCallback((model: string) => dispatch({ type: 'TOGGLE_MODEL', model }), [])
+  const setStockRange = useCallback(
+    (range: [number, number]) => dispatch({ type: 'SET_STOCK_RANGE', range }),
+    [],
   )
+  const setSearch = useCallback((query: string) => dispatch({ type: 'SET_SEARCH', query }), [])
+  const clearFilters = useCallback(() => dispatch({ type: 'CLEAR_FILTERS' }), [])
   const setTab = useCallback((tab: ToolsTabKey) => dispatch({ type: 'SET_TAB', tab }), [])
   const setPage = useCallback((page: number) => dispatch({ type: 'SET_PAGE', page }), [])
   const toggleFiltersPanel = useCallback(() => dispatch({ type: 'TOGGLE_FILTERS_PANEL' }), [])
-  const setDensity = useCallback(
-    (density: 'dense' | 'comfy') => dispatch({ type: 'SET_DENSITY', density }),
-    [],
-  )
   const openNewTool = useCallback(() => dispatch({ type: 'OPEN_NEW_TOOL' }), [])
   const closeNewTool = useCallback(() => dispatch({ type: 'CLOSE_NEW_TOOL' }), [])
   const openIngreso = useCallback((tool: Tool) => dispatch({ type: 'OPEN_INGRESO', tool }), [])
@@ -66,17 +52,14 @@ export function useToolsInventory() {
   return {
     state,
     filteredRows,
-    allSelected,
-    someSelected,
     toggleBrand,
-    toggleStatus,
+    toggleModel,
+    setStockRange,
+    setSearch,
     clearFilters,
-    toggleSelect,
-    toggleSelectAll,
     setTab,
     setPage,
     toggleFiltersPanel,
-    setDensity,
     openNewTool,
     closeNewTool,
     openIngreso,

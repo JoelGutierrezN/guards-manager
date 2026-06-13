@@ -8,3 +8,14 @@ export interface ModelOption {
   value: string
   label: string
 }
+
+export interface CatalogModelNode {
+  name: string
+  count: number
+}
+
+export interface CatalogBrandNode {
+  brand: string
+  count: number
+  models: CatalogModelNode[]
+}

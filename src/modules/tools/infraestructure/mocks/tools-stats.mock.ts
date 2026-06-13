@@ -15,7 +15,7 @@ export const MOCK_TOOLS_STATS: ToolsStats = {
     critical: '22',
     criticalDelta: 'atención',
   },
-  tabCounts: { all: 1284, available: 412, low: 22, mantto: 52, baja: 22 },
+  tabCounts: { all: 1284, available: 412, assigned: 798, low: 22 },
   statusCounts: { ok: 412, warn: 8, low: 14, mantto: 52, baja: 22 },
   brandCounts: { DeWalt: 86, Makita: 32, Milwaukee: 18, Bosch: 41, Fluke: 10 },
   totalCount: 142,
