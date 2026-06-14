@@ -6,7 +6,6 @@ export interface Tool {
   brand: string
   model: string
   total: number
-  available: number
   assigned: number
   status: ToolStatus
 }

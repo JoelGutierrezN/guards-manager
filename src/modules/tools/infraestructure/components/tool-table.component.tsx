@@ -10,12 +10,15 @@ interface Props {
   rows: Tool[]
   totalCount: number
   showFilters: boolean
-  searchQuery: string
+  activeFilterCount: number
   page: number
   onToggleFilters: () => void
-  onSearch: (query: string) => void
   onClearFilters: () => void
   onSetPage: (page: number) => void
+  onStock: (tool: Tool) => void
+  onIngreso: (tool: Tool) => void
+  onEdit: (tool: Tool) => void
+  onDelete: (tool: Tool) => void
 }
 
 // TODO API: el total de páginas proviene de la paginación de GET /api/tools.
@@ -25,46 +28,48 @@ export function ToolTable({
   rows,
   totalCount,
   showFilters,
-  searchQuery,
+  activeFilterCount,
   page,
   onToggleFilters,
-  onSearch,
   onClearFilters,
   onSetPage,
+  onStock,
+  onIngreso,
+  onEdit,
+  onDelete,
 }: Props): JSX.Element {
   return (
-    <div className="overflow-hidden rounded-[18px] border border-hairline bg-white shadow-[0_1px_4px_rgba(14,15,60,0.04)]">
+    <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-[18px] border border-hairline bg-white shadow-[0_1px_4px_rgba(14,15,60,0.04)]">
       <ToolTableToolbar
         showFilters={showFilters}
+        activeFilterCount={activeFilterCount}
         onToggleFilters={onToggleFilters}
-        searchQuery={searchQuery}
-        onSearch={onSearch}
       />
 
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-[13px]">
+      <div className="h-[540px] overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]">
+        <table className="w-full table-fixed border-collapse text-[13px]">
           <thead>
             <tr>
               <th className="sticky top-0 z-[1] cursor-pointer select-none border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap hover:text-ink">
                 Herramienta
               </th>
-              <th className="sticky top-0 z-[1] border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap">
+              <th className="sticky top-0 z-[1] w-[120px] border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap">
                 Marca
               </th>
-              <th className="sticky top-0 z-[1] border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap">
+              <th className="sticky top-0 z-[1] w-[150px] border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap">
                 Modelo
               </th>
               {/* TODO API: el orden por stock se envía a GET /api/tools (?sort=); aquí solo es indicador visual. */}
-              <th className="sticky top-0 z-[1] cursor-pointer select-none border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-brand whitespace-nowrap">
+              <th className="sticky top-0 z-[1] w-[210px] cursor-pointer select-none border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-brand whitespace-nowrap">
                 <span className="inline-flex items-center gap-1">
                   Stock disp. / total
                   <Icon icon={ArrowDown01Icon} size={11} className="text-brand" />
                 </span>
               </th>
-              <th className="sticky top-0 z-[1] cursor-pointer select-none border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap hover:text-ink">
+              <th className="sticky top-0 z-[1] w-[90px] cursor-pointer select-none border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap hover:text-ink">
                 Asign.
               </th>
-              <th className="sticky top-0 z-[1] border-b border-hairline bg-paper-tint px-3 py-2.5" />
+              <th className="sticky top-0 z-[1] w-[150px] border-b border-hairline bg-paper-tint px-3 py-2.5" />
             </tr>
           </thead>
           <tbody>
@@ -80,7 +85,16 @@ export function ToolTable({
                 </td>
               </tr>
             ) : (
-              rows.map((tool) => <ToolRow key={tool.id} tool={tool} />)
+              rows.map((tool) => (
+                <ToolRow
+                  key={tool.id}
+                  tool={tool}
+                  onStock={() => onStock(tool)}
+                  onIngreso={() => onIngreso(tool)}
+                  onEdit={() => onEdit(tool)}
+                  onDelete={() => onDelete(tool)}
+                />
+              ))
             )}
           </tbody>
         </table>

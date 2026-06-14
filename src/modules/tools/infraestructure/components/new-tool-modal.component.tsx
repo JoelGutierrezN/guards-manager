@@ -66,7 +66,7 @@ export function NewToolModal({ open, onClose, onSave }: Props): JSX.Element {
   }
 
   return (
-    <Modal open={open} onClose={handleClose} maxWidth={520}>
+    <Modal open={open} onClose={handleClose} maxWidth={480}>
       <div className="p-6" style={{ overflow: 'visible' }}>
         <div className="mb-5 flex items-start justify-between">
           <div>
@@ -84,6 +84,46 @@ export function NewToolModal({ open, onClose, onSave }: Props): JSX.Element {
           <div>
             <label className="mb-1.5 flex items-center justify-between text-[12px] font-medium text-ink-2">
               <span>
+                Marca <span className="text-danger">*</span>
+              </span>
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.06em] text-muted">
+                catálogo
+              </span>
+            </label>
+            <Combobox
+              value={selectedBrand}
+              onChange={handleBrandChange}
+              options={MOCK_BRANDS}
+              placeholder="Selecciona marca…"
+              leadIcon={Book02Icon}
+              onCreateLabel="Crear marca"
+              onCreate={handleBrandCreate}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 flex items-center justify-between text-[12px] font-medium text-ink-2">
+              <span>
+                Modelo <span className="text-danger">*</span>
+              </span>
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.06em] text-muted">
+                {modelCountHint}
+              </span>
+            </label>
+            <Combobox
+              value={selectedModel}
+              onChange={setSelectedModel}
+              options={modelOptions}
+              placeholder={selectedBrand ? 'Selecciona modelo…' : '—'}
+              leadIcon={Layers01Icon}
+              onCreateLabel={selectedBrand ? `Crear modelo en ${selectedBrand}` : 'Crear modelo'}
+              onCreate={selectedBrand ? handleModelCreate : null}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 flex items-center justify-between text-[12px] font-medium text-ink-2">
+              <span>
                 Nombre de la herramienta <span className="text-danger">*</span>
               </span>
               <span className="font-mono text-[10px] font-medium uppercase tracking-[0.06em] text-muted">
@@ -94,50 +134,8 @@ export function NewToolModal({ open, onClose, onSave }: Props): JSX.Element {
               className="h-[42px] w-full rounded-full border border-hairline-strong bg-white px-4 text-[14px] text-ink outline-none placeholder:text-muted-soft focus:border-brand focus:shadow-[0_0_0_3px_var(--color-brand-soft)] transition-[border-color,box-shadow]"
               placeholder="Ej. Taladro percutor 20V"
               value={toolName}
-              autoFocus
               onChange={(event) => setToolName(event.target.value)}
             />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1.5 flex items-center justify-between text-[12px] font-medium text-ink-2">
-                <span>
-                  Marca <span className="text-danger">*</span>
-                </span>
-                <span className="font-mono text-[10px] font-medium uppercase tracking-[0.06em] text-muted">
-                  catálogo
-                </span>
-              </label>
-              <Combobox
-                value={selectedBrand}
-                onChange={handleBrandChange}
-                options={MOCK_BRANDS}
-                placeholder="Selecciona marca…"
-                leadIcon={Book02Icon}
-                onCreateLabel="Crear marca"
-                onCreate={handleBrandCreate}
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 flex items-center justify-between text-[12px] font-medium text-ink-2">
-                <span>
-                  Modelo <span className="text-danger">*</span>
-                </span>
-                <span className="font-mono text-[10px] font-medium uppercase tracking-[0.06em] text-muted">
-                  {modelCountHint}
-                </span>
-              </label>
-              <Combobox
-                value={selectedModel}
-                onChange={setSelectedModel}
-                options={modelOptions}
-                placeholder={selectedBrand ? 'Selecciona modelo…' : '—'}
-                leadIcon={Layers01Icon}
-                onCreateLabel={selectedBrand ? `Crear modelo en ${selectedBrand}` : 'Crear modelo'}
-                onCreate={selectedBrand ? handleModelCreate : null}
-              />
-            </div>
           </div>
 
           <div className="flex items-start gap-3 rounded-[10px] border border-hairline bg-paper-tint p-2.5">

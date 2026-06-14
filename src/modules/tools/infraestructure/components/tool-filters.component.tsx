@@ -23,11 +23,16 @@ export function ToolFiltersPanel({
   onSetStockRange,
   onClearFilters,
 }: Props): JSX.Element {
+  const catalogSelected = filters.brands.length + filters.models.length
+  const [minStock, maxStock] = filters.stockRange
+  const rangeActive = minStock > DEFAULT_STOCK_RANGE[0] || maxStock < DEFAULT_STOCK_RANGE[1]
+  const rangeLabel = `${minStock}–${maxStock}${maxStock >= DEFAULT_STOCK_RANGE[1] ? '+' : ''}`
+
   return (
-    <div className="rounded-[18px] border border-hairline bg-white shadow-[0_1px_4px_rgba(14,15,60,0.04)] overflow-hidden">
+    <div className="flex h-full w-full flex-col rounded-[18px] border border-hairline bg-white shadow-[0_1px_4px_rgba(14,15,60,0.04)] overflow-hidden">
       <div className="flex items-center justify-between border-b border-hairline px-3.5 py-3">
         <div className="flex items-center gap-2">
-          <Icon icon={FilterHorizontalIcon} size={14} className="text-muted" />
+          <Icon icon={FilterHorizontalIcon} size={14} className="text-ink-2" />
           <span className="text-[13px] font-semibold text-ink">Filtros</span>
         </div>
         <button
@@ -39,9 +44,12 @@ export function ToolFiltersPanel({
         </button>
       </div>
 
-      <div className="px-3.5 py-3">
-        <div className="mb-2 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted">
-          Rango de stock
+      <div className="border-b border-hairline px-3.5 py-3">
+        <div className="mb-1.5 flex items-center justify-between">
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted">
+            Rango de stock
+          </span>
+          {rangeActive && <span className="font-mono text-[11px] text-brand">{rangeLabel}</span>}
         </div>
         <ToolStockRange
           value={filters.stockRange}
@@ -51,17 +59,23 @@ export function ToolFiltersPanel({
         />
       </div>
 
-      <div className="border-t border-hairline px-3.5 py-3">
-        <div className="mb-2 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted">
-          Marca
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3.5 py-3">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted">
+            Catálogo
+          </span>
+          {catalogSelected > 0 && (
+            <span className="font-mono text-[11px] text-brand">{catalogSelected} sel.</span>
+          )}
         </div>
-        <div className="flex flex-col gap-1">
-          {MOCK_CATALOG_TREE.map((node) => (
+        <div className="flex flex-col gap-px">
+          {MOCK_CATALOG_TREE.map((node, index) => (
             <ToolFilterBrandNode
               key={node.brand}
               node={node}
               selectedBrands={filters.brands}
               selectedModels={filters.models}
+              defaultExpanded={index === 0}
               onToggleBrand={onToggleBrand}
               onToggleModel={onToggleModel}
             />

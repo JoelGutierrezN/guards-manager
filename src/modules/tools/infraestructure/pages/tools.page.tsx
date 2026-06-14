@@ -1,4 +1,5 @@
-import { type JSX, useMemo } from 'react'
+import { type JSX } from 'react'
+import { useNavigate } from 'react-router'
 import { ArrowDown01Icon, Download01Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
 import { PageHero, Tabs, Button, useToasts } from '../../../shared/infraestructure/components/ui'
 import type { TabItem } from '../../../shared/infraestructure/components/ui/tabs.model'
@@ -7,8 +8,12 @@ import { ToolFiltersPanel } from '../components/tool-filters.component'
 import { ToolTable } from '../components/tool-table.component'
 import { NewToolModal } from '../components/new-tool-modal.component'
 import { ToolIngresoModal } from '../components/tool-ingreso-modal.component'
+import { ToolStockModal } from '../components/tool-stock-modal.component'
+import { ToolDeleteModal } from '../components/tool-delete-modal.component'
 import { ToolProgressOverlay } from '../components/tool-progress-overlay.component'
+import type { Tool } from '../../domain/tool.entity'
 import type { ToolsTabKey } from '../../domain/tools-tab.model'
+import { DEFAULT_STOCK_RANGE } from '../../application/tools-state.model'
 import { MOCK_TOOLS_STATS } from '../mocks/tools-stats.mock'
 import '../../tools.css'
 
@@ -20,6 +25,7 @@ const TAB_ITEMS: TabItem<ToolsTabKey>[] = [
 ]
 
 export function ToolsPage(): JSX.Element {
+  const navigate = useNavigate()
   const [addToast, toastHost] = useToasts()
 
   const {
@@ -28,7 +34,6 @@ export function ToolsPage(): JSX.Element {
     toggleBrand,
     toggleModel,
     setStockRange,
-    setSearch,
     clearFilters,
     setTab,
     setPage,
@@ -39,17 +44,18 @@ export function ToolsPage(): JSX.Element {
     closeIngreso,
     confirmIngreso,
     finishIngreso,
+    openStock,
+    closeStock,
+    openDelete,
+    closeDelete,
+    confirmDelete,
     progress,
   } = useToolsInventory()
 
-  const gridStyle = useMemo(
-    () => ({
-      display: 'grid',
-      gridTemplateColumns: state.showFilters ? '240px 1fr' : '1fr',
-      gap: '16px',
-    }),
-    [state.showFilters],
-  )
+  const [minStock, maxStock] = state.filters.stockRange
+  const rangeActive = minStock > DEFAULT_STOCK_RANGE[0] || maxStock < DEFAULT_STOCK_RANGE[1]
+  const activeFilterCount =
+    state.filters.brands.length + state.filters.models.length + (rangeActive ? 1 : 0)
 
   const handleNewToolSave = (tool: { name: string; brand: string; model: string }) => {
     // TODO API: POST /api/tools (crear herramienta en el catálogo) y refrescar listado/stats.
@@ -62,7 +68,6 @@ export function ToolsPage(): JSX.Element {
       // TODO API: POST /api/tools/{id}/stock-in (registrar ingreso) antes de actualizar el inventario.
       confirmIngreso(state.ingresoTool, quantity)
     }
-    // TODO API: sin herramienta pre-seleccionada, el ingreso requiere el selector de herramienta del modal.
   }
 
   const handleFinishIngreso = () => {
@@ -74,66 +79,86 @@ export function ToolsPage(): JSX.Element {
     finishIngreso()
   }
 
+  const handleConfirmDelete = (tool: Tool) => {
+    // TODO API: DELETE /api/tools/{id} (eliminar del catálogo) antes de actualizar el listado.
+    confirmDelete(tool)
+    addToast(`Herramienta "${tool.name}" eliminada del catálogo`)
+  }
+
   return (
     <>
       <div className="reveal d1">
         <PageHero
-          eyebrow="Catálogo · herramientas"
+          compact
+          dense
+          eyebrow="Catálogos · herramientas"
           title="Catálogo de herramientas"
           italic="de herramientas"
-          lede="1,284 herramientas en el catálogo. 412 disponibles y 798 asignadas en este momento."
-          actions={
-            <>
-              <Button icon={ArrowDown01Icon} size="md" onClick={() => openIngreso(null)}>
-                Ingresar inventario
-              </Button>
-              {/* TODO API: GET /api/tools/export (descarga del catálogo en CSV/Excel). */}
-              <Button icon={Download01Icon} size="md">
-                Exportar
-              </Button>
-              <Button variant="primary" icon={PlusSignIcon} size="md" onClick={openNewTool}>
-                Nueva herramienta
-              </Button>
-            </>
-          }
+          lede="1,284 herramientas en inventario. Filtra por marca, modelo o estado y gestiona existencias, ingresos y asignaciones."
         />
       </div>
 
-      <div className="reveal d2 mb-3">
+      <div className="reveal d2 mb-3 flex flex-wrap items-center justify-between gap-3">
         <Tabs value={state.tab} onChange={setTab} items={TAB_ITEMS} />
+        <div className="flex flex-wrap gap-2">
+          <Button icon={ArrowDown01Icon} size="md" onClick={() => navigate('/stockIn')}>
+            Ingresar inventario
+          </Button>
+          {/* TODO API: GET /api/tools/export (descarga del catálogo en CSV/Excel). */}
+          <Button icon={Download01Icon} size="md">
+            Exportar
+          </Button>
+          <Button variant="primary" icon={PlusSignIcon} size="md" onClick={openNewTool}>
+            Nueva herramienta
+          </Button>
+        </div>
       </div>
 
-      <div className="reveal d3 max-[1000px]:!grid-cols-1" style={gridStyle}>
+      <div className="reveal d3 flex items-stretch gap-4 max-[1000px]:flex-col">
         {state.showFilters && (
-          <ToolFiltersPanel
-            filters={state.filters}
-            onToggleBrand={toggleBrand}
-            onToggleModel={toggleModel}
-            onSetStockRange={setStockRange}
-            onClearFilters={clearFilters}
-          />
+          <div className="flex w-[244px] shrink-0 max-[1000px]:w-full">
+            <ToolFiltersPanel
+              filters={state.filters}
+              onToggleBrand={toggleBrand}
+              onToggleModel={toggleModel}
+              onSetStockRange={setStockRange}
+              onClearFilters={clearFilters}
+            />
+          </div>
         )}
 
         <ToolTable
           rows={filteredRows}
           totalCount={MOCK_TOOLS_STATS.totalCount}
           showFilters={state.showFilters}
-          searchQuery={state.searchQuery}
+          activeFilterCount={activeFilterCount}
           page={state.page}
           onToggleFilters={toggleFiltersPanel}
-          onSearch={setSearch}
           onClearFilters={clearFilters}
           onSetPage={setPage}
+          onStock={openStock}
+          onIngreso={openIngreso}
+          onEdit={openNewTool}
+          onDelete={openDelete}
         />
       </div>
 
       <NewToolModal open={state.newToolOpen} onClose={closeNewTool} onSave={handleNewToolSave} />
 
       <ToolIngresoModal
-        open={state.ingresoOpen}
+        open={!!state.ingresoTool}
         tool={state.ingresoTool}
         onClose={closeIngreso}
         onConfirm={handleConfirmIngreso}
+      />
+
+      <ToolStockModal open={!!state.stockTool} tool={state.stockTool} onClose={closeStock} />
+
+      <ToolDeleteModal
+        open={!!state.deleteTool}
+        tool={state.deleteTool}
+        onClose={closeDelete}
+        onConfirm={handleConfirmDelete}
       />
 
       {progress && (

@@ -8,9 +8,18 @@ interface Props {
   lede?: string
   actions?: ReactNode
   compact?: boolean
+  dense?: boolean
 }
 
-export function PageHero({ eyebrow, title, italic, lede, actions, compact = false }: Props): JSX.Element {
+export function PageHero({
+  eyebrow,
+  title,
+  italic,
+  lede,
+  actions,
+  compact = false,
+  dense = false,
+}: Props): JSX.Element {
   const titleParts = useMemo(() => {
     if (!italic || !title.includes(italic)) return null
     const splitIndex = title.indexOf(italic)
@@ -24,12 +33,11 @@ export function PageHero({ eyebrow, title, italic, lede, actions, compact = fals
   const heroClassName = useMemo(
     () =>
       cn(
-        'grid gap-8 items-end border-b border-hairline max-[1100px]:grid-cols-1',
-        compact
-          ? 'grid-cols-[1.2fr_1fr] gap-6 pb-4 pt-5 mb-4'
-          : 'grid-cols-[1.4fr_1fr] pb-6 pt-8 mb-5',
+        'grid items-end border-b border-hairline max-[1100px]:grid-cols-1',
+        compact ? 'grid-cols-[1.2fr_1fr] gap-6' : 'grid-cols-[1.4fr_1fr] gap-8',
+        dense ? 'pt-[5px] pb-0 mb-[5px]' : compact ? 'py-0 mb-4' : 'pt-8 pb-6 mb-5',
       ),
-    [compact],
+    [compact, dense],
   )
 
   return (

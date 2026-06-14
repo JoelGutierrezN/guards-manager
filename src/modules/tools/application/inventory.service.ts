@@ -4,9 +4,7 @@ export class InventoryService {
   // TODO API: persistir el ingreso con POST /api/tools/{toolId}/stock-in; aquí solo se actualiza en memoria.
   static addStock(rows: Tool[], toolId: number, quantity: number): Tool[] {
     return rows.map((tool) =>
-      tool.id === toolId
-        ? { ...tool, total: tool.total + quantity, available: tool.available + quantity }
-        : tool,
+      tool.id === toolId ? { ...tool, total: tool.total + quantity } : tool,
     )
   }
 

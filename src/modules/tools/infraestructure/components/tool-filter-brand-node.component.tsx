@@ -9,6 +9,7 @@ interface Props {
   node: CatalogBrandNode
   selectedBrands: string[]
   selectedModels: string[]
+  defaultExpanded?: boolean
   onToggleBrand: (brand: string) => void
   onToggleModel: (model: string) => void
 }
@@ -17,10 +18,11 @@ export function ToolFilterBrandNode({
   node,
   selectedBrands,
   selectedModels,
+  defaultExpanded = false,
   onToggleBrand,
   onToggleModel,
 }: Props): JSX.Element {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(defaultExpanded)
 
   const chevronClass = useMemo(
     () => cn('inline-flex transition-transform', !expanded && '-rotate-90'),

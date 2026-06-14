@@ -45,18 +45,17 @@ export const MOCK_CATALOG_TREE: CatalogBrandNode[] = [
     brand: 'DeWalt',
     count: 86,
     models: [
-      { name: 'DCD996', count: 28 },
-      { name: 'DCD777', count: 22 },
-      { name: 'DCF887', count: 24 },
-      { name: 'DWE1622K', count: 12 },
+      { name: 'DCD996', count: 24 },
+      { name: 'DCF887', count: 30 },
+      { name: 'DCD777', count: 12 },
     ],
   },
   {
     brand: 'Makita',
     count: 32,
     models: [
-      { name: 'XSH06PT', count: 12 },
-      { name: 'GA4570', count: 11 },
+      { name: 'XSH06PT', count: 8 },
+      { name: 'GA4570', count: 18 },
       { name: 'BO5041', count: 9 },
     ],
   },
@@ -64,17 +63,17 @@ export const MOCK_CATALOG_TREE: CatalogBrandNode[] = [
     brand: 'Milwaukee',
     count: 18,
     models: [
-      { name: 'M18 FUEL', count: 10 },
-      { name: 'M18 GG', count: 8 },
+      { name: 'M18 FUEL', count: 12 },
+      { name: 'M18 GG', count: 4 },
     ],
   },
   {
     brand: 'Bosch',
     count: 41,
     models: [
-      { name: 'GBH 18V-26', count: 16 },
-      { name: 'GSA 18V-32', count: 14 },
-      { name: 'GHG 18V-50', count: 11 },
+      { name: 'GBH 18V-26', count: 15 },
+      { name: 'GHG 18V-50', count: 6 },
+      { name: 'GSA 18V-32', count: 7 },
     ],
   },
   {

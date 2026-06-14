@@ -20,8 +20,6 @@ export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState
     }
     case 'SET_STOCK_RANGE':
       return { ...state, filters: { ...state.filters, stockRange: action.range }, page: 1 }
-    case 'SET_SEARCH':
-      return { ...state, searchQuery: action.query, page: 1 }
     case 'CLEAR_FILTERS':
       return {
         ...state,
@@ -39,21 +37,26 @@ export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState
     case 'CLOSE_NEW_TOOL':
       return { ...state, newToolOpen: false }
     case 'OPEN_INGRESO':
-      return { ...state, ingresoOpen: true, ingresoTool: action.tool }
+      return { ...state, ingresoTool: action.tool }
     case 'CLOSE_INGRESO':
-      return { ...state, ingresoOpen: false, ingresoTool: null }
+      return { ...state, ingresoTool: null }
     case 'CONFIRM_INGRESO':
-      return {
-        ...state,
-        ingresoOpen: false,
-        ingresoTool: null,
-        progress: { tool: action.tool, total: action.total },
-      }
+      return { ...state, ingresoTool: null, progress: { tool: action.tool, total: action.total } }
     case 'FINISH_INGRESO': {
       if (!state.progress) return { ...state, progress: null }
       const updatedRows = InventoryService.addStock(state.rows, state.progress.tool.id, state.progress.total)
       return { ...state, rows: updatedRows, progress: null }
     }
+    case 'OPEN_STOCK':
+      return { ...state, stockTool: action.tool }
+    case 'CLOSE_STOCK':
+      return { ...state, stockTool: null }
+    case 'OPEN_DELETE':
+      return { ...state, deleteTool: action.tool }
+    case 'CLOSE_DELETE':
+      return { ...state, deleteTool: null }
+    case 'CONFIRM_DELETE':
+      return { ...state, rows: state.rows.filter((tool) => tool.id !== action.tool.id), deleteTool: null }
     default:
       return state
   }

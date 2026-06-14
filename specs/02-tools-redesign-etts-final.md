@@ -1,10 +1,16 @@
 # SPEC 02 — Redesign pantalla Herramientas (alineación al diseño ETTS final)
 
-> **Estado:** Approved · **Depende de:** SPEC 01 · **Fecha:** 2026-06-13  
+> **Estado:** Implementado · **Depende de:** SPEC 01 · **Fecha:** 2026-06-13  
 > **Objetivo:** Ajustar la pantalla `/dashboard/tools` para que coincida exactamente
 > con el diseño ETTS final: eliminar StatStrip, corregir pestañas, eliminar selección
 > masiva, rediseñar el panel de filtros (slider + árbol catálogo) y adaptar la tabla
 > (columnas MARCA / MODELO / STOCK DISP.·TOTAL / ASIGN. con barra de color).
+>
+> **Nota de implementación:** se construyó contra el diseño real `Herramientas.html`
+> (`app/screens/tools.jsx` del bundle ETTS), que supersede varios detalles de este spec:
+> celda STOCK abre un modal de **existencias en detalle** con buscador local, modal de
+> **eliminar** (deshabilitado si hay stock), ingreso por-herramienta, buscador del toolbar
+> como seam `// TODO API:`, y **sin** campo `condition`. Ver memoria `spec-02-real-design-rebuild`.
 
 ---
 
