@@ -1,21 +1,25 @@
 # SPEC 04 — Conectar filtros de Herramientas a la API (stats + catálogo)
 
-> **Estado:** Borrador · **Depende de:** SPEC 02 · **Fecha:** 2026-06-13
+> **Estado:** Borrador · **Depende de:** SPEC 02, SPEC 03 · **Fecha:** 2026-06-13
 > **Objetivo:** Poblar desde la API los conteos de las 4 pestañas (GET /products/stats) y el árbol de catálogo marca→modelos con el tope del slider (GET /brands/catalog/tree) en `/dashboard/tools`, dejando los controles inertes (togglean visual, no filtran) y las filas de la tabla en mock.
 
 ---
 
 ## 1 — Por qué existe este spec
 
-Es la **primera integración real con la API** del proyecto. Hoy `HttpDataSource` existe pero no se instancia en ningún lado, no hay raíz de composición, no hay `.env`, y `useAuthService` es un stub.
+Es la **primera integración de pantalla con la API** del proyecto: alimenta dos zonas
+de Herramientas que hoy leen mock (los conteos de pestañas y el panel de filtros
+izquierdo) con datos reales.
 
-Este spec deja montada la base mínima de red (base URL por entorno + interceptor de token) y la usa para alimentar dos zonas de la pantalla Herramientas que hoy leen mock: los conteos de pestañas y el panel de filtros izquierdo.
+La base de red (base URL por entorno con `api.config.ts`, interceptor de token en
+`HttpDataSource` y `get<T>` tipado) la deja montada **SPEC 03**; este spec la
+**reutiliza**, no la crea.
 
 Las acciones (filtrado server-side al hacer clic, traer la lista de la tabla) se difieren a un spec posterior; por eso los controles quedan **inertes**.
 
-> El login real (escribir `access_token` automáticamente) se especifica aparte en
-> SPEC 03 (auth). Este spec no lo depende: para probar, el token se coloca a mano en
-> localStorage.
+> El login real y el `access_token` los provee **SPEC 03** (auth), del que este spec
+> depende. Para probar, inicia sesión normalmente; ya no hace falta pegar el token a
+> mano en localStorage.
 
 ---
 
@@ -23,10 +27,12 @@ Las acciones (filtrado server-side al hacer clic, traer la lista de la tabla) se
 
 **Dentro:**
 
-- **Base de red mínima (compartida):**
-  - Crear `.env` con `VITE_API_URL=http://localhost:8000/api/v1` y `api.config.ts` que la lee con fallback.
-  - Tipar `import.meta.env.VITE_API_URL` (env.d.ts).
-  - `HttpDataSource`: añadir interceptor de request que adjunta `Authorization: Bearer {token}` leyendo `access_token` de localStorage (vía `StorageService`); mejorar `get<T>` para devolver `response.data` tipado.
+- **Base de red (reutilizada de SPEC 03):**
+  - `API_BASE_URL` desde `src/modules/shared/infraestructure/config/api.config.ts`
+    (creado en SPEC 03 a partir de `VITE_API_URL`).
+  - `HttpDataSource` con interceptor de token (`Authorization: Bearer`) y `get<T>`
+    tipado que devuelve `response.data`, ambos ya provistos por SPEC 03.
+  - Este spec **no** crea `.env`, `api.config.ts` ni toca `HttpDataSource`; solo los usa.
 
 - **Endpoint /products/stats → conteos de pestañas + lede:**
   - Entidad `InventoryStats { total, assigned, available, criticalStock }`.
@@ -50,9 +56,7 @@ Las acciones (filtrado server-side al hacer clic, traer la lista de la tabla) se
 
 - Filtrado y conteos reactivos al clic (server-side): hacer que pestañas/marcas/slider filtren la lista. Va en el spec de acciones.
 - Traer la lista de la tabla desde la API (`rows`, `totalCount`, `pageCount` siguen mock).
-- Conectar el login: hoy no escribe `access_token`; el token se coloca a mano en localStorage para probar. (SPEC 03 — auth.)
 - Persistir o crear marcas/modelos/herramientas (combobox de "Nueva herramienta" sigue con `MOCK_BRANDS`/`MOCK_MODELS`).
-- Arreglar el `post<T>` roto de `HttpDataSource` y los errores preexistentes de `auth`.
 - Exportar, búsqueda y ordenación server-side.
 
 ---
@@ -151,71 +155,64 @@ type OverviewStatus = 'loading' | 'ready' | 'error'
 
 ## 4 — Plan de implementación
 
-1. **Config de red.** Crear `.env` con `VITE_API_URL=http://localhost:8000/api/v1`;
-   crear `src/modules/shared/infraestructure/config/api.config.ts`
-   (`export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api/v1'`);
-   tipar la variable en `src/vite-env.d.ts` (`interface ImportMetaEnv`).
+> **Precondición (SPEC 03):** `api.config.ts` (`API_BASE_URL`), el interceptor de token
+> y `get<T>` tipado ya existen. Este plan los reutiliza; no crea `.env` ni toca
+> `HttpDataSource`.
 
-2. **HttpDataSource: token + get tipado.** Añadir interceptor de request que adjunta
-   `Authorization: Bearer {token}` leyendo `access_token` vía `StorageService`;
-   cambiar `get<T>(url): Promise<T>` para devolver `response.data`.
-   Verificación: `tsc -b` sin errores; `auth` sigue compilando.
-
-3. **Domain de tools.** Crear `inventory-stats.entity.ts` (`InventoryStats`),
+1. **Domain de tools.** Crear `inventory-stats.entity.ts` (`InventoryStats`),
    `inventory-repository.ts` (contrato), `catalog-tree` (interfaz `CatalogTree`);
    añadir `id` a `CatalogBrandNode`/`CatalogModelNode` en `catalog-option.model.ts`.
 
-4. **DTOs.** Crear `infraestructure/dto/inventory-stats.dto.ts` y
+2. **DTOs.** Crear `infraestructure/dto/inventory-stats.dto.ts` y
    `infraestructure/dto/catalog-tree.dto.ts` con la forma cruda de la API.
 
-5. **Mappers.** Crear `infraestructure/mappers/inventory.mapper.ts`:
+3. **Mappers.** Crear `infraestructure/mappers/inventory.mapper.ts`:
    `toInventoryStats(dto)` y `toCatalogTree(dto)` (DTO → dominio; `name→brand`,
    `totalProducts→count`, `meta.maxStock→maxStock`).
 
-6. **Repositorio.** Crear `infraestructure/repositories/inventory.repository.ts`
+4. **Repositorio.** Crear `infraestructure/repositories/inventory.repository.ts`
    implementando el contrato con `HttpDataSource` (GET `/products/stats`,
    GET `/brands/catalog/tree`) + `handleApiError`. Exportar singleton
-   `inventoryRepository` (instancia `new HttpDataSource(API_BASE_URL)` a nivel módulo).
+   `inventoryRepository` (instancia `new HttpDataSource(API_BASE_URL)` a nivel módulo,
+   reutilizando `API_BASE_URL` de SPEC 03).
 
-7. **Hook de carga.** Crear `hooks/use-inventory-overview.hook.ts`: `useEffect` que
+5. **Hook de carga.** Crear `hooks/use-inventory-overview.hook.ts`: `useEffect` que
    dispara ambos endpoints en paralelo (`Promise.all`), expone
    `{ stats, catalog, status, reload }`.
 
-8. **Pestañas + lede (`tools.page.tsx`).** Consumir `useInventoryOverview`; construir
+6. **Pestañas + lede (`tools.page.tsx`).** Consumir `useInventoryOverview`; construir
    `TAB_ITEMS` dentro del componente con los conteos de `stats`
    (`all=total, available=available, assigned=assigned, low=criticalStock`);
    mientras `status==='loading'` mostrar conteos en skeleton; reemplazar el número
    del lede por `stats.total` formateado. Eliminar import de `tabCounts`.
 
-9. **Inertar la tabla.** En `use-tools-inventory.hook.ts` dejar de calcular
+7. **Inertar la tabla.** En `use-tools-inventory.hook.ts` dejar de calcular
    `filteredRows` con `ToolFilterService`; en `tools.page.tsx` pasar `rows={state.rows}`.
    (El archivo `tool-filter.service.ts` se queda para el spec de acciones.)
 
-10. **Panel de filtros (`tool-filters.component.tsx`).** Recibir por props
-    `brands`, `maxStock` y `status` desde la página (en vez de `MOCK_CATALOG_TREE`);
-    pasar `maxStock` como `max` del slider; render de skeleton en carga, mensaje +
-    botón "Reintentar" en error, estado vacío si `brands` está vacío.
+8. **Panel de filtros (`tool-filters.component.tsx`).** Recibir por props
+   `brands`, `maxStock` y `status` desde la página (en vez de `MOCK_CATALOG_TREE`);
+   pasar `maxStock` como `max` del slider; render de skeleton en carga, mensaje +
+   botón "Reintentar" en error, estado vacío si `brands` está vacío.
 
-11. **Brand node.** En `tool-filter-brand-node.component.tsx` usar `node.id` como key
-    interna donde aplique; selección sigue por `node.brand` / `model.name` (visual).
-    Ajustar `key` del `.map()` en el panel a `node.id`.
+9. **Brand node.** En `tool-filter-brand-node.component.tsx` usar `node.id` como key
+   interna donde aplique; selección sigue por `node.brand` / `model.name` (visual).
+   Ajustar `key` del `.map()` en el panel a `node.id`.
 
-12. **Limpieza de mocks.** Quitar `tabCounts` de `tools-stats.mock.ts`; quitar
+10. **Limpieza de mocks.** Quitar `tabCounts` de `tools-stats.mock.ts`; quitar
     `MOCK_CATALOG_TREE` y su `// TODO API:` de `catalog.mock.ts`.
 
-13. **Verificación.** `npx tsc -b` sin errores nuevos; `npx eslint` limpio;
-    `npx vite build` compila. Prueba manual con token en localStorage
-    (`StorageService.set('access_token', '<token>')`): pestañas con conteos reales,
-    árbol real, slider con tope `maxStock`, lede con `total`; apagar la API → skeleton
-    y luego error con "Reintentar".
+11. **Verificación.** `npx tsc -b` sin errores nuevos; `npx eslint` limpio;
+    `npx vite build` compila. Prueba manual iniciando sesión (SPEC 03): pestañas con
+    conteos reales, árbol real, slider con tope `maxStock`, lede con `total`; apagar la
+    API → skeleton y luego error con "Reintentar".
 
 ---
 
 ## 5 — Criterios de aceptación
 
-- [ ] Existe `.env` con `VITE_API_URL` y `api.config.ts` la lee con fallback a `http://localhost:8000/api/v1`.
-- [ ] Toda petición de `HttpDataSource` envía el header `Authorization: Bearer {token}` cuando hay `access_token` en localStorage.
-- [ ] Con la API arriba y un token válido, las 4 pestañas muestran los conteos reales: Todas=`total`, Disponibles=`available`, Asignadas=`assigned`, Stock bajo / agotadas=`criticalStock`.
+- [ ] Reutiliza la base de red de SPEC 03 (`api.config.ts` + interceptor de token en `HttpDataSource`); este spec no crea `.env` ni `api.config.ts`.
+- [ ] Con la API arriba y sesión iniciada (SPEC 03), las 4 pestañas muestran los conteos reales: Todas=`total`, Disponibles=`available`, Asignadas=`assigned`, Stock bajo / agotadas=`criticalStock`.
 - [ ] El número del lede del `PageHero` muestra `stats.total` formateado (ya no el fijo "1,284").
 - [ ] El panel de filtros izquierdo renderiza el árbol marca→modelos con los conteos provenientes de `/brands/catalog/tree`.
 - [ ] El tope (`max`) del slider "Rango de stock" es `meta.maxStock` de la API.
@@ -235,12 +232,11 @@ type OverviewStatus = 'loading' | 'ready' | 'error'
   la API daría un estado incoherente (los conteos no cuadrarían con las filas mock).
 - **No:** Conservar el filtrado local de `ToolFilterService`. Se desconecta de las
   filas; el archivo se queda intacto para reconectarlo en el spec de acciones.
-- **Sí:** `VITE_API_URL` por entorno con fallback. Configurable sin tocar código;
-  primer uso de `import.meta.env` en el proyecto.
-- **Sí:** Interceptor de token en `HttpDataSource` leyendo `access_token` de
-  localStorage. Centraliza el auth header para toda futura llamada.
-- **No:** Fallback `VITE_API_TOKEN` para dev. Para probar se coloca el token a mano
-  en localStorage; se evita una variable de entorno que se colaría a producción.
+- **Sí:** Reutilizar la base de red de SPEC 03 (`VITE_API_URL` + `api.config.ts` +
+  interceptor de token) en lugar de crearla aquí. Evita duplicar config y deja una sola
+  fuente del auth header; por eso este spec depende de SPEC 03.
+- **No:** Fallback `VITE_API_TOKEN` para dev. El token lo escribe el login real de
+  SPEC 03 al iniciar sesión; se evita una variable de entorno que se colaría a producción.
 - **Sí:** Un solo hook `useInventoryOverview` que carga ambos endpoints en paralelo
   con `status`/`reload` combinados. Una sola zona de carga/error, un solo reintento.
 - **No:** Use cases separados por endpoint (estilo `auth.usecase.ts`). Para lecturas
@@ -254,8 +250,8 @@ type OverviewStatus = 'loading' | 'ready' | 'error'
   su endpoint y la paginación real van en otro spec.
 - **Sí:** Eliminar los mocks reemplazados (`tabCounts`, `MOCK_CATALOG_TREE`).
   Coherente con CLAUDE.md (los mocks se borran al integrar); evita data muerta.
-- **No:** Arreglar el `post<T>` roto de `HttpDataSource` ni el login. Este spec solo
-  necesita `GET`; el resto se documenta como riesgo / spec aparte.
+- **No:** Arreglar el `post<T>` roto de `HttpDataSource` ni el login. Eso lo hace
+  SPEC 03 (del que este spec depende); aquí solo se consume `GET`.
 
 ---
 
@@ -263,8 +259,7 @@ type OverviewStatus = 'loading' | 'ready' | 'error'
 
 | Riesgo | Mitigación |
 | --- | --- |
-| Sin login conectado no hay `access_token`: toda llamada daría `401`. | Para probar se coloca el token a mano (`StorageService.set('access_token', '<token>')`); el interceptor ya lo adjunta. Conectar el login va en SPEC 03 (auth). |
-| `StorageService` guarda con `JSON.stringify`: un token pegado "en crudo" en localStorage no se parsea bien. | Documentar que se setee con `StorageService.set(...)` desde consola, no escribiendo la clave a mano sin comillas. |
+| Sin sesión no hay `access_token`: toda llamada daría `401`. | SPEC 03 (dependencia) conecta el login y escribe `access_token`; el interceptor lo adjunta. Para probar, inicia sesión normalmente. |
 | CORS / API local apagada en dev. | Estados de carga/error con "Reintentar"; la pantalla no se rompe, solo no muestra datos. |
 | Discrepancia de ruta en la doc (`/v1/products/stats` vs cURL). | Se fija la ruta relativa correcta (`/products/stats`) tomando el cURL como autoritativo; anotado en el modelo de datos. |
 
@@ -274,8 +269,7 @@ type OverviewStatus = 'loading' | 'ready' | 'error'
 
 - Filtrado/conteos reactivos al clic (server-side) — spec de acciones.
 - Traer la lista de la tabla desde la API (`rows`, `totalCount`, `pageCount` siguen mock).
-- Conectar el login y escribir `access_token` automáticamente (SPEC 03 — auth).
-- Arreglar el `post<T>` roto de `HttpDataSource` y los errores preexistentes de `auth`.
 - Persistir/crear marcas, modelos o herramientas (combobox sigue con mocks).
 
-Cada uno, si aterriza, va en su propio spec.
+La base de red y el login los provee **SPEC 03** (dependencia). Cada cosa pendiente, si
+aterriza, va en su propio spec.
