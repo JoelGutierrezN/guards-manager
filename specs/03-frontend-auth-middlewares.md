@@ -1,6 +1,6 @@
 # SPEC 03 — Autenticación frontend y middlewares de ruta
 
-> **Estado:** Borrador · **Depende de:** — · **Fecha:** 2026-06-13
+> **Estado:** Implemented · **Depende de:** — · **Fecha:** 2026-06-13
 > **Objetivo:** Conectar login y logout reales (POST /login, POST /logout) mediante un AuthProvider global y dos middlewares de ruta (AuthMiddleware/GuestMiddleware) que protegen el dashboard y la pantalla de login, usando location.state para retomar la ruta intentada tras autenticar.
 
 ---

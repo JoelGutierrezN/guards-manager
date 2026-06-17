@@ -1,10 +1,10 @@
 export interface LoginResponseDto {
-  access_token: string
-
   user: {
-    id: string
+    uuid: string
     name: string
+    username: string
     email: string
     phone: string
   }
+  token: string
 }

@@ -1,15 +1,22 @@
-// modules/auth/infrastructure/mappers/auth.mapper.ts
-
 import { User } from '../../domain/user.entity'
-import type { LoginResponseDto } from '../dto/ogin.response.dto'
+import type { AuthSession } from '../../domain/auth-session.model'
+import type { LoginResponseDto } from '../dto/login.response.dto'
 
 export class AuthMapper {
-  static toUserEntity (user: LoginResponseDto['user']): User {
+  static toUserEntity(dto: LoginResponseDto['user']): User {
     return User.create({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      phone: user.phone
+      uuid: dto.uuid,
+      email: dto.email,
+      name: dto.name,
+      username: dto.username,
+      phone: dto.phone,
     })
+  }
+
+  static toAuthSession(dto: LoginResponseDto): AuthSession {
+    return {
+      user: AuthMapper.toUserEntity(dto.user),
+      token: dto.token,
+    }
   }
 }
