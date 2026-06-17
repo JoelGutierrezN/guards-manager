@@ -1,32 +1,50 @@
 import { createBrowserRouter } from 'react-router'
+import { AuthProvider } from '../../../auth/infraestructure/providers/auth.provider'
+import { AuthMiddleware } from '../../../auth/infraestructure/middlewares/auth.middleware'
+import { GuestMiddleware } from '../../../auth/infraestructure/middlewares/guest.middleware'
 import AuthPage from '../../../auth/infraestructure/pages/auth.page'
 import { AppLayout } from '../layouts/app.layout'
 
 export default createBrowserRouter([
   {
-    path: '/',
-    element: <AuthPage />,
-  },
-  {
-    Component: AppLayout,
+    element: <AuthProvider />,
     children: [
       {
-        path: 'dashboard',
-        lazy: async () => ({
-          Component: (await import('../pages/dashboard-panel.page')).DashboardPanelPage,
-        }),
+        element: <GuestMiddleware />,
+        children: [
+          {
+            path: '/',
+            element: <AuthPage />,
+          },
+        ],
       },
       {
-        path: 'tools',
-        lazy: async () => ({
-          Component: (await import('../../../tools')).ToolsPage,
-        }),
-      },
-      {
-        path: '*',
-        lazy: async () => ({
-          Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
-        }),
+        element: <AuthMiddleware />,
+        children: [
+          {
+            Component: AppLayout,
+            children: [
+              {
+                path: 'dashboard',
+                lazy: async () => ({
+                  Component: (await import('../pages/dashboard-panel.page')).DashboardPanelPage,
+                }),
+              },
+              {
+                path: 'tools',
+                lazy: async () => ({
+                  Component: (await import('../../../tools')).ToolsPage,
+                }),
+              },
+              {
+                path: '*',
+                lazy: async () => ({
+                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                }),
+              },
+            ],
+          },
+        ],
       },
     ],
   },

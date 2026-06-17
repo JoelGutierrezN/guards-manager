@@ -1,10 +1,11 @@
 import { type JSX } from 'react'
-import { ArrowUp01Icon } from '@hugeicons/core-free-icons'
+import { ArrowUp01Icon, Logout01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
-interface SidebarUserCardProps {
+interface Props {
   name: string
   role: string
+  onLogout: () => void
 }
 
 const initials = (name: string): string =>
@@ -16,13 +17,10 @@ const initials = (name: string): string =>
     .slice(0, 2)
     .toUpperCase() || '·'
 
-export function SidebarUserCard({ name, role }: SidebarUserCardProps): JSX.Element {
+export function SidebarUserCard({ name, role, onLogout }: Props): JSX.Element {
   return (
     <div className="mt-auto border-t border-lavender-line pt-3">
-      <button
-        type="button"
-        className="flex w-full items-center gap-2.5 rounded-[14px] px-2 py-1.5 transition-colors hover:bg-white/55"
-      >
+      <div className="flex w-full items-center gap-2.5 rounded-[14px] px-2 py-1.5">
         <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-medium text-cream">
           {initials(name)}
         </span>
@@ -32,10 +30,18 @@ export function SidebarUserCard({ name, role }: SidebarUserCardProps): JSX.Eleme
             {role}
           </span>
         </div>
+        <button
+          type="button"
+          onClick={onLogout}
+          className="shrink-0 text-muted-soft transition-colors hover:text-destructive group-data-[collapsed=true]/sidebar:hidden"
+          aria-label="Cerrar sesión"
+        >
+          <HugeiconsIcon icon={Logout01Icon} size={14} strokeWidth={1.8} />
+        </button>
         <span className="shrink-0 text-muted-soft group-data-[collapsed=true]/sidebar:hidden">
           <HugeiconsIcon icon={ArrowUp01Icon} size={12} strokeWidth={1.8} />
         </span>
-      </button>
+      </div>
     </div>
   )
 }
