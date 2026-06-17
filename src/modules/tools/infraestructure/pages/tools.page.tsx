@@ -1,9 +1,10 @@
-import { type JSX } from 'react'
+import { type JSX, useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { ArrowDown01Icon, Download01Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
 import { PageHero, Tabs, Button, useToasts } from '../../../shared/infraestructure/components/ui'
 import type { TabItem } from '../../../shared/infraestructure/components/ui'
 import { useToolsInventory } from '../../hooks/use-tools-inventory.hook'
+import { useInventoryOverview } from '../../hooks/use-inventory-overview.hook'
 import { ToolFiltersPanel } from '../components/tool-filters.component'
 import { ToolTable } from '../components/tool-table.component'
 import { NewToolModal } from '../components/new-tool-modal.component'
@@ -17,20 +18,28 @@ import { DEFAULT_STOCK_RANGE } from '../../application/tools-state.model'
 import { MOCK_TOOLS_STATS } from '../mocks/tools-stats.mock'
 import '../../tools.css'
 
-const TAB_ITEMS: TabItem<ToolsTabKey>[] = [
-  { value: 'all', label: 'Todas', count: MOCK_TOOLS_STATS.tabCounts.all },
-  { value: 'available', label: 'Disponibles', count: MOCK_TOOLS_STATS.tabCounts.available },
-  { value: 'assigned', label: 'Asignadas', count: MOCK_TOOLS_STATS.tabCounts.assigned },
-  { value: 'low', label: 'Stock bajo / agotadas', count: MOCK_TOOLS_STATS.tabCounts.low },
-]
-
 export function ToolsPage(): JSX.Element {
   const navigate = useNavigate()
   const [addToast, toastHost] = useToasts()
+  const { stats, catalog, status: overviewStatus, reload } = useInventoryOverview()
+
+  const tabItems = useMemo<TabItem<ToolsTabKey>[]>(
+    () => [
+      { value: 'all', label: 'Todas', count: stats?.total },
+      { value: 'available', label: 'Disponibles', count: stats?.available },
+      { value: 'assigned', label: 'Asignadas', count: stats?.assigned },
+      { value: 'low', label: 'Stock bajo / agotadas', count: stats?.criticalStock },
+    ],
+    [stats],
+  )
+
+  const ledeText = useMemo(() => {
+    const totalFormatted = stats ? stats.total.toLocaleString('es-MX') : '—'
+    return `${totalFormatted} herramientas en inventario. Filtra por marca, modelo o estado y gestiona existencias, ingresos y asignaciones.`
+  }, [stats])
 
   const {
     state,
-    filteredRows,
     toggleBrand,
     toggleModel,
     setStockRange,
@@ -94,12 +103,12 @@ export function ToolsPage(): JSX.Element {
           eyebrow="Catálogos · herramientas"
           title="Catálogo de herramientas"
           italic="de herramientas"
-          lede="1,284 herramientas en inventario. Filtra por marca, modelo o estado y gestiona existencias, ingresos y asignaciones."
+          lede={ledeText}
         />
       </div>
 
       <div className="reveal d2 mb-3 flex flex-wrap items-center justify-between gap-3">
-        <Tabs value={state.tab} onChange={setTab} items={TAB_ITEMS} />
+        <Tabs value={state.tab} onChange={setTab} items={tabItems} />
         <div className="flex flex-wrap gap-2">
           <Button icon={ArrowDown01Icon} size="md" onClick={() => navigate('/stockIn')}>
             Ingresar inventario
@@ -118,17 +127,21 @@ export function ToolsPage(): JSX.Element {
         {state.showFilters && (
           <div className="flex w-[244px] shrink-0 max-[1000px]:w-full">
             <ToolFiltersPanel
+              brands={catalog?.brands ?? []}
+              maxStock={catalog?.maxStock ?? 0}
+              status={overviewStatus}
               filters={state.filters}
               onToggleBrand={toggleBrand}
               onToggleModel={toggleModel}
               onSetStockRange={setStockRange}
               onClearFilters={clearFilters}
+              onReload={reload}
             />
           </div>
         )}
 
         <ToolTable
-          rows={filteredRows}
+          rows={state.rows}
           totalCount={MOCK_TOOLS_STATS.totalCount}
           showFilters={state.showFilters}
           activeFilterCount={activeFilterCount}

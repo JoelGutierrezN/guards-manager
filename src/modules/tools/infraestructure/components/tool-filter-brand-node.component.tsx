@@ -56,7 +56,7 @@ export function ToolFilterBrandNode({
         <div className="ml-2 mt-1 flex flex-col gap-1 border-l border-hairline pl-3">
           {node.models.map((model) => (
             <ToolFilterCheckItem
-              key={model.name}
+              key={model.id}
               filterKey={model.name}
               label={model.name}
               count={model.count}

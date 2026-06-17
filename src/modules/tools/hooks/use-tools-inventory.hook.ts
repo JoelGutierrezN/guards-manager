@@ -1,10 +1,9 @@
-import { useCallback, useMemo, useReducer } from 'react'
+import { useCallback, useReducer } from 'react'
 import type { Tool } from '../domain/tool.entity'
 import type { ToolsTabKey } from '../domain/tools-tab.model'
 import type { ProgressEntry, ToolsState } from '../application/tools-state.model'
 import { DEFAULT_STOCK_RANGE } from '../application/tools-state.model'
 import { toolsReducer } from '../application/tools.reducer'
-import { ToolFilterService } from '../application/tool-filter.service'
 // TODO API: cargar el listado desde GET /api/tools (reemplazar MOCK_TOOLS y manejar carga async con loading/error).
 import { MOCK_TOOLS } from '../infraestructure/mocks/tools.mock'
 
@@ -23,11 +22,6 @@ const initialState: ToolsState = {
 
 export function useToolsInventory() {
   const [state, dispatch] = useReducer(toolsReducer, initialState)
-
-  const filteredRows = useMemo(
-    () => ToolFilterService.apply(state.rows, state.filters, state.tab),
-    [state.rows, state.filters, state.tab],
-  )
 
   const toggleBrand = useCallback((brand: string) => dispatch({ type: 'TOGGLE_BRAND', brand }), [])
   const toggleModel = useCallback((model: string) => dispatch({ type: 'TOGGLE_MODEL', model }), [])
@@ -56,7 +50,6 @@ export function useToolsInventory() {
 
   return {
     state,
-    filteredRows,
     toggleBrand,
     toggleModel,
     setStockRange,

@@ -1,32 +1,44 @@
-import { type JSX } from 'react'
+import { type JSX, useMemo } from 'react'
 import { FilterHorizontalIcon } from '@hugeicons/core-free-icons'
 import { Icon } from '../../../shared/infraestructure/components/ui'
 import type { ToolFilters } from '../../domain/tool-filters.model'
+import type { CatalogBrandNode } from '../../domain/catalog-option.model'
+import type { OverviewStatus } from '../../hooks/use-inventory-overview.hook'
 import { DEFAULT_STOCK_RANGE } from '../../application/tools-state.model'
 import { ToolFilterBrandNode } from './tool-filter-brand-node.component'
 import { ToolStockRange } from './tool-stock-range.component'
-// TODO API: el árbol marca→modelos y sus conteos provienen de GET /api/catalog/tree.
-import { MOCK_CATALOG_TREE } from '../mocks/catalog.mock'
 
 interface Props {
+  brands: CatalogBrandNode[]
+  maxStock: number
+  status: OverviewStatus
   filters: ToolFilters
   onToggleBrand: (brand: string) => void
   onToggleModel: (model: string) => void
   onSetStockRange: (range: [number, number]) => void
   onClearFilters: () => void
+  onReload: () => void
 }
 
 export function ToolFiltersPanel({
+  brands,
+  maxStock,
+  status,
   filters,
   onToggleBrand,
   onToggleModel,
   onSetStockRange,
   onClearFilters,
+  onReload,
 }: Props): JSX.Element {
   const catalogSelected = filters.brands.length + filters.models.length
-  const [minStock, maxStock] = filters.stockRange
-  const rangeActive = minStock > DEFAULT_STOCK_RANGE[0] || maxStock < DEFAULT_STOCK_RANGE[1]
-  const rangeLabel = `${minStock}–${maxStock}${maxStock >= DEFAULT_STOCK_RANGE[1] ? '+' : ''}`
+  const [minStock, maxStockFilter] = filters.stockRange
+  const effectiveMax = maxStock > 0 ? maxStock : DEFAULT_STOCK_RANGE[1]
+  const rangeActive = minStock > DEFAULT_STOCK_RANGE[0] || maxStockFilter < effectiveMax
+  const rangeLabel = useMemo(
+    () => `${minStock}–${maxStockFilter}${maxStockFilter >= effectiveMax ? '+' : ''}`,
+    [minStock, maxStockFilter, effectiveMax],
+  )
 
   return (
     <div className="flex h-full w-full flex-col rounded-[18px] border border-hairline bg-white shadow-[0_1px_4px_rgba(14,15,60,0.04)] overflow-hidden">
@@ -44,44 +56,88 @@ export function ToolFiltersPanel({
         </button>
       </div>
 
-      <div className="border-b border-hairline px-3.5 py-3">
-        <div className="mb-1.5 flex items-center justify-between">
-          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted">
-            Rango de stock
-          </span>
-          {rangeActive && <span className="font-mono text-[11px] text-brand">{rangeLabel}</span>}
-        </div>
-        <ToolStockRange
-          value={filters.stockRange}
-          min={DEFAULT_STOCK_RANGE[0]}
-          max={DEFAULT_STOCK_RANGE[1]}
-          onChange={onSetStockRange}
-        />
-      </div>
+      {status === 'loading' && <FiltersPanelSkeleton />}
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3.5 py-3">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted">
-            Catálogo
+      {status === 'error' && (
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-6">
+          <span className="text-center text-[12px] text-muted">
+            No se pudo cargar el catálogo.
           </span>
-          {catalogSelected > 0 && (
-            <span className="font-mono text-[11px] text-brand">{catalogSelected} sel.</span>
-          )}
+          <button
+            type="button"
+            className="text-[12px] font-medium text-brand hover:text-brand-hover transition-colors"
+            onClick={onReload}
+          >
+            Reintentar
+          </button>
         </div>
-        <div className="flex flex-col gap-px">
-          {MOCK_CATALOG_TREE.map((node, index) => (
-            <ToolFilterBrandNode
-              key={node.brand}
-              node={node}
-              selectedBrands={filters.brands}
-              selectedModels={filters.models}
-              defaultExpanded={index === 0}
-              onToggleBrand={onToggleBrand}
-              onToggleModel={onToggleModel}
+      )}
+
+      {status === 'ready' && (
+        <>
+          <div className="border-b border-hairline px-3.5 py-3">
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted">
+                Rango de stock
+              </span>
+              {rangeActive && <span className="font-mono text-[11px] text-brand">{rangeLabel}</span>}
+            </div>
+            <ToolStockRange
+              value={filters.stockRange}
+              min={DEFAULT_STOCK_RANGE[0]}
+              max={effectiveMax}
+              onChange={onSetStockRange}
             />
-          ))}
-        </div>
-      </div>
+          </div>
+
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3.5 py-3">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted">
+                Catálogo
+              </span>
+              {catalogSelected > 0 && (
+                <span className="font-mono text-[11px] text-brand">{catalogSelected} sel.</span>
+              )}
+            </div>
+
+            {brands.length === 0 ? (
+              <div className="flex flex-1 items-center justify-center py-6">
+                <span className="text-center text-[12px] text-muted">
+                  No hay marcas disponibles.
+                </span>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-px">
+                {brands.map((brandNode, index) => (
+                  <ToolFilterBrandNode
+                    key={brandNode.id}
+                    node={brandNode}
+                    selectedBrands={filters.brands}
+                    selectedModels={filters.models}
+                    defaultExpanded={index === 0}
+                    onToggleBrand={onToggleBrand}
+                    onToggleModel={onToggleModel}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function FiltersPanelSkeleton(): JSX.Element {
+  return (
+    <div className="flex flex-1 flex-col gap-3 px-3.5 py-3 animate-pulse">
+      <div className="h-3 w-24 rounded bg-cream-2" />
+      <div className="h-4 w-full rounded bg-cream-2" />
+      <div className="mt-2 h-px w-full bg-hairline" />
+      <div className="h-3 w-16 rounded bg-cream-2" />
+      {[1, 2, 3, 4].map((skeletonIndex) => (
+        <div key={skeletonIndex} className="h-6 w-full rounded bg-cream-2" />
+      ))}
     </div>
   )
 }

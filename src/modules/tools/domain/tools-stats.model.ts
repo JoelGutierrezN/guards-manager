@@ -1,5 +1,3 @@
-import type { ToolsTabKey } from './tools-tab.model'
-
 export interface ToolsKpis {
   total: string
   totalDelta: string
@@ -20,7 +18,6 @@ export interface ToolsStockRange {
 
 export interface ToolsStats {
   kpis: ToolsKpis
-  tabCounts: Record<ToolsTabKey, number>
   statusCounts: Record<string, number>
   brandCounts: Record<string, number>
   totalCount: number

@@ -1,6 +1,6 @@
 # SPEC 04 — Conectar filtros de Herramientas a la API (stats + catálogo)
 
-> **Estado:** Borrador · **Depende de:** SPEC 02, SPEC 03 · **Fecha:** 2026-06-13
+> **Estado:** Implemented · **Depende de:** SPEC 02, SPEC 03 · **Fecha:** 2026-06-13
 > **Objetivo:** Poblar desde la API los conteos de las 4 pestañas (GET /products/stats) y el árbol de catálogo marca→modelos con el tope del slider (GET /brands/catalog/tree) en `/dashboard/tools`, dejando los controles inertes (togglean visual, no filtran) y las filas de la tabla en mock.
 
 ---
