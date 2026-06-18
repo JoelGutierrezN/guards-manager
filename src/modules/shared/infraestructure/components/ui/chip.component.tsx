@@ -18,7 +18,6 @@ const TONES: Record<ChipTone, string> = {
   danger: 'bg-danger-soft border-transparent text-danger',
 }
 
-/** Etiqueta de estado con punto opcional. */
 export function Chip({
   tone = 'default',
   size = 'md',

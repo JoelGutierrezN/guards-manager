@@ -1,14 +1,51 @@
 import { createBrowserRouter } from 'react-router'
+import { AuthProvider } from '../../../auth/infraestructure/providers/auth.provider'
+import { AuthMiddleware } from '../../../auth/infraestructure/middlewares/auth.middleware'
+import { GuestMiddleware } from '../../../auth/infraestructure/middlewares/guest.middleware'
 import AuthPage from '../../../auth/infraestructure/pages/auth.page'
-import DashboardPage from '../pages/dashboard.page'
+import { AppLayout } from '../layouts/app.layout'
 
 export default createBrowserRouter([
   {
-    path: '/',
-    element: <AuthPage />
+    element: <AuthProvider />,
+    children: [
+      {
+        element: <GuestMiddleware />,
+        children: [
+          {
+            path: '/',
+            element: <AuthPage />,
+          },
+        ],
+      },
+      {
+        element: <AuthMiddleware />,
+        children: [
+          {
+            Component: AppLayout,
+            children: [
+              {
+                path: 'dashboard',
+                lazy: async () => ({
+                  Component: (await import('../pages/dashboard-panel.page')).DashboardPanelPage,
+                }),
+              },
+              {
+                path: 'tools',
+                lazy: async () => ({
+                  Component: (await import('../../../tools')).ToolsPage,
+                }),
+              },
+              {
+                path: '*',
+                lazy: async () => ({
+                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                }),
+              },
+            ],
+          },
+        ],
+      },
+    ],
   },
-  {
-    path: '/dashboard',
-    element: <DashboardPage />
-  }
 ])

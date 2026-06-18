@@ -11,7 +11,6 @@ interface PagerProps {
 
 const ELLIPSIS = '…' as const
 
-/** Construye la secuencia de páginas con elipsis, igual que el `Pager` del diseño. */
 function buildPages(page: number, max: number): (number | typeof ELLIPSIS)[] {
   const around = [page - 1, page, page + 1].filter((n) => n > 1 && n < max)
   return [
@@ -23,7 +22,6 @@ function buildPages(page: number, max: number): (number | typeof ELLIPSIS)[] {
   ]
 }
 
-/** Paginación compacta con elipsis. Fiel al `.pager` del diseño. */
 export function Pager({ page = 1, total = 1, onChange }: PagerProps): JSX.Element {
   const max = Math.max(1, total)
   const pages = buildPages(page, max)

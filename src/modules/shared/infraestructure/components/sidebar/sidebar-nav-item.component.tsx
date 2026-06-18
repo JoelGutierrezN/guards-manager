@@ -1,23 +1,20 @@
 import { type JSX } from 'react'
+import { useNavigate } from 'react-router'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { cn } from '../../utils/cn'
+import { AppRouteHelper } from '../../router/app-route.helper'
 import type { SidebarItem } from './sidebar.routes'
 
-interface SidebarNavItemProps {
+interface Props {
   item: SidebarItem
   active: boolean
   featured?: boolean
   collapsed: boolean
-  onSelect: (id: string) => void
 }
 
-export function SidebarNavItem({
-  item,
-  active,
-  featured = false,
-  collapsed,
-  onSelect,
-}: SidebarNavItemProps): JSX.Element {
+export function SidebarNavItem({ item, active, featured = false, collapsed }: Props): JSX.Element {
+  const navigate = useNavigate()
+
   const iconColor = featured
     ? active
       ? 'text-white'
@@ -29,7 +26,7 @@ export function SidebarNavItem({
   return (
     <button
       type="button"
-      onClick={() => onSelect(item.id)}
+      onClick={() => navigate(AppRouteHelper.pathForId(item.id))}
       title={collapsed ? item.label : undefined}
       className={cn(
         'group/item relative mb-px flex w-full items-center gap-2.5 rounded-[10px] px-2 py-[7px] text-left text-[13px] transition-colors',

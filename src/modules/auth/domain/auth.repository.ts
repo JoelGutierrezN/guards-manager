@@ -1,6 +1,6 @@
-import type { User } from './user.entity'
+import type { AuthSession } from './auth-session.model'
 
 export interface AuthRepository {
-  authenticate(emailOrPhone: string, password: string): Promise<User>
-  findByEmail(email: string, password: string): Promise<string>
+  login(identifier: string, password: string): Promise<AuthSession>
+  logout(): Promise<void>
 }

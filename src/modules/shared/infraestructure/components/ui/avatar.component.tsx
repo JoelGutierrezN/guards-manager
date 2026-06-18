@@ -22,7 +22,6 @@ const initials = (name: string): string =>
     .slice(0, 2)
     .toUpperCase() || '·'
 
-/** Avatar de iniciales. */
 export function Avatar({ name, size = 'md', tone = 'default' }: AvatarProps): JSX.Element {
   return (
     <span

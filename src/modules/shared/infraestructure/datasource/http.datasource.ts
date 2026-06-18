@@ -1,19 +1,28 @@
 import Axios, { type AxiosInstance } from 'axios'
+import { StorageService } from '../storage/local.storage'
 
 export class HttpDataSource {
   private readonly client: AxiosInstance
-  private readonly baseURL: string
-  constructor (baseURL: string) {
-    this.baseURL = baseURL
-    this.client = Axios.create({
-      baseURL: this.baseURL
+
+  constructor(baseURL: string) {
+    this.client = Axios.create({ baseURL })
+
+    this.client.interceptors.request.use((config) => {
+      const token = StorageService.get<string>('access_token')
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+      return config
     })
   }
-  //TODO: add interceptors for auth token and error handling and improve all methods to return a custom response type with error handling
-  get (url: string) {
-    return this.client.get(url)
+
+  async get<T>(url: string): Promise<T> {
+    const response = await this.client.get<T>(url)
+    return response.data
   }
-  post<T> (url: string, body: object): T {
-    return this.client.post(url, body) as T
+
+  async post<T>(url: string, body?: object): Promise<T> {
+    const response = await this.client.post<T>(url, body)
+    return response.data
   }
 }

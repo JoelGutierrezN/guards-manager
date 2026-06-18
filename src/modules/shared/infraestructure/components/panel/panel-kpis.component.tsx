@@ -3,7 +3,7 @@ import {
   ArrowRight01Icon,
   ArrowUp01Icon,
   ArrowUpRight01Icon,
-  CornerDownRightIcon,
+  CornerDownRight,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { BentoCell } from './bento-cell.component'
@@ -31,7 +31,7 @@ export function PanelKpis({ selected, onSelect }: PanelKpisProps): JSX.Element {
             Activas hoy
           </div>
           <span className="text-white/85">
-            <HugeiconsIcon icon={CornerDownRightIcon} size={22} strokeWidth={1.8} />
+            <HugeiconsIcon icon={CornerDownRight} size={22} strokeWidth={1.8} />
           </span>
         </div>
 

@@ -1,14 +1,10 @@
 import { type JSX, type ReactNode } from 'react'
 
 interface PageHeroProps {
-  /** Etiqueta mono en versales sobre el título. */
   eyebrow?: string
   title: string
-  /** Palabra del título a resaltar en cursiva púrpura (debe existir en `title`). */
   italic?: string
-  /** Texto de apoyo. */
   lede?: string
-  /** Acciones a la derecha (botones, buscador…). */
   actions?: ReactNode
 }
 

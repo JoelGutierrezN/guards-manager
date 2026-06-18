@@ -2,9 +2,7 @@ import { type ButtonHTMLAttributes, type JSX } from 'react'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
 import { cn } from '../../utils/cn'
-
-type Variant = 'primary' | 'secondary' | 'ghost'
-type Size = 'sm' | 'md' | 'lg'
+import type { Variant, Size } from './button.model'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant
@@ -25,9 +23,10 @@ const VARIANTS: Record<Variant, string> = {
   secondary:
     'border-lavender-line bg-white text-ink hover:border-brand-mid hover:bg-[#f5f5fd] hover:text-brand-active',
   ghost: 'text-ink-2 hover:bg-brand-soft hover:text-ink',
+  danger:
+    'bg-danger text-white border-transparent hover:bg-[#a52f23] shadow-[0_1px_0_rgba(255,255,255,0.15)_inset]',
 }
 
-/** Botón base del sistema, fiel a los tokens del diseño. */
 export function Button({
   variant = 'secondary',
   size = 'md',

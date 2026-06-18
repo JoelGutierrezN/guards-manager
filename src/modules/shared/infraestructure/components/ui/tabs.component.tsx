@@ -4,7 +4,6 @@ import { cn } from '../../utils/cn'
 interface TabItem<T extends string> {
   value: T
   label: string
-  /** Contador opcional mostrado como burbuja a la derecha del rótulo. */
   count?: number
 }
 
@@ -14,7 +13,6 @@ interface TabsProps<T extends string> {
   onChange: (value: T) => void
 }
 
-/** Pestañas con subrayado y contador opcional. Fiel al `.tabs` del diseño. */
 export function Tabs<T extends string>({ value, items, onChange }: TabsProps<T>): JSX.Element {
   return (
     <div className="flex gap-0.5 border-b border-hairline">

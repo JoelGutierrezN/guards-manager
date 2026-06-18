@@ -1,33 +1,27 @@
-import { type JSX } from 'react'
+import { useMemo, type JSX } from 'react'
+import { useLocation, useNavigate } from 'react-router'
 import './sidebar.css'
 import { SidebarBrand } from './sidebar-brand.component'
 import { SidebarNav } from './sidebar-nav.component'
 import { SidebarUserCard } from './sidebar-user-card.component'
 import { SidebarCollapseButton } from './sidebar-collapse-button.component'
 import { useSidebarCollapse } from './use-sidebar-collapse.hook'
+import { AppRouteHelper } from '../../router/app-route.helper'
+import { useAuth } from '../../../../auth/hooks/use-auth.hook'
 
-interface SidebarUser {
-  name: string
-  role: string
-}
+const STATIC_ROLE = 'Almacén · Admin'
 
-interface SidebarProps {
-  activeId: string
-  onSelect: (id: string) => void
-  user?: SidebarUser
-}
-
-const DEFAULT_USER: SidebarUser = {
-  name: 'José Martínez',
-  role: 'Almacén · Admin',
-}
-
-export function Sidebar({
-  activeId,
-  onSelect,
-  user = DEFAULT_USER,
-}: SidebarProps): JSX.Element {
+export function Sidebar(): JSX.Element {
   const { collapsed, toggle } = useSidebarCollapse()
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const activeId = useMemo(() => AppRouteHelper.activeIdFromPath(pathname), [pathname])
+  const { user, logout } = useAuth()
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/', { replace: true })
+  }
 
   return (
     <div
@@ -36,8 +30,8 @@ export function Sidebar({
     >
       <aside className="sidebar-surface relative flex h-full flex-col overflow-hidden rounded-[32px] border border-lavender-line bg-lavender-bg px-2.5 py-3 text-ink [&>*]:relative [&>*]:z-[1]">
         <SidebarBrand />
-        <SidebarNav activeId={activeId} collapsed={collapsed} onSelect={onSelect} />
-        <SidebarUserCard name={user.name} role={user.role} />
+        <SidebarNav activeId={activeId} collapsed={collapsed} />
+        <SidebarUserCard name={user?.getName() ?? '—'} role={STATIC_ROLE} onLogout={handleLogout} />
       </aside>
       <SidebarCollapseButton onToggle={toggle} />
     </div>
