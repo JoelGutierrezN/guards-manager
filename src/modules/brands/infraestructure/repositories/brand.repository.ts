@@ -1,0 +1,50 @@
+import { HttpDataSource } from '../../../shared/infraestructure/datasource/http.datasource'
+import { handleApiError } from '../../../shared/infraestructure/errors/handle-api-error'
+import { API_BASE_URL } from '../../../shared/infraestructure/config/api.config'
+import type { BrandRepository as BrandRepositoryContract } from '../../domain/brand-repository'
+import type { Brand } from '../../domain/brand.entity'
+import type { BrandPage } from '../../domain/brand-page.model'
+import type { CreateBrandInput, UpdateBrandInput } from '../../domain/brand-input.model'
+import type { BrandCollectionDto, BrandResourceDto } from '../dto/brand-collection.dto'
+import { BrandMapper } from '../mappers/brand.mapper'
+
+class BrandRepositoryImpl implements BrandRepositoryContract {
+  private readonly datasource: HttpDataSource
+
+  constructor() {
+    this.datasource = new HttpDataSource(API_BASE_URL)
+  }
+
+  async list(page: number, name?: string): Promise<BrandPage> {
+    try {
+      const params = new URLSearchParams({ page: String(page) })
+      if (name && name.trim() !== '') {
+        params.set('name', name.trim())
+      }
+      const response = await this.datasource.get<BrandCollectionDto>(`/brands?${params.toString()}`)
+      return BrandMapper.toBrandPage(response)
+    } catch (error) {
+      handleApiError(error)
+    }
+  }
+
+  async create(input: CreateBrandInput): Promise<Brand> {
+    try {
+      const response = await this.datasource.post<BrandResourceDto>('/brands', input)
+      return BrandMapper.toBrand(response.data)
+    } catch (error) {
+      handleApiError(error)
+    }
+  }
+
+  async update(id: string, input: UpdateBrandInput): Promise<Brand> {
+    try {
+      const response = await this.datasource.put<BrandResourceDto>(`/brands/${id}`, input)
+      return BrandMapper.toBrand(response.data)
+    } catch (error) {
+      handleApiError(error)
+    }
+  }
+}
+
+export const brandRepository = new BrandRepositoryImpl()

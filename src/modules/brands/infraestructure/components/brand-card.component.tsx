@@ -1,7 +1,9 @@
-import { type JSX } from 'react'
+import { type JSX, useMemo } from 'react'
 import { PencilEdit02Icon } from '@hugeicons/core-free-icons'
 import { IconButton } from '../../../shared/infraestructure/components/ui'
-import { type Brand, usagePct } from '../data/brands.data'
+import { BrandService } from '../../application/brand.service'
+import { BrandPresenter } from '../../application/brand-presenter.helper'
+import type { Brand } from '../../domain/brand.entity'
 
 interface BrandCardProps {
   brand: Brand
@@ -9,9 +11,12 @@ interface BrandCardProps {
   onEdit: () => void
 }
 
-/** Tarjeta de marca con logotipo de color, stats y barra de uso. */
 export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Element {
-  const usage = usagePct(brand.asg, brand.tools)
+  const usage = BrandService.usagePercent(brand.toolsAssigned, brand.toolsTotal)
+  const logo = useMemo(
+    () => ({ initial: BrandPresenter.initial(brand.name), color: BrandPresenter.color(brand.name) }),
+    [brand.name],
+  )
 
   return (
     <button
@@ -22,9 +27,9 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
       <div className="flex items-start gap-3">
         <div
           className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] text-[18px] font-bold tracking-[0.04em] text-ink"
-          style={{ background: brand.color, boxShadow: `0 4px 12px -3px ${brand.color}80` }}
+          style={{ background: logo.color, boxShadow: `0 4px 12px -3px ${logo.color}80` }}
         >
-          {brand.initial}
+          {logo.initial}
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -39,7 +44,7 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
               }}
             />
           </div>
-          <div className="text-[11px] text-muted">{brand.models} modelos</div>
+          <div className="text-[11px] text-muted">{brand.modelsCount} modelos</div>
         </div>
       </div>
 
@@ -48,11 +53,11 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
       <div className="grid grid-cols-2 gap-2.5">
         <div>
           <div className="text-[11px] text-muted">Herramientas</div>
-          <div className="font-mono text-[18px] font-semibold text-ink">{brand.tools}</div>
+          <div className="font-mono text-[18px] font-semibold text-ink">{brand.toolsTotal}</div>
         </div>
         <div>
           <div className="text-[11px] text-muted">Asignadas</div>
-          <div className="font-mono text-[18px] font-semibold text-brand">{brand.asg}</div>
+          <div className="font-mono text-[18px] font-semibold text-brand">{brand.toolsAssigned}</div>
         </div>
       </div>
 

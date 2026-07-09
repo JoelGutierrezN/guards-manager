@@ -37,6 +37,18 @@ export default createBrowserRouter([
                 }),
               },
               {
+                path: 'brands',
+                lazy: async () => ({
+                  Component: (await import('../../../brands')).BrandsScreen,
+                }),
+              },
+              {
+                path: 'models',
+                lazy: async () => ({
+                  Component: (await import('../../../models/infraestructure')).ModelsPage,
+                }),
+              },
+              {
                 path: '*',
                 lazy: async () => ({
                   Component: (await import('../pages/coming-soon.page')).ComingSoonPage,

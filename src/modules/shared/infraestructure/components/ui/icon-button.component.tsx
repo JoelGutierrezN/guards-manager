@@ -7,12 +7,9 @@ type Size = 'sm' | 'md'
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: IconSvgElement
-  /** Texto del tooltip que aparece debajo al hacer hover. */
   tip?: string
   size?: Size
-  /** Variante con borde y fondo blanco (para cerrar modales, etc.). */
   bordered?: boolean
-  /** Tinte rojo de peligro en hover (eliminar). */
   danger?: boolean
 }
 
@@ -21,7 +18,6 @@ const SIZES: Record<Size, string> = {
   md: 'h-8 w-8 rounded-[14px]',
 }
 
-/** Botón de solo icono, con tooltip opcional. Fiel al `.icon-btn` del diseño. */
 export function IconButton({
   icon,
   tip,

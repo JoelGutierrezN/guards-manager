@@ -10,18 +10,11 @@ export interface ModelDraft {
 
 interface NewModelModalProps {
   open: boolean
-  /** Modelo en edición; `null` para crear uno nuevo. */
   editModel?: ToolModel | null
   onClose: () => void
   onSave: (draft: ModelDraft) => void
 }
 
-/**
- * Modal para crear o editar un modelo de herramienta.
- *
- * El estado de los campos se inicializa desde `editModel`. El padre debe pasar
- * una `key` que cambie al abrir para reiniciar el formulario.
- */
 export function NewModelModal({
   open,
   editModel = null,

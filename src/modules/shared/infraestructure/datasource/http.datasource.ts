@@ -25,4 +25,14 @@ export class HttpDataSource {
     const response = await this.client.post<T>(url, body)
     return response.data
   }
+
+  async put<T>(url: string, body?: object): Promise<T> {
+    const response = await this.client.put<T>(url, body)
+    return response.data
+  }
+
+  async delete<T>(url: string): Promise<T> {
+    const response = await this.client.delete<T>(url)
+    return response.data
+  }
 }
