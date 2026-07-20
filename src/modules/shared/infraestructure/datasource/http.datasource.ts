@@ -1,10 +1,12 @@
 import Axios, { type AxiosInstance } from 'axios'
 import { StorageService } from '../storage/local.storage'
+import { API_BASE_URL } from '../config/api.config'
 
 export class HttpDataSource {
+  private static instance: HttpDataSource | null = null
   private readonly client: AxiosInstance
 
-  constructor(baseURL: string) {
+  private constructor(baseURL: string) {
     this.client = Axios.create({ baseURL })
 
     this.client.interceptors.request.use((config) => {
@@ -14,6 +16,13 @@ export class HttpDataSource {
       }
       return config
     })
+  }
+
+  static getInstance(): HttpDataSource {
+    if (!HttpDataSource.instance) {
+      HttpDataSource.instance = new HttpDataSource(API_BASE_URL)
+    }
+    return HttpDataSource.instance
   }
 
   async get<T>(url: string): Promise<T> {
