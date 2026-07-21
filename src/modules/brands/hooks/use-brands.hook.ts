@@ -4,12 +4,14 @@ import { brandsReducer } from '../application/brands.reducer'
 import { INITIAL_BRANDS_STATE } from '../application/brands-state.model'
 import { brandRepository } from '../infraestructure/repositories/brand.repository'
 import { useHandleApiError } from '../../shared/infraestructure/errors/use-handle-api-error.hook'
+import { useAuth } from '../../auth/hooks/use-auth.hook'
 
 const SEARCH_DEBOUNCE_MS = 250
 
 export function useBrands() {
   const [state, dispatch] = useReducer(brandsReducer, INITIAL_BRANDS_STATE)
-  const handleApiError = useHandleApiError()
+  const { dispatch: authDispatch } = useAuth()
+  const handleApiError = useHandleApiError(authDispatch)
   const requestRef = useRef({ page: state.page, query: state.query })
   requestRef.current = { page: state.page, query: state.query }
 

@@ -4,7 +4,7 @@ import { authReducer } from '../../application/auth.reducer'
 import { AuthInitialStateHelper } from '../../application/auth-initial-state.helper'
 import { AuthUseCase } from '../../application/auth.usecase'
 import { authRepository } from '../repositories/auth.repository'
-import { useHandleApiError } from '../../../shared/infraestructure/errors/use-handle-api-error.hook'
+import { useHandleApiError, resetSessionExpiredGuard } from '../../../shared/infraestructure/errors/use-handle-api-error.hook'
 import { AuthContext } from './auth.context'
 import type { AuthContextValue } from './auth-context.interfaces'
 
@@ -12,13 +12,14 @@ const authUseCase = new AuthUseCase(authRepository)
 
 export function AuthProvider() {
   const [state, dispatch] = useReducer(authReducer, undefined, AuthInitialStateHelper.build)
-  const handleApiError = useHandleApiError()
+  const handleApiError = useHandleApiError(dispatch)
 
   async function login(identifier: string, password: string): Promise<void> {
     dispatch({ type: 'AUTH_START' })
     try {
       const session = await authUseCase.login(identifier, password)
       dispatch({ type: 'AUTH_SUCCESS', payload: session })
+      resetSessionExpiredGuard()
     } catch (error) {
       try {
         handleApiError(error)
@@ -41,6 +42,7 @@ export function AuthProvider() {
     error: state.error,
     login,
     logout,
+    dispatch,
   }
 
   return <AuthContext.Provider value={contextValue}><Outlet /></AuthContext.Provider>
