@@ -50,7 +50,7 @@ export function Pager({ page = 1, total = 1, onChange }: PagerProps): JSX.Elemen
           <button
             key={p}
             type="button"
-            className={cn(cell, p === page ? 'bg-ink text-cream' : 'hover:bg-brand-soft')}
+            className={cn(cell, p === page ? 'bg-ink text-white' : 'hover:bg-brand-soft')}
             onClick={() => onChange(p)}
           >
             {p}
