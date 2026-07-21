@@ -1,3 +1,3 @@
 export interface FromLocationState {
-  from?: { pathname: string }
+  from?: { pathname: string; search?: string }
 }

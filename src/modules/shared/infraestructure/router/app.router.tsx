@@ -4,11 +4,16 @@ import { AuthMiddleware } from '../../../auth/infraestructure/middlewares/auth.m
 import { GuestMiddleware } from '../../../auth/infraestructure/middlewares/guest.middleware'
 import AuthPage from '../../../auth/infraestructure/pages/auth.page'
 import { AppLayout } from '../layouts/app.layout'
+import { SessionExpiredPage } from '../pages/session-expired.page'
 
 export default createBrowserRouter([
   {
     element: <AuthProvider />,
     children: [
+      {
+        path: '/session-expired',
+        element: <SessionExpiredPage />,
+      },
       {
         element: <GuestMiddleware />,
         children: [

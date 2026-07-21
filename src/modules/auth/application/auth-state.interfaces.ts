@@ -8,6 +8,7 @@ export interface AuthState {
   token: string | null
   status: AuthStatus
   error: string | null
+  sessionExpired: boolean
 }
 
 export type AuthAction =
@@ -15,3 +16,4 @@ export type AuthAction =
   | { type: 'AUTH_SUCCESS'; payload: AuthSession }
   | { type: 'AUTH_ERROR'; payload: string }
   | { type: 'AUTH_LOGOUT' }
+  | { type: 'AUTH_SESSION_EXPIRED' }

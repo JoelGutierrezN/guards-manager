@@ -6,7 +6,6 @@ export class HttpDataSource {
   private static instance: HttpDataSource | null = null
   private readonly client: AxiosInstance
   private onUnauthorized: (() => void) | null = null
-  private unauthorizedHandled = false
 
   private constructor(baseURL: string) {
     this.client = Axios.create({ baseURL })
@@ -22,11 +21,8 @@ export class HttpDataSource {
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        const isUnauthorized = Axios.isAxiosError(error) && error.response?.status === 401
-        const hasSession = StorageService.get<string>('access_token') != null
-        if (isUnauthorized && hasSession && !this.unauthorizedHandled && this.onUnauthorized) {
-          this.unauthorizedHandled = true
-          this.onUnauthorized()
+        if (Axios.isAxiosError(error) && error.response?.status === 401) {
+          this.onUnauthorized?.()
         }
         return Promise.reject(error)
       },
@@ -42,10 +38,6 @@ export class HttpDataSource {
 
   setUnauthorizedHandler(handler: (() => void) | null): void {
     this.onUnauthorized = handler
-  }
-
-  resetUnauthorized(): void {
-    this.unauthorizedHandled = false
   }
 
   async get<T>(url: string): Promise<T> {

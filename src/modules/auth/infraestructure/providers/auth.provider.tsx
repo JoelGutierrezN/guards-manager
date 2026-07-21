@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef } from 'react'
 import axios from 'axios'
-import { Outlet, useLocation, useNavigate } from 'react-router'
+import { Outlet } from 'react-router'
 import { authReducer } from '../../application/auth.reducer'
 import { AuthInitialStateHelper } from '../../application/auth-initial-state.helper'
 import { AuthUseCase } from '../../application/auth.usecase'
@@ -14,31 +14,28 @@ const authUseCase = new AuthUseCase(authRepository)
 
 export function AuthProvider() {
   const [state, dispatch] = useReducer(authReducer, undefined, AuthInitialStateHelper.build)
-  const navigate = useNavigate()
-  const location = useLocation()
-  const locationRef = useRef(location)
+  const authenticatedRef = useRef(state.token !== null)
 
   useEffect(() => {
-    locationRef.current = location
-  }, [location])
+    authenticatedRef.current = state.token !== null
+  }, [state.token])
 
   useEffect(() => {
     const datasource = HttpDataSource.getInstance()
     datasource.setUnauthorizedHandler(() => {
+      if (!authenticatedRef.current) return
+      authenticatedRef.current = false
       AuthSessionStorage.clear()
-      dispatch({ type: 'AUTH_LOGOUT' })
-      const { pathname, search } = locationRef.current
-      navigate('/session-expired', { state: { from: { pathname, search } } })
+      dispatch({ type: 'AUTH_SESSION_EXPIRED' })
     })
     return () => datasource.setUnauthorizedHandler(null)
-  }, [navigate])
+  }, [])
 
   async function login(identifier: string, password: string): Promise<void> {
     dispatch({ type: 'AUTH_START' })
     try {
       const session = await authUseCase.login(identifier, password)
       dispatch({ type: 'AUTH_SUCCESS', payload: session })
-      HttpDataSource.getInstance().resetUnauthorized()
     } catch (error) {
       const message = axios.isAxiosError(error)
         ? error.response?.data?.message ?? 'Credenciales inválidas'
@@ -59,6 +56,7 @@ export function AuthProvider() {
     error: state.error,
     login,
     logout,
+    sessionExpired: state.sessionExpired,
   }
 
   return <AuthContext.Provider value={contextValue}><Outlet /></AuthContext.Provider>

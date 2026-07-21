@@ -4,6 +4,7 @@ import { PackageIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useNavigate, useLocation } from 'react-router'
 import { useAuth } from '../../hooks/use-auth.hook'
+import { FromLocationHelper } from '../from-location.helper'
 import type { FromLocationState } from '../from-location-state.interfaces'
 
 export const AuthForm = (): JSX.Element => {
@@ -23,7 +24,7 @@ export const AuthForm = (): JSX.Element => {
     await login(identifier, password)
 
     if (status !== 'error') {
-      navigate(state?.from?.pathname ?? '/dashboard', { replace: true })
+      navigate(FromLocationHelper.resolvePath(state), { replace: true })
     }
   }
 

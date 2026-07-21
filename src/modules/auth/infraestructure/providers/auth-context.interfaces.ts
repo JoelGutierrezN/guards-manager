@@ -8,4 +8,5 @@ export interface AuthContextValue {
   error: string | null
   login: (identifier: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  sessionExpired: boolean
 }
