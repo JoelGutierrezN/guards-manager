@@ -22,11 +22,11 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
     <button
       type="button"
       onClick={onOpen}
-      className="group/card cursor-pointer overflow-hidden rounded-[26px] border border-hairline bg-white p-[18px] text-left shadow-[0_1px_2px_rgba(14,15,60,0.04)] transition-[transform,box-shadow] duration-[120ms] hover:-translate-y-0.5 hover:shadow-[0_8px_20px_-6px_rgba(14,15,60,0.1),0_2px_6px_-1px_rgba(14,15,60,0.05)]"
+      className="group/card cursor-pointer overflow-hidden rounded-[26px] border border-hairline bg-white p-4.5 text-left shadow-[0_1px_2px_rgba(14,15,60,0.04)] transition-[transform,box-shadow] duration-120 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_-6px_rgba(14,15,60,0.1),0_2px_6px_-1px_rgba(14,15,60,0.05)]"
     >
       <div className="flex items-start gap-3">
         <div
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] text-[18px] font-bold tracking-[0.04em] text-ink"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-3xl text-[18px] font-bold tracking-[0.04em] text-white"
           style={{ background: logo.color, boxShadow: `0 4px 12px -3px ${logo.color}80` }}
         >
           {logo.initial}
@@ -61,7 +61,7 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
         </div>
       </div>
 
-      <div className="mt-2.5 h-1 overflow-hidden rounded-[2px] bg-cream-2">
+      <div className="mt-2.5 h-1 overflow-hidden rounded-sm bg-cream-2">
         <div className="h-full bg-brand" style={{ width: `${usage}%` }} />
       </div>
       <div className="mt-1 font-mono text-[11px] text-muted">{usage}% en uso</div>

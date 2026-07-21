@@ -2,8 +2,6 @@ import { useCallback, useEffect, useReducer } from 'react'
 import type { InventoryStats } from '../domain/inventory-stats.entity'
 import type { CatalogTree } from '../domain/catalog-option.model'
 import { inventoryRepository } from '../infraestructure/repositories/inventory.repository'
-import { useHandleApiError } from '../../shared/infraestructure/errors/use-handle-api-error.hook'
-import { useAuth } from '../../auth/hooks/use-auth.hook'
 
 export type OverviewStatus = 'loading' | 'ready' | 'error'
 
@@ -37,8 +35,6 @@ const initialState: OverviewState = {
 
 export function useInventoryOverview() {
   const [state, dispatch] = useReducer(overviewReducer, initialState)
-  const { dispatch: authDispatch } = useAuth()
-  const handleApiError = useHandleApiError(authDispatch)
 
   const load = useCallback(async () => {
     dispatch({ type: 'FETCH_START' })
@@ -48,14 +44,10 @@ export function useInventoryOverview() {
         inventoryRepository.getCatalogTree(),
       ])
       dispatch({ type: 'FETCH_SUCCESS', stats, catalog })
-    } catch (error) {
-      try {
-        handleApiError(error)
-      } catch {
-        dispatch({ type: 'FETCH_ERROR' })
-      }
+    } catch {
+      dispatch({ type: 'FETCH_ERROR' })
     }
-  }, [handleApiError])
+  }, [])
 
   useEffect(() => {
     load()

@@ -1,10 +1,12 @@
-import { useReducer } from 'react'
-import { Outlet } from 'react-router'
+import { useEffect, useReducer, useRef } from 'react'
+import axios from 'axios'
+import { Outlet, useLocation, useNavigate } from 'react-router'
 import { authReducer } from '../../application/auth.reducer'
 import { AuthInitialStateHelper } from '../../application/auth-initial-state.helper'
 import { AuthUseCase } from '../../application/auth.usecase'
 import { authRepository } from '../repositories/auth.repository'
-import { useHandleApiError, resetSessionExpiredGuard } from '../../../shared/infraestructure/errors/use-handle-api-error.hook'
+import { AuthSessionStorage } from '../storage/auth-session.storage'
+import { HttpDataSource } from '../../../shared/infraestructure/datasource/http.datasource'
 import { AuthContext } from './auth.context'
 import type { AuthContextValue } from './auth-context.interfaces'
 
@@ -12,21 +14,36 @@ const authUseCase = new AuthUseCase(authRepository)
 
 export function AuthProvider() {
   const [state, dispatch] = useReducer(authReducer, undefined, AuthInitialStateHelper.build)
-  const handleApiError = useHandleApiError(dispatch)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const locationRef = useRef(location)
+
+  useEffect(() => {
+    locationRef.current = location
+  }, [location])
+
+  useEffect(() => {
+    const datasource = HttpDataSource.getInstance()
+    datasource.setUnauthorizedHandler(() => {
+      AuthSessionStorage.clear()
+      dispatch({ type: 'AUTH_LOGOUT' })
+      const { pathname, search } = locationRef.current
+      navigate('/session-expired', { state: { from: { pathname, search } } })
+    })
+    return () => datasource.setUnauthorizedHandler(null)
+  }, [navigate])
 
   async function login(identifier: string, password: string): Promise<void> {
     dispatch({ type: 'AUTH_START' })
     try {
       const session = await authUseCase.login(identifier, password)
       dispatch({ type: 'AUTH_SUCCESS', payload: session })
-      resetSessionExpiredGuard()
+      HttpDataSource.getInstance().resetUnauthorized()
     } catch (error) {
-      try {
-        handleApiError(error)
-      } catch (normalizedError) {
-        const message = normalizedError instanceof Error ? normalizedError.message : 'Error de autenticación'
-        dispatch({ type: 'AUTH_ERROR', payload: message })
-      }
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message ?? 'Credenciales inválidas'
+        : 'Error de autenticación'
+      dispatch({ type: 'AUTH_ERROR', payload: message })
     }
   }
 
@@ -42,7 +59,6 @@ export function AuthProvider() {
     error: state.error,
     login,
     logout,
-    dispatch,
   }
 
   return <AuthContext.Provider value={contextValue}><Outlet /></AuthContext.Provider>

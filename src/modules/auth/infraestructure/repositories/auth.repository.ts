@@ -17,11 +17,7 @@ class AuthRepositoryImpl implements AuthRepositoryContract {
   }
 
   async logout(): Promise<void> {
-    try {
-      await this.datasource.post('/logout')
-    } catch {
-      // El servidor puede rechazar un token ya expirado (401); la sesión local se limpia igual.
-    }
+    await this.datasource.post('/logout')
   }
 }
 

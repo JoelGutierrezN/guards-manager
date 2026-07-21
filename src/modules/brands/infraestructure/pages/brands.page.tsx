@@ -39,7 +39,7 @@ export function BrandsPage({ onSelectBrand }: BrandsPageProps): JSX.Element {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1480px]">
+    <div className="mx-auto w-full max-w-370">
       <PageHero
         eyebrow="Catálogos · marcas"
         title="Marcas de herramientas"
@@ -47,7 +47,7 @@ export function BrandsPage({ onSelectBrand }: BrandsPageProps): JSX.Element {
         lede={`${state.total} marcas registradas. ${state.modelsTotal} modelos y ${state.toolsTotal} herramientas activas en inventario.`}
         actions={
           <>
-            <div className="flex h-9 max-w-[260px] items-center gap-2 rounded-full border border-hairline-strong bg-white px-3 transition-[border-color,box-shadow] duration-[120ms] focus-within:border-brand focus-within:shadow-[0_0_0_3px_var(--color-brand-soft)] hover:border-ink-3">
+            <div className="flex h-9 max-w-65 items-center gap-2 rounded-full border border-hairline-strong bg-white px-3 transition-[border-color,box-shadow] duration-[120ms] focus-within:border-brand focus-within:shadow-[0_0_0_3px_var(--color-brand-soft)] hover:border-ink-3">
               <HugeiconsIcon icon={Search01Icon} size={14} strokeWidth={1.8} className="shrink-0 text-muted" />
               <input
                 className="h-full min-w-0 flex-1 border-none bg-transparent text-[13px] text-ink outline-none placeholder:text-muted-soft"
