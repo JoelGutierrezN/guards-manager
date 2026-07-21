@@ -21,6 +21,9 @@ export class AppError extends Error {
     this.status = status
     this.details = details
 
-    Error.captureStackTrace?.(this, this.constructor)
+    const errorConstructor = Error as unknown as {
+      captureStackTrace?: (targetObject: object, constructorOpt?: unknown) => void
+    }
+    errorConstructor.captureStackTrace?.(this, this.constructor)
   }
 }

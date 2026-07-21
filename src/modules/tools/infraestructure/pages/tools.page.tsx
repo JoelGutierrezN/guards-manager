@@ -98,8 +98,6 @@ export function ToolsPage(): JSX.Element {
     <>
       <div className="reveal d1">
         <PageHero
-          compact
-          dense
           eyebrow="Catálogos · herramientas"
           title="Catálogo de herramientas"
           italic="de herramientas"
