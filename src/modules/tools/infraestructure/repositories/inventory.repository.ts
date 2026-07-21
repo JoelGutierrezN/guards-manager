@@ -1,6 +1,5 @@
 import { HttpDataSource } from '../../../shared/infraestructure/datasource/http.datasource'
 import { handleApiError } from '../../../shared/infraestructure/errors/handle-api-error'
-import { API_BASE_URL } from '../../../shared/infraestructure/config/api.config'
 import type { InventoryRepository as InventoryRepositoryContract } from '../../domain/inventory-repository'
 import type { InventoryStats } from '../../domain/inventory-stats.entity'
 import type { CatalogTree } from '../../domain/catalog-option.model'
@@ -12,7 +11,7 @@ class InventoryRepositoryImpl implements InventoryRepositoryContract {
   private readonly datasource: HttpDataSource
 
   constructor() {
-    this.datasource = new HttpDataSource(API_BASE_URL)
+    this.datasource = HttpDataSource.getInstance()
   }
 
   async getStats(): Promise<InventoryStats> {

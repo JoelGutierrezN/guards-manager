@@ -1,6 +1,5 @@
 import { HttpDataSource } from '../../../shared/infraestructure/datasource/http.datasource'
 import { handleApiError } from '../../../shared/infraestructure/errors/handle-api-error'
-import { API_BASE_URL } from '../../../shared/infraestructure/config/api.config'
 import type { BrandRepository as BrandRepositoryContract } from '../../domain/brand-repository'
 import type { Brand } from '../../domain/brand.entity'
 import type { BrandPage } from '../../domain/brand-page.model'
@@ -12,7 +11,7 @@ class BrandRepositoryImpl implements BrandRepositoryContract {
   private readonly datasource: HttpDataSource
 
   constructor() {
-    this.datasource = new HttpDataSource(API_BASE_URL)
+    this.datasource = HttpDataSource.getInstance()
   }
 
   async list(page: number, name?: string): Promise<BrandPage> {
