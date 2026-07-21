@@ -1,5 +1,4 @@
 import { HttpDataSource } from '../../../shared/infraestructure/datasource/http.datasource'
-import { handleApiError } from '../../../shared/infraestructure/errors/handle-api-error'
 import type { AuthRepository as AuthRepositoryContract } from '../../domain/auth.repository'
 import type { AuthSession } from '../../domain/auth-session.model'
 import type { LoginResponseDto } from '../dto/login.response.dto'
@@ -13,12 +12,8 @@ class AuthRepositoryImpl implements AuthRepositoryContract {
   }
 
   async login(identifier: string, password: string): Promise<AuthSession> {
-    try {
-      const response = await this.datasource.post<LoginResponseDto>('/login', { identifier, password })
-      return AuthMapper.toAuthSession(response)
-    } catch (error) {
-      handleApiError(error)
-    }
+    const response = await this.datasource.post<LoginResponseDto>('/login', { identifier, password })
+    return AuthMapper.toAuthSession(response)
   }
 
   async logout(): Promise<void> {

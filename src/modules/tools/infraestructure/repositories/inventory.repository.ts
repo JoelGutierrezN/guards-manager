@@ -1,5 +1,4 @@
 import { HttpDataSource } from '../../../shared/infraestructure/datasource/http.datasource'
-import { handleApiError } from '../../../shared/infraestructure/errors/handle-api-error'
 import type { InventoryRepository as InventoryRepositoryContract } from '../../domain/inventory-repository'
 import type { InventoryStats } from '../../domain/inventory-stats.entity'
 import type { CatalogTree } from '../../domain/catalog-option.model'
@@ -15,21 +14,13 @@ class InventoryRepositoryImpl implements InventoryRepositoryContract {
   }
 
   async getStats(): Promise<InventoryStats> {
-    try {
-      const response = await this.datasource.get<InventoryStatsDto>('/products/stats')
-      return InventoryMapper.toInventoryStats(response)
-    } catch (error) {
-      handleApiError(error)
-    }
+    const response = await this.datasource.get<InventoryStatsDto>('/products/stats')
+    return InventoryMapper.toInventoryStats(response)
   }
 
   async getCatalogTree(): Promise<CatalogTree> {
-    try {
-      const response = await this.datasource.get<CatalogTreeDto>('/brands/catalog/tree')
-      return InventoryMapper.toCatalogTree(response)
-    } catch (error) {
-      handleApiError(error)
-    }
+    const response = await this.datasource.get<CatalogTreeDto>('/brands/catalog/tree')
+    return InventoryMapper.toCatalogTree(response)
   }
 }
 

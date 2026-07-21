@@ -3,11 +3,13 @@ import type { Brand } from '../domain/brand.entity'
 import { brandsReducer } from '../application/brands.reducer'
 import { INITIAL_BRANDS_STATE } from '../application/brands-state.model'
 import { brandRepository } from '../infraestructure/repositories/brand.repository'
+import { useHandleApiError } from '../../shared/infraestructure/errors/use-handle-api-error.hook'
 
 const SEARCH_DEBOUNCE_MS = 250
 
 export function useBrands() {
   const [state, dispatch] = useReducer(brandsReducer, INITIAL_BRANDS_STATE)
+  const handleApiError = useHandleApiError()
   const requestRef = useRef({ page: state.page, query: state.query })
   requestRef.current = { page: state.page, query: state.query }
 
@@ -16,10 +18,14 @@ export function useBrands() {
     try {
       const result = await brandRepository.list(page, query)
       dispatch({ type: 'LOAD_SUCCESS', result })
-    } catch {
-      dispatch({ type: 'LOAD_ERROR', error: 'No se pudieron cargar las marcas.' })
+    } catch (error) {
+      try {
+        handleApiError(error)
+      } catch {
+        dispatch({ type: 'LOAD_ERROR', error: 'No se pudieron cargar las marcas.' })
+      }
     }
-  }, [])
+  }, [handleApiError])
 
   useEffect(() => {
     const handle = setTimeout(() => {
@@ -47,12 +53,16 @@ export function useBrands() {
         dispatch({ type: 'SAVE_DONE' })
         await load(requestRef.current.page, requestRef.current.query)
         return true
-      } catch {
-        dispatch({ type: 'SAVE_ERROR' })
+      } catch (error) {
+        try {
+          handleApiError(error)
+        } catch {
+          dispatch({ type: 'SAVE_ERROR' })
+        }
         return false
       }
     },
-    [load],
+    [load, handleApiError],
   )
 
   const renameBrand = useCallback(
@@ -63,12 +73,16 @@ export function useBrands() {
         dispatch({ type: 'SAVE_DONE' })
         await load(requestRef.current.page, requestRef.current.query)
         return true
-      } catch {
-        dispatch({ type: 'SAVE_ERROR' })
+      } catch (error) {
+        try {
+          handleApiError(error)
+        } catch {
+          dispatch({ type: 'SAVE_ERROR' })
+        }
         return false
       }
     },
-    [load],
+    [load, handleApiError],
   )
 
   return {
