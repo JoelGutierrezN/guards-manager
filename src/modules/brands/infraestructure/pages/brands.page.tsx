@@ -1,7 +1,6 @@
 import type { JSX } from 'react'
-import { PlusSignIcon, Search01Icon } from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { Button, PageHero, Pager, useToasts } from '../../../shared/infraestructure/components/ui'
+import { PlusSignIcon } from '@hugeicons/core-free-icons'
+import { Button, PageHero, Pager, SearchInput, useToasts } from '../../../shared/infraestructure/components/ui'
 import { BrandCard } from '../components/brand-card.component'
 import { BrandCardSkeleton } from '../components/brand-card-skeleton.component'
 import { NewBrandModal } from '../components/new-brand-modal.component'
@@ -43,15 +42,12 @@ export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
         lede={`${state.total} marcas registradas. ${state.modelsTotal} modelos y ${state.toolsTotal} herramientas activas en inventario.`}
         actions={
           <>
-            <div className="flex h-9 max-w-65 items-center gap-2 rounded-full border border-hairline-strong bg-white px-3 transition-[border-color,box-shadow] duration-[120ms] focus-within:border-brand focus-within:shadow-[0_0_0_3px_var(--color-brand-soft)] hover:border-ink-3">
-              <HugeiconsIcon icon={Search01Icon} size={14} strokeWidth={1.8} className="shrink-0 text-muted" />
-              <input
-                className="h-full min-w-0 flex-1 border-none bg-transparent text-[13px] text-ink outline-none placeholder:text-muted-soft"
-                placeholder="Buscar marca…"
-                value={state.query}
-                onChange={(event) => setQuery(event.target.value)}
-              />
-            </div>
+            <SearchInput
+              value={state.query}
+              onChange={setQuery}
+              placeholder="Buscar marca…"
+              ariaLabel="Buscar marca"
+            />
             <Button variant="primary" icon={PlusSignIcon} onClick={openCreate}>
               Nueva marca
             </Button>
@@ -90,18 +86,13 @@ export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
             </div>
           )}
 
-          {state.lastPage > 1 && (
-            <div className="mt-5 flex items-center justify-between text-[13px] text-muted">
-              <span>
-                Página <b className="text-ink">{state.page}</b> de {state.lastPage} · {state.total} marcas
-              </span>
-              <Pager
-                  page={state.page}
-                  total={state.lastPage}
-                  onChange={setPage}
-              />
-            </div>
-          )}
+          <Pager
+            page={state.page}
+            lastPage={state.lastPage}
+            total={state.total}
+            onChange={setPage}
+            itemsLabel="marcas"
+          />
         </div>
       )}
 

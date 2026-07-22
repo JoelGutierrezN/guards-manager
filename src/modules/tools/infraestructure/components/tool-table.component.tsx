@@ -100,11 +100,8 @@ export function ToolTable({
         </table>
       </div>
 
-      <div className="flex items-center justify-between border-t border-hairline px-4 py-2.5 text-[13px] text-muted">
-        <span>
-          Mostrando <b className="text-ink">{rows.length}</b> de {totalCount}
-        </span>
-        <Pager page={page} total={TOTAL_PAGES} onChange={onSetPage} />
+      <div className="border-t border-hairline px-4 pb-2.5 text-[13px] text-muted">
+        <Pager page={page} lastPage={TOTAL_PAGES} total={totalCount} onChange={onSetPage} itemsLabel="herramientas" />
       </div>
     </div>
   )

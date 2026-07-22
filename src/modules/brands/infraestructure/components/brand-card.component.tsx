@@ -42,7 +42,12 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <div className="text-[16px] font-semibold tracking-[-0.01em] text-ink">{brand.name}</div>
+            <div
+                title={brand.name}
+                className="text-[14px] font-semibold tracking-[-0.01em] truncate text-ink"
+            >
+              {brand.name}
+            </div>
             <IconButton
               icon={PencilEdit02Icon}
               size="sm"

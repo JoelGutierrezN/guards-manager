@@ -172,11 +172,8 @@ export function ModelsPage(): JSX.Element {
           </table>
         </div>
 
-        <div className="flex items-center justify-between border-t border-hairline px-4 py-3 text-[13px] text-muted">
-          <span>
-            Mostrando <b className="text-ink">{filtered.length}</b> de {rows.length}
-          </span>
-          <Pager page={page} total={2} onChange={setPage} />
+        <div className="border-t border-hairline px-4 pb-3 text-[13px] text-muted">
+          <Pager page={page} lastPage={2} total={rows.length} onChange={setPage} itemsLabel="modelos" />
         </div>
       </div>
 
