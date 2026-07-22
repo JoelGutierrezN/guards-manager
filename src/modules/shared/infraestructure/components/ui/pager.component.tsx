@@ -10,16 +10,19 @@ interface PagerProps {
 }
 
 const ELLIPSIS = '…' as const
+const VISIBLE_CELLS = 7
 
 function buildPages(page: number, max: number): (number | typeof ELLIPSIS)[] {
-  const around = [page - 1, page, page + 1].filter((n) => n > 1 && n < max)
-  return [
-    1,
-    ...(around[0] > 2 ? [ELLIPSIS] : []),
-    ...around,
-    ...(around[around.length - 1] < max - 1 ? [ELLIPSIS] : []),
-    ...(max > 1 ? [max] : []),
-  ]
+  if (max <= VISIBLE_CELLS) {
+    return Array.from({ length: max }, (_, index) => index + 1)
+  }
+  if (page <= 4) {
+    return [1, 2, 3, 4, 5, ELLIPSIS, max]
+  }
+  if (page >= max - 3) {
+    return [1, ELLIPSIS, max - 4, max - 3, max - 2, max - 1, max]
+  }
+  return [1, ELLIPSIS, page - 1, page, page + 1, ELLIPSIS, max]
 }
 
 export function Pager({ page = 1, total = 1, onChange }: PagerProps): JSX.Element {

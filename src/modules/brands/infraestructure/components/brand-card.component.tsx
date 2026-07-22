@@ -1,4 +1,4 @@
-import { type JSX, useMemo } from 'react'
+import { type JSX, type KeyboardEvent, useMemo } from 'react'
 import { PencilEdit02Icon } from '@hugeicons/core-free-icons'
 import { IconButton } from '../../../shared/infraestructure/components/ui'
 import { BrandService } from '../../application/brand.service'
@@ -18,10 +18,19 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
     [brand.name],
   )
 
+  const handleOpenKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      onOpen()
+    }
+  }
+
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onOpen}
+      onKeyDown={handleOpenKeyDown}
       className="group/card cursor-pointer overflow-hidden rounded-[26px] border border-hairline bg-white p-4.5 text-left shadow-[0_1px_2px_rgba(14,15,60,0.04)] transition-[transform,box-shadow] duration-120 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_-6px_rgba(14,15,60,0.1),0_2px_6px_-1px_rgba(14,15,60,0.05)]"
     >
       <div className="flex items-start gap-3">
@@ -65,6 +74,6 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
         <div className="h-full bg-brand" style={{ width: `${usage}%` }} />
       </div>
       <div className="mt-1 font-mono text-[11px] text-muted">{usage}% en uso</div>
-    </button>
+    </div>
   )
 }

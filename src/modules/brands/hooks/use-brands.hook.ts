@@ -1,15 +1,21 @@
-import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { useOverlayState } from '@heroui/react'
 import type { Brand } from '../domain/brand.entity'
+import type { BrandsWindowManager } from '../application/brands-window.model'
 import { brandsReducer } from '../application/brands.reducer'
 import { INITIAL_BRANDS_STATE } from '../application/brands-state.model'
 import { brandRepository } from '../infraestructure/repositories/brand.repository'
 
 const SEARCH_DEBOUNCE_MS = 250
+const MIN_SKELETON_CARDS = 3
 
 export function useBrands() {
   const [state, dispatch] = useReducer(brandsReducer, INITIAL_BRANDS_STATE)
   const requestRef = useRef({ page: state.page, query: state.query })
-  requestRef.current = { page: state.page, query: state.query }
+
+  useEffect(() => {
+    requestRef.current = { page: state.page, query: state.query }
+  }, [state.page, state.query])
 
   const load = useCallback(async (page: number, query: string) => {
     dispatch({ type: 'LOAD_START' })
@@ -34,10 +40,25 @@ export function useBrands() {
 
   const setPage = useCallback((page: number) => dispatch({ type: 'SET_PAGE', page }), [])
   const setQuery = useCallback((query: string) => dispatch({ type: 'SET_QUERY', query }), [])
-  const openCreate = useCallback(() => dispatch({ type: 'OPEN_CREATE' }), [])
-  const closeCreate = useCallback(() => dispatch({ type: 'CLOSE_CREATE' }), [])
-  const openEdit = useCallback((brand: Brand) => dispatch({ type: 'OPEN_EDIT', brand }), [])
-  const closeEdit = useCallback(() => dispatch({ type: 'CLOSE_EDIT' }), [])
+
+  const modal = useOverlayState()
+  const [windowManager, setWindowManager] = useState<BrandsWindowManager>({
+    window: 'create',
+    payload: null,
+  })
+
+  const openCreate = useCallback(() => {
+    setWindowManager({ window: 'create', payload: null })
+    modal.open()
+  }, [modal])
+
+  const openEdit = useCallback(
+    (brand: Brand) => {
+      setWindowManager({ window: 'edit', payload: brand })
+      modal.open()
+    },
+    [modal],
+  )
 
   const createBrand = useCallback(
     async (name: string): Promise<boolean> => {
@@ -71,16 +92,52 @@ export function useBrands() {
     [load],
   )
 
+  const saveBrand = useCallback(
+    async (name: string): Promise<string> => {
+      const { window, payload } = windowManager
+      if (window === 'edit' && payload) {
+        const renamed = await renameBrand(payload.id, name)
+        if (renamed) modal.close()
+        return renamed ? `Marca actualizada a "${name}"` : 'No se pudo actualizar la marca'
+      }
+      const created = await createBrand(name)
+      if (created) modal.close()
+      return created ? `Marca "${name}" creada` : 'No se pudo crear la marca'
+    },
+    [windowManager, renameBrand, createBrand, modal],
+  )
+
+  const editingBrand = windowManager.window === 'edit' ? windowManager.payload : null
+  const modalKey = modal.isOpen ? `${windowManager.window}-${editingBrand?.id ?? 'new'}` : 'closed'
+
+  const showSkeletons = state.status === 'loading' || state.status === 'reloading'
+  const hasPagination = state.lastPage > 1
+  const skeletonSlots = useMemo(
+    () =>
+      state.status === 'loading' || hasPagination
+        ? [...Array(state.perPage).keys()]
+        : [...Array(Math.max(state.brands.length, MIN_SKELETON_CARDS)).keys()],
+    [state.status, hasPagination, state.perPage, state.brands.length],
+  )
+  const fillerSlots = useMemo(
+    () => (hasPagination ? [...Array(Math.max(state.perPage - state.brands.length, 0)).keys()] : []),
+    [hasPagination, state.perPage, state.brands.length],
+  )
+
   return {
     state,
+    showSkeletons,
+    skeletonSlots,
+    fillerSlots,
     reload,
     setPage,
     setQuery,
     openCreate,
-    closeCreate,
     openEdit,
-    closeEdit,
-    createBrand,
-    renameBrand,
+    saveBrand,
+    editingBrand,
+    modalKey,
+    modalOpen: modal.isOpen,
+    closeModal: modal.close,
   }
 }

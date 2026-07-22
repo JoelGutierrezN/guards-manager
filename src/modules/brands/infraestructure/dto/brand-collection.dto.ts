@@ -13,7 +13,3 @@ export interface BrandCollectionDto {
   data: BrandDto[]
   meta: BrandCollectionMetaDto
 }
-
-export interface BrandResourceDto {
-  data: BrandDto
-}

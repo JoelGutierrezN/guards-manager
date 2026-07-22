@@ -3,7 +3,8 @@ import type { BrandRepository as BrandRepositoryContract } from '../../domain/br
 import type { Brand } from '../../domain/brand.entity'
 import type { BrandPage } from '../../domain/brand-page.model'
 import type { CreateBrandInput, UpdateBrandInput } from '../../domain/brand-input.model'
-import type { BrandCollectionDto, BrandResourceDto } from '../dto/brand-collection.dto'
+import type { BrandCollectionDto } from '../dto/brand-collection.dto'
+import type { BrandDto } from '../dto/brand.dto'
 import { BrandMapper } from '../mappers/brand.mapper'
 
 class BrandRepositoryImpl implements BrandRepositoryContract {
@@ -23,13 +24,13 @@ class BrandRepositoryImpl implements BrandRepositoryContract {
   }
 
   async create(input: CreateBrandInput): Promise<Brand> {
-    const response = await this.datasource.post<BrandResourceDto>('/brands', input)
-    return BrandMapper.toBrand(response.data)
+    const response = await this.datasource.post<BrandDto>('/brands', input)
+    return BrandMapper.toBrand(response)
   }
 
   async update(id: string, input: UpdateBrandInput): Promise<Brand> {
-    const response = await this.datasource.put<BrandResourceDto>(`/brands/${id}`, input)
-    return BrandMapper.toBrand(response.data)
+    const response = await this.datasource.put<BrandDto>(`/brands/${id}`, input)
+    return BrandMapper.toBrand(response)
   }
 }
 

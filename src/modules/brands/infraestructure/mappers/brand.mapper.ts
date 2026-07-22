@@ -18,6 +18,7 @@ export class BrandMapper {
     return {
       brands: dto.data.map((brand) => BrandMapper.toBrand(brand)),
       page: dto.meta.current_page,
+      perPage: dto.meta.per_page,
       lastPage: dto.meta.last_page,
       total: dto.meta.total,
       modelsTotal: dto.meta.productModels ?? 0,

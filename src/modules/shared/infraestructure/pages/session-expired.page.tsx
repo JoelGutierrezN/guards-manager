@@ -19,13 +19,12 @@ export function SessionExpiredPage(): JSX.Element {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-cream px-6 py-16">
       <div className="w-full max-w-md text-center">
+        <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-soft text-brand shadow-[0_0_0_4px_var(--color-brand-soft)]">
+          <HugeiconsIcon icon={LockIcon} size={26} strokeWidth={1.8} />
+        </div>
         <div className="mb-5 inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] text-brand uppercase">
           <span className="h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_0_4px_var(--color-brand-soft)]" />
           Sesión
-        </div>
-
-        <div className="mx-auto mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-soft text-brand shadow-[0_0_0_4px_var(--color-brand-soft)]">
-          <HugeiconsIcon icon={LockIcon} size={26} strokeWidth={1.8} />
         </div>
 
         <h1 className="m-0 mb-3 font-display text-[clamp(28px,3vw,38px)] leading-[1.02] font-normal tracking-[-0.035em] text-ink">

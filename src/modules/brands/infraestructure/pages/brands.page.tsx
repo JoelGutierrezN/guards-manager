@@ -1,41 +1,38 @@
-import { type JSX } from 'react'
+import type { JSX } from 'react'
 import { PlusSignIcon, Search01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Button, PageHero, Pager, useToasts } from '../../../shared/infraestructure/components/ui'
 import { BrandCard } from '../components/brand-card.component'
+import { BrandCardSkeleton } from '../components/brand-card-skeleton.component'
 import { NewBrandModal } from '../components/new-brand-modal.component'
 import { useBrands } from '../../hooks/use-brands.hook'
+import {CreateBrandCard} from "../components/create-brand-card.component.tsx";
 
-interface BrandsPageProps {
-  /** Abre el detalle de la marca seleccionada (opcional mientras no exista su endpoint). */
+interface Props {
   onSelectBrand?: (name: string) => void
 }
 
-/** Catálogo de marcas: cuadrícula de tarjetas + alta/edición contra la API. */
-export function BrandsPage({ onSelectBrand }: BrandsPageProps): JSX.Element {
+export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
   const {
     state,
+    showSkeletons,
+    skeletonSlots,
+    fillerSlots,
     reload,
     setPage,
     setQuery,
     openCreate,
-    closeCreate,
     openEdit,
-    closeEdit,
-    createBrand,
-    renameBrand,
+    saveBrand,
+    editingBrand,
+    modalKey,
+    modalOpen,
+    closeModal,
   } = useBrands()
   const [addToast, ToastHost] = useToasts()
 
-  const handleCreate = async (name: string): Promise<void> => {
-    const created = await createBrand(name)
-    addToast(created ? `Marca "${name}" creada` : 'No se pudo crear la marca')
-  }
-
-  const handleRename = async (name: string): Promise<void> => {
-    if (!state.editBrand) return
-    const renamed = await renameBrand(state.editBrand.id, name)
-    addToast(renamed ? `Marca actualizada a "${name}"` : 'No se pudo actualizar la marca')
+  const handleSave = async (name: string): Promise<void> => {
+    addToast(await saveBrand(name))
   }
 
   return (
@@ -63,12 +60,6 @@ export function BrandsPage({ onSelectBrand }: BrandsPageProps): JSX.Element {
         }
       />
 
-      {state.status === 'loading' && (
-        <div className="grid min-h-40 place-items-center rounded-[26px] border border-hairline bg-white text-[13px] text-muted">
-          Cargando marcas…
-        </div>
-      )}
-
       {state.status === 'error' && (
         <div className="flex min-h-40 flex-col items-center justify-center gap-3 rounded-[26px] border border-hairline bg-white">
           <span className="text-[13px] text-muted">{state.error}</span>
@@ -76,33 +67,34 @@ export function BrandsPage({ onSelectBrand }: BrandsPageProps): JSX.Element {
         </div>
       )}
 
-      {state.status === 'ready' && (
+      {state.status !== 'error' && (
         <>
           <div className="reveal-d2 grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <button
-              type="button"
-              onClick={openCreate}
-              className="group/add grid min-h-40 cursor-pointer place-items-center rounded-[26px] border border-dashed border-hairline-strong bg-transparent transition-[border-color,background] duration-200 hover:border-brand hover:bg-brand-soft"
-            >
-              <div className="flex flex-col items-center gap-2">
-                <div className="grid h-10 w-10 place-items-center rounded-[10px] bg-brand-soft text-brand">
-                  <HugeiconsIcon icon={PlusSignIcon} size={20} strokeWidth={1.8} />
-                </div>
-                <div className="text-[13px] font-semibold text-ink">Agregar marca</div>
-              </div>
-            </button>
+            <CreateBrandCard openCreate={openCreate} />
 
-            {state.brands.map((brand) => (
-              <BrandCard
-                key={brand.id}
-                brand={brand}
-                onOpen={() => onSelectBrand?.(brand.name)}
-                onEdit={() => openEdit(brand)}
-              />
-            ))}
+            {showSkeletons &&
+                skeletonSlots.map((index) => <BrandCardSkeleton key={index} />)
+            }
+
+            {!showSkeletons &&
+              state.brands.map((brand) => (
+                <BrandCard
+                  key={brand.id}
+                  brand={brand}
+                  onOpen={() => onSelectBrand?.(brand.name)}
+                  onEdit={() => openEdit(brand)}
+                />
+              ))}
+
+            {!showSkeletons &&
+              fillerSlots.map((slotIndex) => (
+                <div key={slotIndex} aria-hidden className="invisible">
+                  <BrandCardSkeleton />
+                </div>
+              ))}
           </div>
 
-          {state.brands.length === 0 && state.query !== '' && (
+          {!showSkeletons && state.brands.length === 0 && state.query !== '' && (
             <div className="mt-3 text-center text-[13px] text-muted">
               Sin resultados para “{state.query}”.
             </div>
@@ -113,25 +105,22 @@ export function BrandsPage({ onSelectBrand }: BrandsPageProps): JSX.Element {
               <span>
                 Página <b className="text-ink">{state.page}</b> de {state.lastPage} · {state.total} marcas
               </span>
-              <Pager page={state.page} total={state.lastPage} onChange={setPage} />
+              <Pager
+                  page={state.page}
+                  total={state.lastPage}
+                  onChange={setPage}
+              />
             </div>
           )}
         </>
       )}
 
       <NewBrandModal
-        key={state.createOpen ? 'create-open' : 'create-closed'}
-        open={state.createOpen}
-        onClose={closeCreate}
-        onSave={(name) => void handleCreate(name)}
-      />
-
-      <NewBrandModal
-        key={`edit-${state.editBrand?.id ?? 'closed'}`}
-        open={state.editBrand != null}
-        editName={state.editBrand?.name ?? null}
-        onClose={closeEdit}
-        onSave={(name) => void handleRename(name)}
+        key={modalKey}
+        open={modalOpen}
+        editName={editingBrand?.name ?? null}
+        onClose={closeModal}
+        onSave={(name) => void handleSave(name)}
       />
 
       {ToastHost}
