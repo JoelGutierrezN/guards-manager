@@ -17,7 +17,6 @@ export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
     state,
     showSkeletons,
     skeletonSlots,
-    fillerSlots,
     reload,
     setPage,
     setQuery,
@@ -68,30 +67,21 @@ export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
       )}
 
       {state.status !== 'error' && (
-        <>
-          <div className="reveal-d2 grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="lg:min-h-160 flex flex-col justify-between">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 h-full">
             <CreateBrandCard openCreate={openCreate} />
 
-            {showSkeletons &&
-                skeletonSlots.map((index) => <BrandCardSkeleton key={index} />)
+            {showSkeletons
+                ? skeletonSlots.map((index) => <BrandCardSkeleton key={index} />)
+                : state.brands.map((brand) => (
+                    <BrandCard
+                        key={brand.id}
+                        brand={brand}
+                        onOpen={() => onSelectBrand?.(brand.name)}
+                        onEdit={() => openEdit(brand)}
+                    />
+                ))
             }
-
-            {!showSkeletons &&
-              state.brands.map((brand) => (
-                <BrandCard
-                  key={brand.id}
-                  brand={brand}
-                  onOpen={() => onSelectBrand?.(brand.name)}
-                  onEdit={() => openEdit(brand)}
-                />
-              ))}
-
-            {!showSkeletons &&
-              fillerSlots.map((slotIndex) => (
-                <div key={slotIndex} aria-hidden className="invisible">
-                  <BrandCardSkeleton />
-                </div>
-              ))}
           </div>
 
           {!showSkeletons && state.brands.length === 0 && state.query !== '' && (
@@ -112,7 +102,7 @@ export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
               />
             </div>
           )}
-        </>
+        </div>
       )}
 
       <NewBrandModal

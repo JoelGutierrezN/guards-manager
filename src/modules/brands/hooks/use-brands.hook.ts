@@ -3,19 +3,25 @@ import { useOverlayState } from '@heroui/react'
 import type { Brand } from '../domain/brand.entity'
 import type { BrandsWindowManager } from '../application/brands-window.model'
 import { brandsReducer } from '../application/brands.reducer'
-import { INITIAL_BRANDS_STATE } from '../application/brands-state.model'
 import { brandRepository } from '../infraestructure/repositories/brand.repository'
+import { BrandsQueryParamsHelper } from '../infraestructure/helpers/brands-query-params.helper'
+import { useQueryParams } from '../../shared/hooks/use-query-params.hook'
 
 const SEARCH_DEBOUNCE_MS = 250
 const MIN_SKELETON_CARDS = 3
 
 export function useBrands() {
-  const [state, dispatch] = useReducer(brandsReducer, INITIAL_BRANDS_STATE)
+  const { params, setQueryParams } = useQueryParams()
+  const [state, dispatch] = useReducer(brandsReducer, params, BrandsQueryParamsHelper.initialStateFrom)
   const requestRef = useRef({ page: state.page, query: state.query })
 
   useEffect(() => {
     requestRef.current = { page: state.page, query: state.query }
   }, [state.page, state.query])
+
+  useEffect(() => {
+    setQueryParams(BrandsQueryParamsHelper.toParams({ page: state.page, query: state.query }))
+  }, [state.page, state.query, setQueryParams])
 
   const load = useCallback(async (page: number, query: string) => {
     dispatch({ type: 'LOAD_START' })
@@ -119,16 +125,11 @@ export function useBrands() {
         : [...Array(Math.max(state.brands.length, MIN_SKELETON_CARDS)).keys()],
     [state.status, hasPagination, state.perPage, state.brands.length],
   )
-  const fillerSlots = useMemo(
-    () => (hasPagination ? [...Array(Math.max(state.perPage - state.brands.length, 0)).keys()] : []),
-    [hasPagination, state.perPage, state.brands.length],
-  )
 
   return {
     state,
     showSkeletons,
     skeletonSlots,
-    fillerSlots,
     reload,
     setPage,
     setQuery,
