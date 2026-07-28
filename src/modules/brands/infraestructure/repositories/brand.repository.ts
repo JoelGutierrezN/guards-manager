@@ -3,7 +3,9 @@ import type { BrandRepository as BrandRepositoryContract } from '../../domain/br
 import type { Brand } from '../../domain/brand.entity'
 import type { BrandPage } from '../../domain/brand-page.model'
 import type { CreateBrandInput, UpdateBrandInput } from '../../domain/brand-input.model'
+import type { BrandSelectOption } from '../../domain/brand-select.model'
 import type { BrandCollectionDto } from '../dto/brand-collection.dto'
+import type { BrandSelectDto } from '../dto/brand-select.dto'
 import type { BrandDto } from '../dto/brand.dto'
 import { BrandMapper } from '../mappers/brand.mapper'
 
@@ -21,6 +23,11 @@ class BrandRepositoryImpl implements BrandRepositoryContract {
     }
     const response = await this.datasource.get<BrandCollectionDto>(`/brands?${params.toString()}`)
     return BrandMapper.toBrandPage(response)
+  }
+
+  async select(): Promise<BrandSelectOption[]> {
+    const response = await this.datasource.get<BrandSelectDto[]>('/brands/select')
+    return response.map((brand) => BrandMapper.toBrandSelectOption(brand))
   }
 
   async create(input: CreateBrandInput): Promise<Brand> {

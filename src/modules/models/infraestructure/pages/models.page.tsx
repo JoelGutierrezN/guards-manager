@@ -16,8 +16,10 @@ import {
   Tabs,
   useToasts,
 } from '../../../shared/infraestructure/components/ui'
+import { useModelBrandTabs } from '../../hooks/use-model-brand-tabs.hook'
+import { BrandTabPicker } from '../components/brand-tab-picker.component'
 import { NewModelModal } from '../components/new-model-modal.component'
-import { BRANDS_FILTER, MODELS, usagePct, type ToolModel } from '../data/models.data'
+import { MODELS, usagePct, type ToolModel } from '../data/models.data'
 
 const TH =
   'border-b border-hairline bg-[#fbf9fc] px-3 py-2.5 text-left text-[11px] font-semibold tracking-[0.08em] text-muted uppercase'
@@ -64,11 +66,10 @@ function ModelRow({ model, onEdit, onDelete }: ModelRowProps): JSX.Element {
   )
 }
 
-type BrandFilter = (typeof BRANDS_FILTER)[number]
-
 /** Catálogo de modelos: filtro por marca, tabla, alta/edición y borrado. */
 export function ModelsPage(): JSX.Element {
-  const [brand, setBrand] = useState<BrandFilter>('Todas')
+  const { tabItems, hiddenBrands, hasOverflow, selectedBrandId, selectedBrand, selectBrand } =
+    useModelBrandTabs()
   const [query, setQuery] = useState('')
   const [createOpen, setCreateOpen] = useState(false)
   const [editModel, setEditModel] = useState<ToolModel | null>(null)
@@ -80,10 +81,10 @@ export function ModelsPage(): JSX.Element {
     const q = query.trim().toLowerCase()
     return rows.filter(
       (m) =>
-        (brand === 'Todas' || m.brand === brand) &&
+        (selectedBrand == null || m.brand === selectedBrand.name) &&
         (q === '' || m.code.toLowerCase().includes(q)),
     )
-  }, [brand, query, rows])
+  }, [selectedBrand, query, rows])
 
   const brandCount = useMemo(() => new Set(rows.map((m) => m.brand)).size, [rows])
   const totalTools = useMemo(() => rows.reduce((a, b) => a + b.tools, 0), [rows])
@@ -114,19 +115,24 @@ export function ModelsPage(): JSX.Element {
         }
       />
 
-      <div className="reveal-d2 mb-3">
+      <div className="reveal-d2 mb-3 flex items-end border-b border-hairline">
         <Tabs
-          value={brand}
+          value={selectedBrandId}
           onChange={(value) => {
-            setBrand(value)
+            selectBrand(value)
             setPage(1)
           }}
-          items={BRANDS_FILTER.map((b) => ({
-            value: b,
-            label: b,
-            count: b === 'Todas' ? rows.length : rows.filter((m) => m.brand === b).length,
-          }))}
+          items={tabItems}
         />
+        {hasOverflow && (
+          <BrandTabPicker
+            brands={hiddenBrands}
+            onSelect={(brandId) => {
+              selectBrand(brandId)
+              setPage(1)
+            }}
+          />
+        )}
       </div>
 
       <div className="reveal-d3 overflow-hidden rounded-[20px] border border-hairline bg-white shadow-[0_1px_2px_rgba(14,15,60,0.04)]">
