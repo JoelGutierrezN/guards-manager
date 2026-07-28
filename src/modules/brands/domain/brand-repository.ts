@@ -6,6 +6,7 @@ import type { BrandSelectOption } from './brand-select.model'
 export interface BrandRepository {
   list(page: number, name?: string): Promise<BrandPage>
   select(): Promise<BrandSelectOption[]>
+  detail(id: string): Promise<Brand>
   create(input: CreateBrandInput): Promise<Brand>
   update(id: string, input: UpdateBrandInput): Promise<Brand>
 }

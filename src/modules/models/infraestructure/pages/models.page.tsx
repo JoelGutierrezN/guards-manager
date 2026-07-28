@@ -166,11 +166,6 @@ export function ModelsPage(): JSX.Element {
             <table className="w-full border-collapse text-[12px]">
               <thead>
                 <tr>
-                  <th className={`${MODELS_TABLE_TH} w-8`}>
-                    <span title="Selección múltiple en desarrollo">
-                      <Checkbox disabled />
-                    </span>
-                  </th>
                   <th className={MODELS_TABLE_TH}>Marca</th>
                   <th className={MODELS_TABLE_TH}>Nombre del modelo</th>
                   <th className={MODELS_TABLE_TH}>Existencias</th>
@@ -194,7 +189,7 @@ export function ModelsPage(): JSX.Element {
                   ))}
                 {isEmpty && (
                   <tr>
-                    <td colSpan={6} className="px-3 py-16 text-center text-[13px] text-muted">
+                    <td colSpan={5} className="px-3 py-16 text-center text-[13px] text-muted">
                       {emptyMessage}
                     </td>
                   </tr>

@@ -4,9 +4,6 @@ import { MODELS_TABLE_TD } from './models-table.model'
 export function ModelRowSkeleton(): JSX.Element {
   return (
     <tr>
-      <td className={`${MODELS_TABLE_TD} w-8`}>
-        <div className="h-4 w-4 animate-pulse rounded-[4px] bg-cream-2" />
-      </td>
       <td className={`${MODELS_TABLE_TD} w-[130px]`}>
         <div className="h-4 w-20 animate-pulse rounded bg-cream-2" />
       </td>

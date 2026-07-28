@@ -5,7 +5,7 @@ import {
   ThumbsDownIcon,
   ThumbsUpIcon,
 } from '@hugeicons/core-free-icons'
-import { Checkbox, IconButton } from '../../../shared/infraestructure/components/ui'
+import { IconButton } from '../../../shared/infraestructure/components/ui'
 import type { ProductModel } from '../../domain/product-model.entity'
 import { MODELS_TABLE_TD } from './models-table.model'
 
@@ -66,11 +66,6 @@ export function ModelRow({
 
   return (
     <tr className={rowClassName}>
-      <td className={`${MODELS_TABLE_TD} w-8`}>
-        <span title="Selección múltiple en desarrollo">
-          <Checkbox disabled />
-        </span>
-      </td>
       <td className={`${MODELS_TABLE_TD} w-32.5`}>
         <span className={`font-medium ${textClassName}`}>{brandName}</span>
       </td>

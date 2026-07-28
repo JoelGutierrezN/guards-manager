@@ -30,6 +30,11 @@ class BrandRepositoryImpl implements BrandRepositoryContract {
     return response.map((brand) => BrandMapper.toBrandSelectOption(brand))
   }
 
+  async detail(id: string): Promise<Brand> {
+    const response = await this.datasource.get<BrandDto>(`/brands/${id}`)
+    return BrandMapper.toBrand(response)
+  }
+
   async create(input: CreateBrandInput): Promise<Brand> {
     const response = await this.datasource.post<BrandDto>('/brands', input)
     return BrandMapper.toBrand(response)

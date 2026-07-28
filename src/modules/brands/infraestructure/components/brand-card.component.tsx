@@ -1,9 +1,9 @@
-import { type JSX, type KeyboardEvent, useMemo } from 'react'
+import { type JSX, type KeyboardEvent } from 'react'
 import { PencilEdit02Icon } from '@hugeicons/core-free-icons'
 import { IconButton } from '../../../shared/infraestructure/components/ui'
 import { BrandService } from '../../application/brand.service'
-import { BrandPresenter } from '../../application/brand-presenter.helper'
 import type { Brand } from '../../domain/brand.entity'
+import { BrandAvatar } from './brand-avatar.component'
 
 interface BrandCardProps {
   brand: Brand
@@ -13,10 +13,6 @@ interface BrandCardProps {
 
 export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Element {
   const usage = BrandService.usagePercent(brand.toolsAssigned, brand.toolsTotal)
-  const logo = useMemo(
-    () => ({ initial: BrandPresenter.initial(brand.name), color: BrandPresenter.color(brand.name) }),
-    [brand.name],
-  )
 
   const handleOpenKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -34,12 +30,7 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
       className="group/card cursor-pointer overflow-hidden rounded-[26px] border border-hairline bg-white p-4.5 text-left shadow-[0_1px_2px_rgba(14,15,60,0.04)] transition-[transform,box-shadow] duration-120 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_-6px_rgba(14,15,60,0.1),0_2px_6px_-1px_rgba(14,15,60,0.05)]"
     >
       <div className="flex items-start gap-3">
-        <div
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-3xl text-[18px] font-bold tracking-[0.04em] text-white"
-          style={{ background: logo.color, boxShadow: `0 4px 12px -3px ${logo.color}80` }}
-        >
-          {logo.initial}
-        </div>
+        <BrandAvatar name={brand.name} size="lg" />
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <div

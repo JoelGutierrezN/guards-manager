@@ -35,10 +35,10 @@ export function Checkbox({ checked, indeterminate, onChange, label, ...rest }: P
       />
       <span
         className={cn(
-          'inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[8px] border-[1.5px] bg-white transition-[background,border-color,box-shadow]',
+          'inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[8px] border-[1.5px] transition-[background,border-color,box-shadow]',
           checked || indeterminate
             ? 'border-brand bg-brand'
-            : 'border-hairline-strong hover:border-ink-3',
+            : 'border-hairline-strong bg-white hover:border-ink-3',
         )}
       >
         {checked && !indeterminate && (
