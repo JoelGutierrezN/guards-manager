@@ -55,6 +55,11 @@ export class HttpDataSource {
     return response.data
   }
 
+  async patch<T>(url: string, body?: object): Promise<T> {
+    const response = await this.client.patch<T>(url, body)
+    return response.data
+  }
+
   async delete<T>(url: string): Promise<T> {
     const response = await this.client.delete<T>(url)
     return response.data
