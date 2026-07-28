@@ -1,4 +1,4 @@
-import { type JSX, useMemo, useState } from 'react'
+import { type JSX, useMemo } from 'react'
 import { Download04Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
 import {
   Button,
@@ -9,6 +9,7 @@ import {
   Tabs,
   useToasts,
 } from '../../../shared/infraestructure/components/ui'
+import type { CreateProductModelInput } from '../../domain/product-model-input.model'
 import { useModelBrandTabs } from '../../hooks/use-model-brand-tabs.hook'
 import { useProductModels } from '../../hooks/use-product-models.hook'
 import { ALL_BRANDS_TAB } from '../../domain/brand-tabs.model'
@@ -25,12 +26,30 @@ import {
 const TABLE_MAX_HEIGHT_PX = 600
 
 export function ModelsPage(): JSX.Element {
-  const { tabItems, hiddenBrands, hasOverflow, selectedBrandId, selectBrand } = useModelBrandTabs()
+  const { brands, tabItems, hiddenBrands, hasOverflow, selectedBrandId, selectBrand, refresh } =
+    useModelBrandTabs()
   const brandId = selectedBrandId === ALL_BRANDS_TAB ? null : selectedBrandId
-  const { state, showSkeletons, skeletonSlots, reload, setPage, setQuery } =
-    useProductModels(brandId)
-  const [createOpen, setCreateOpen] = useState(false)
+  const {
+    state,
+    showSkeletons,
+    skeletonSlots,
+    reload,
+    setPage,
+    setQuery,
+    openCreate,
+    openEdit,
+    saveModel,
+    editingModel,
+    modalKey,
+    modalOpen,
+    closeModal,
+  } = useProductModels(brandId, refresh)
   const [addToast, ToastHost] = useToasts()
+
+  const handleSave = async (input: CreateProductModelInput): Promise<void> => {
+    const message = await saveModel(input)
+    if (message != null) addToast(message)
+  }
 
   const { modelsTotal, brandsTotal, stocksTotal } = state
   const isEmpty = !showSkeletons && state.status === 'ready' && state.models.length === 0
@@ -50,7 +69,7 @@ export function ModelsPage(): JSX.Element {
   )
 
   return (
-    <div className="mx-auto w-full max-w-[1480px]">
+    <div className="mx-auto w-full max-w-370">
       <PageHero
         eyebrow="Catálogos · modelos"
         title="Modelos de herramientas"
@@ -61,7 +80,7 @@ export function ModelsPage(): JSX.Element {
             <Button icon={Download04Icon} onClick={() => addToast('Exportando catálogo de modelos…')}>
               Exportar
             </Button>
-            <Button variant="primary" icon={PlusSignIcon} onClick={() => setCreateOpen(true)}>
+            <Button variant="primary" icon={PlusSignIcon} onClick={openCreate}>
               Nuevo modelo
             </Button>
           </>
@@ -87,7 +106,7 @@ export function ModelsPage(): JSX.Element {
           </span>
         </div>
 
-        <div className="max-h-[600px] overflow-y-auto" style={tableAreaStyle}>
+        <div className="max-h-150 overflow-y-auto" style={tableAreaStyle}>
           {state.status === 'error' ? (
             <div className="flex h-full min-h-[inherit] flex-col items-center justify-center gap-3">
               <span className="text-[13px] text-muted">{state.error}</span>
@@ -104,7 +123,7 @@ export function ModelsPage(): JSX.Element {
                   <th className={MODELS_TABLE_TH}>Código</th>
                   <th className={MODELS_TABLE_TH}>Herram.</th>
                   <th className={MODELS_TABLE_TH}>Uso</th>
-                  <th className={`${MODELS_TABLE_TH} w-[150px]`} />
+                  <th className={`${MODELS_TABLE_TH} w-37.5`} />
                 </tr>
               </thead>
               <tbody>
@@ -114,7 +133,7 @@ export function ModelsPage(): JSX.Element {
                     <ModelRow
                       key={model.id}
                       model={model}
-                      onEdit={() => undefined}
+                      onEdit={() => openEdit(model)}
                       onDelete={() => undefined}
                     />
                   ))}
@@ -142,14 +161,15 @@ export function ModelsPage(): JSX.Element {
       </div>
 
       <NewModelModal
-        key={createOpen ? 'create-open' : 'closed'}
-        open={createOpen}
-        editModel={null}
-        onClose={() => setCreateOpen(false)}
-        onSave={() => {
-          addToast('El alta de modelos se conecta en el siguiente paso')
-          setCreateOpen(false)
-        }}
+        key={modalKey}
+        open={modalOpen}
+        brands={brands}
+        initialBrandId={brandId}
+        editModel={editingModel}
+        saving={state.saving}
+        formError={state.formError}
+        onClose={closeModal}
+        onSave={(input) => void handleSave(input)}
       />
 
       {ToastHost}

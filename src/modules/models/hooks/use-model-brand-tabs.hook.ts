@@ -15,23 +15,26 @@ export function useModelBrandTabs() {
   const selectedBrandId = params.brand != null ? String(params.brand) : ALL_BRANDS_TAB
   const initialBrandIdRef = useRef(selectedBrandId)
 
+  const refresh = useCallback(
+    (): Promise<void> =>
+      brandRepository
+        .select()
+        .then((result) => {
+          setOptions(result)
+          setVisibleIds((currentIds) =>
+            currentIds.length > 0
+              ? currentIds
+              : BrandTabsHelper.initialVisibleIds(result, initialBrandIdRef.current),
+          )
+          setStatus('ready')
+        })
+        .catch(() => setStatus('error')),
+    [],
+  )
+
   useEffect(() => {
-    let active = true
-    brandRepository
-      .select()
-      .then((result) => {
-        if (!active) return
-        setOptions(result)
-        setVisibleIds(BrandTabsHelper.initialVisibleIds(result, initialBrandIdRef.current))
-        setStatus('ready')
-      })
-      .catch(() => {
-        if (active) setStatus('error')
-      })
-    return () => {
-      active = false
-    }
-  }, [])
+    void refresh()
+  }, [refresh])
 
   const selectBrand = useCallback(
     (brandId: string) => {
@@ -82,11 +85,13 @@ export function useModelBrandTabs() {
 
   return {
     status,
+    brands: options,
     tabItems,
     hiddenBrands,
     hasOverflow,
     selectedBrandId,
     selectedBrand,
     selectBrand,
+    refresh,
   }
 }

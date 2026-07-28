@@ -1,31 +1,42 @@
-import { type JSX, useState } from 'react'
+import { type JSX, useMemo, useState } from 'react'
 import { Cancel01Icon } from '@hugeicons/core-free-icons'
 import { Button, IconButton, Modal } from '../../../shared/infraestructure/components/ui'
-import { BRANDS_FILTER, type ToolModel } from '../data/models.data'
+import type { BrandSelectOption } from '../../../brands/domain/brand-select.model'
+import type { ProductModel } from '../../domain/product-model.entity'
+import type { CreateProductModelInput } from '../../domain/product-model-input.model'
 
-export interface ModelDraft {
-  brand: string
-  code: string
-}
-
-interface NewModelModalProps {
+interface Props {
   open: boolean
-  editModel?: ToolModel | null
+  brands: BrandSelectOption[]
+  initialBrandId: string | null
+  editModel: ProductModel | null
+  saving: boolean
+  formError: string | null
   onClose: () => void
-  onSave: (draft: ModelDraft) => void
+  onSave: (input: CreateProductModelInput) => void
 }
 
 export function NewModelModal({
   open,
-  editModel = null,
+  brands,
+  initialBrandId,
+  editModel,
+  saving,
+  formError,
   onClose,
   onSave,
-}: NewModelModalProps): JSX.Element {
+}: Props): JSX.Element {
   const isEdit = editModel != null
-  const [brand, setBrand] = useState(() => editModel?.brand ?? '')
-  const [code, setCode] = useState(() => editModel?.code ?? '')
+  const [brandId, setBrandId] = useState(() => editModel?.brandId ?? initialBrandId ?? '')
+  const [name, setName] = useState(() => editModel?.name ?? '')
 
-  const valid = brand !== '' && code.trim().length > 0
+  const valid = brandId !== '' && name.trim().length > 0
+
+  const selectClassName = useMemo(
+    () =>
+      `h-[42px] w-full rounded-[8px] border border-hairline-strong bg-white px-3 text-[14px] outline-none transition-[border-color,box-shadow] duration-[120ms] hover:border-ink-3 focus:border-brand focus:shadow-[0_0_0_3px_var(--color-brand-soft)] ${brandId !== '' ? 'text-ink' : 'text-muted-soft'}`,
+    [brandId],
+  )
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -50,14 +61,14 @@ export function NewModelModal({
               </span>
             </label>
             <select
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
-              className={`h-[42px] w-full rounded-[8px] border border-hairline-strong bg-white px-3 text-[14px] outline-none transition-[border-color,box-shadow] duration-[120ms] hover:border-ink-3 focus:border-brand focus:shadow-[0_0_0_3px_var(--color-brand-soft)] ${brand ? 'text-ink' : 'text-muted-soft'}`}
+              value={brandId}
+              onChange={(event) => setBrandId(event.target.value)}
+              className={selectClassName}
             >
               <option value="">Selecciona marca…</option>
-              {BRANDS_FILTER.slice(1).map((b) => (
-                <option key={b} value={b} className="text-ink">
-                  {b}
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id} className="text-ink">
+                  {brand.name}
                 </option>
               ))}
             </select>
@@ -74,10 +85,11 @@ export function NewModelModal({
               <input
                 className="h-full min-w-0 flex-1 border-none bg-transparent font-mono text-[14px] text-ink outline-none placeholder:text-muted-soft"
                 placeholder="DCD996"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
+                value={name}
+                onChange={(event) => setName(event.target.value)}
               />
             </div>
+            {formError != null && <span className="text-[12px] text-danger">{formError}</span>}
           </div>
         </div>
 
@@ -87,8 +99,8 @@ export function NewModelModal({
           </Button>
           <Button
             variant="primary"
-            disabled={!valid}
-            onClick={() => onSave({ brand, code: code.trim() })}
+            disabled={!valid || saving}
+            onClick={() => onSave({ name: name.trim(), brandId })}
           >
             {isEdit ? 'Guardar cambios' : 'Crear modelo'}
           </Button>
