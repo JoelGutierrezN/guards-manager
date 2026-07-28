@@ -29,7 +29,7 @@ export function PageHero({
   actions,
 }: PageHeroProps): JSX.Element {
   return (
-    <section className="reveal-d1 mb-4 gap-6 border-b border-hairline py-1 flex justify-between">
+    <section className="reveal-d1 mb-2 gap-6 border-b border-hairline py-1 flex justify-between">
       <div>
         {eyebrow && (
           <div className="mb-3 inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] text-brand uppercase">

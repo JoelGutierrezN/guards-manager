@@ -36,7 +36,7 @@ export type ModelsAction =
   | { type: 'ROW_REMOVED'; id: string }
   | { type: 'ROW_DONE' }
 
-const DEFAULT_PAGE_SIZE = 15
+const DEFAULT_PAGE_SIZE = 10
 
 export const INITIAL_MODELS_STATE: ModelsState = {
   models: [],

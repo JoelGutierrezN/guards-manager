@@ -27,7 +27,7 @@ import {
   MODELS_TABLE_TH,
 } from '../components/models-table.model'
 
-const TABLE_MAX_HEIGHT_PX = 600
+const TABLE_MAX_HEIGHT_PX = 450
 
 export function ModelsPage(): JSX.Element {
   const { brands, tabItems, hiddenBrands, hasOverflow, selectedBrandId, selectBrand, refresh } =
@@ -132,7 +132,7 @@ export function ModelsPage(): JSX.Element {
         {hasOverflow && <BrandTabPicker brands={hiddenBrands} onSelect={selectBrand} />}
       </div>
 
-      <div className="reveal-d3 overflow-hidden rounded-[20px] border border-hairline bg-white shadow-[0_1px_2px_rgba(14,15,60,0.04)]">
+      <div className="reveal-d3 overflow-hidden rounded-[20px] max-h-164 border border-hairline bg-white shadow-[0_1px_2px_rgba(14,15,60,0.04)]">
         <div className="flex items-center gap-2 border-b border-hairline px-3 py-3">
           <SearchInput
             value={state.query}
@@ -151,20 +151,17 @@ export function ModelsPage(): JSX.Element {
               En desarrollo
             </Chip>
           </div>
-          <span className="ml-auto text-[13px] text-muted">
-            Mostrando <b className="text-ink">{state.total}</b> modelos
-          </span>
         </div>
 
-        <div className="max-h-150 overflow-y-auto" style={tableAreaStyle}>
+        <div className="overflow-y-hidden overflow-x-hidden" style={tableAreaStyle}>
           {state.status === 'error' ? (
             <div className="flex h-full min-h-[inherit] flex-col items-center justify-center gap-3">
               <span className="text-[13px] text-muted">{state.error}</span>
               <Button onClick={reload}>Reintentar</Button>
             </div>
           ) : (
-            <table className="w-full border-collapse text-[12px]">
-              <thead>
+            <table className="w-full border-collapse text-[12px] relative">
+              <thead className="sticky w-full top-0">
                 <tr>
                   <th className={MODELS_TABLE_TH}>Marca</th>
                   <th className={MODELS_TABLE_TH}>Nombre del modelo</th>
@@ -199,7 +196,7 @@ export function ModelsPage(): JSX.Element {
           )}
         </div>
 
-        <div className="min-h-12 border-t border-hairline px-4 pb-3 text-[13px] text-muted">
+        <div className="h-fit border-t border-hairline px-4 pb-3 text-[13px] text-muted">
           <Pager
             page={state.page}
             lastPage={state.lastPage}

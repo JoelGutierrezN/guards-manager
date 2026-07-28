@@ -8,6 +8,7 @@ import {
 import { IconButton } from '../../../shared/infraestructure/components/ui'
 import type { ProductModel } from '../../domain/product-model.entity'
 import { MODELS_TABLE_TD } from './models-table.model'
+import {Chip} from "@heroui/react";
 
 interface Props {
   model: ProductModel
@@ -81,7 +82,11 @@ export function ModelRow({
           )}
         </div>
       </td>
-      <td className={`${MODELS_TABLE_TD} w-20 font-mono font-medium text-ink-2`}>{stocksTotal}</td>
+      {stocksTotal <= 0 ? (
+            <td className={`${MODELS_TABLE_TD} w-20 font-mono font-medium text-ink-2`}><Chip>Sin existencias</Chip></td>)
+        : (
+            <td className={`${MODELS_TABLE_TD} w-20 font-mono font-medium text-ink-2`}>{stocksTotal}</td>
+        )}
       <td className={`${MODELS_TABLE_TD} w-42.5`}>
         <div className="flex items-center gap-2">
           <span className="w-9 font-mono text-[11px] text-ink-2">

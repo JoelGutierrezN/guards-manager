@@ -9,7 +9,7 @@ export function AppLayout(): JSX.Element {
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col gap-2.5">
         <Topbar />
-        <main className="px-6 pt-5 pb-8">
+        <main className="px-4 pt-2 pb-4">
           <Outlet />
         </main>
       </div>
