@@ -1,11 +1,8 @@
+import type { Pagination } from '../../shared/domain/pagination.model'
 import type { Brand } from './brand.entity'
 
-export interface BrandPage {
+export interface BrandPage extends Pagination {
   brands: Brand[]
-  page: number
-  perPage: number
-  lastPage: number
-  total: number
   modelsTotal: number
   toolsTotal: number
 }

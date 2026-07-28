@@ -1,3 +1,4 @@
+import { PaginationMapper } from '../../../shared/infraestructure/mappers/pagination.mapper'
 import type { Brand } from '../../domain/brand.entity'
 import type { BrandPage } from '../../domain/brand-page.model'
 import type { BrandSelectOption } from '../../domain/brand-select.model'
@@ -25,14 +26,14 @@ export class BrandMapper {
   }
 
   static toBrandPage(dto: BrandCollectionDto): BrandPage {
+    const { data, meta } = dto
+    const { productModels, products } = meta
+
     return {
-      brands: dto.data.map((brand) => BrandMapper.toBrand(brand)),
-      page: dto.meta.current_page,
-      perPage: dto.meta.per_page,
-      lastPage: dto.meta.last_page,
-      total: dto.meta.total,
-      modelsTotal: dto.meta.productModels ?? 0,
-      toolsTotal: dto.meta.products ?? 0,
+      ...PaginationMapper.toPagination(meta),
+      brands: data.map((brand) => BrandMapper.toBrand(brand)),
+      modelsTotal: productModels ?? 0,
+      toolsTotal: products ?? 0,
     }
   }
 }

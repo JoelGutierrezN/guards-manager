@@ -1,11 +1,8 @@
+import type { Pagination } from '../../shared/domain/pagination.model'
 import type { ProductModel } from './product-model.entity'
 
-export interface ProductModelPage {
+export interface ProductModelPage extends Pagination {
   models: ProductModel[]
-  page: number
-  perPage: number
-  lastPage: number
-  total: number
   modelsTotal: number
   brandsTotal: number
   stocksTotal: number

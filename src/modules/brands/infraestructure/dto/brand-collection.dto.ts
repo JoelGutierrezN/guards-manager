@@ -1,10 +1,7 @@
+import type { PaginationMetaDto } from '../../../shared/infraestructure/dto/pagination-meta.dto'
 import type { BrandDto } from './brand.dto'
 
-export interface BrandCollectionMetaDto {
-  current_page: number
-  last_page: number
-  per_page: number
-  total: number
+export interface BrandCollectionMetaDto extends PaginationMetaDto {
   productModels?: number
   products?: number
 }
