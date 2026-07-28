@@ -7,4 +7,5 @@ export interface ProductModel {
   stocksAssigned: number
   usagePercentage: number
   active: boolean
+  discontinuationReason: string | null
 }

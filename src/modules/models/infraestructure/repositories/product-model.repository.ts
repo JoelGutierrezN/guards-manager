@@ -4,7 +4,7 @@ import type { ProductModel } from '../../domain/product-model.entity'
 import type { ProductModelPage } from '../../domain/product-model-page.model'
 import type { CreateProductModelInput, UpdateProductModelInput } from '../../domain/product-model-input.model'
 import type { ProductModelCollectionDto } from '../dto/product-model-collection.dto'
-import type { ProductModelItemDto } from '../dto/product-model-item.dto'
+import type { ProductModelDto } from '../dto/product-model.dto'
 import { ProductModelMapper } from '../mappers/product-model.mapper'
 
 class ProductModelRepositoryImpl implements ProductModelRepositoryContract {
@@ -23,31 +23,27 @@ class ProductModelRepositoryImpl implements ProductModelRepositoryContract {
 
   async create(input: CreateProductModelInput): Promise<ProductModel> {
     const { name, brandId } = input
-    const response = await this.datasource.post<ProductModelItemDto>('/product-models', {
+    const response = await this.datasource.post<ProductModelDto>('/product-models', {
       name,
       brand_id: brandId,
     })
-    const { data } = response
-    return ProductModelMapper.toProductModel(data)
+    return ProductModelMapper.toProductModel(response)
   }
 
   async update(id: string, input: UpdateProductModelInput): Promise<ProductModel> {
     const { name, brandId } = input
-    const response = await this.datasource.put<ProductModelItemDto>(`/product-models/${id}`, {
+    const response = await this.datasource.put<ProductModelDto>(`/product-models/${id}`, {
       name,
       brand_id: brandId,
     })
-    const { data } = response
-    return ProductModelMapper.toProductModel(data)
+    return ProductModelMapper.toProductModel(response)
   }
 
   async setActive(id: string, active: boolean): Promise<ProductModel> {
-    const response = await this.datasource.patch<ProductModelItemDto>(
-      `/product-models/${id}/status`,
-      { active },
+    const response = await this.datasource.patch<ProductModelDto>(
+      `/product-models/${id}/${active ? 'enable' : 'disable'}`,
     )
-    const { data } = response
-    return ProductModelMapper.toProductModel(data)
+    return ProductModelMapper.toProductModel(response)
   }
 
   async remove(id: string): Promise<void> {

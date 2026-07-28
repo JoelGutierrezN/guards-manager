@@ -32,6 +32,8 @@ export type ModelsAction =
   | { type: 'SAVE_ERROR'; message: string }
   | { type: 'SAVE_DONE' }
   | { type: 'ROW_START'; id: string }
+  | { type: 'ROW_UPDATED'; model: ProductModel }
+  | { type: 'ROW_REMOVED'; id: string }
   | { type: 'ROW_DONE' }
 
 const DEFAULT_PAGE_SIZE = 15

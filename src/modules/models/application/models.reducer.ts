@@ -39,6 +39,33 @@ export function modelsReducer(state: ModelsState, action: ModelsAction): ModelsS
       return { ...state, saving: false, formError: null }
     case 'ROW_START':
       return { ...state, pendingId: action.id }
+    case 'ROW_UPDATED': {
+      const { model } = action
+      return {
+        ...state,
+        models: state.models.map((row) =>
+          row.id === model.id
+            ? {
+                ...row,
+                name: model.name,
+                active: model.active,
+                discontinuationReason: model.discontinuationReason,
+              }
+            : row,
+        ),
+      }
+    }
+    case 'ROW_REMOVED': {
+      const models = state.models.filter((row) => row.id !== action.id)
+      const total = Math.max(0, state.total - 1)
+      return {
+        ...state,
+        models,
+        total,
+        modelsTotal: Math.max(0, state.modelsTotal - 1),
+        lastPage: Math.max(1, Math.ceil(total / state.perPage)),
+      }
+    }
     case 'ROW_DONE':
       return { ...state, pendingId: null }
     default:

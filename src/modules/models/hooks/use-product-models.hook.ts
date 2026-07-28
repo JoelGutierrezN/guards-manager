@@ -7,6 +7,7 @@ import { modelsReducer } from '../application/models.reducer'
 import { productModelRepository } from '../infraestructure/repositories/product-model.repository'
 import { ModelsQueryParamsHelper } from '../infraestructure/helpers/models-query-params.helper'
 import { ModelFormErrorHelper } from '../infraestructure/helpers/model-form-error.helper'
+import { DeactivateWarningStorage } from '../infraestructure/storage/deactivate-warning.storage'
 import { useQueryParams } from '../../shared/hooks/use-query-params.hook'
 
 const SEARCH_DEBOUNCE_MS = 250
@@ -30,8 +31,11 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
     setQueryParams(ModelsQueryParamsHelper.toParams({ page: state.page, query: state.query }))
   }, [state.page, state.query, setQueryParams])
 
-  const load = useCallback(async (request: { page: number; query: string; brandId: string | null }) => {
-    dispatch({ type: 'LOAD_START' })
+  const load = useCallback(async (
+    request: { page: number; query: string; brandId: string | null },
+    silent = false,
+  ) => {
+    if (!silent) dispatch({ type: 'LOAD_START' })
     try {
       const result = await productModelRepository.list(ModelsQueryParamsHelper.toApiParams(request))
       dispatch({ type: 'LOAD_SUCCESS', result })
@@ -100,8 +104,85 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
     [windowManager, modal, load, onMutated],
   )
 
+  const setModelActive = useCallback(
+    async (model: ProductModel, active: boolean): Promise<string> => {
+      dispatch({ type: 'ROW_START', id: model.id })
+      try {
+        const updated = await productModelRepository.setActive(model.id, active)
+        dispatch({ type: 'ROW_UPDATED', model: updated })
+        dispatch({ type: 'ROW_DONE' })
+        return active ? `Modelo "${model.name}" reactivado` : `Modelo "${model.name}" dado de baja`
+      } catch {
+        dispatch({ type: 'ROW_DONE' })
+        return active ? 'No se pudo reactivar el modelo.' : 'No se pudo dar de baja el modelo.'
+      }
+    },
+    [],
+  )
+
+  const deactivateModel = useCallback(
+    async (model: ProductModel): Promise<string | null> => {
+      if (!DeactivateWarningStorage.hasSeen()) {
+        setWindowManager({ window: 'deactivate', payload: model })
+        modal.open()
+        return null
+      }
+      return setModelActive(model, false)
+    },
+    [modal, setModelActive],
+  )
+
+  const confirmDeactivate = useCallback(async (): Promise<string | null> => {
+    const { window, payload } = windowManager
+    if (window !== 'deactivate' || payload == null) return null
+    DeactivateWarningStorage.markSeen()
+    modal.close()
+    return setModelActive(payload, false)
+  }, [windowManager, modal, setModelActive])
+
+  const reactivateModel = useCallback(
+    (model: ProductModel): Promise<string> => setModelActive(model, true),
+    [setModelActive],
+  )
+
+  const openDelete = useCallback(
+    (model: ProductModel) => {
+      setWindowManager({ window: 'delete', payload: model })
+      modal.open()
+    },
+    [modal],
+  )
+
+  const confirmDelete = useCallback(async (): Promise<string | null> => {
+    const { window, payload } = windowManager
+    if (window !== 'delete' || payload == null) return null
+    modal.close()
+    dispatch({ type: 'ROW_START', id: payload.id })
+    try {
+      await productModelRepository.remove(payload.id)
+      dispatch({ type: 'ROW_REMOVED', id: payload.id })
+      dispatch({ type: 'ROW_DONE' })
+      if (state.models.length === 1 && state.page > 1) {
+        dispatch({ type: 'SET_PAGE', page: state.page - 1 })
+      } else {
+        void load(requestRef.current, true)
+      }
+      onMutated?.()
+      return `Modelo "${payload.name}" eliminado`
+    } catch {
+      dispatch({ type: 'ROW_DONE' })
+      return 'No se pudo eliminar el modelo.'
+    }
+  }, [windowManager, modal, state.models.length, state.page, load, onMutated])
+
   const editingModel = windowManager.window === 'edit' ? windowManager.payload : null
+  const deactivatingModel = windowManager.window === 'deactivate' ? windowManager.payload : null
+  const deletingModel = windowManager.window === 'delete' ? windowManager.payload : null
   const modalKey = modal.isOpen ? `${windowManager.window}-${editingModel?.id ?? 'new'}` : 'closed'
+  const formModalOpen =
+    modal.isOpen && (windowManager.window === 'create' || windowManager.window === 'edit')
+  const deactivateModalOpen = modal.isOpen && windowManager.window === 'deactivate'
+  const deleteModalOpen = modal.isOpen && windowManager.window === 'delete'
 
   const showSkeletons = state.status === 'loading' || state.status === 'reloading'
   const skeletonSlots = useMemo(() => [...Array(state.perPage).keys()], [state.perPage])
@@ -116,9 +197,18 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
     openCreate,
     openEdit,
     saveModel,
+    deactivateModel,
+    confirmDeactivate,
+    reactivateModel,
+    openDelete,
+    confirmDelete,
     editingModel,
+    deactivatingModel,
+    deletingModel,
     modalKey,
-    modalOpen: modal.isOpen,
+    modalOpen: formModalOpen,
+    deactivateModalOpen,
+    deleteModalOpen,
     closeModal: modal.close,
   }
 }

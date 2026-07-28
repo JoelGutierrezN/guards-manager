@@ -1,8 +1,9 @@
-import { type JSX, useMemo } from 'react'
+import { type JSX, useMemo, useState } from 'react'
 import { Download04Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
 import {
   Button,
   Checkbox,
+  Chip,
   Pager,
   PageHero,
   SearchInput,
@@ -10,11 +11,14 @@ import {
   useToasts,
 } from '../../../shared/infraestructure/components/ui'
 import type { CreateProductModelInput } from '../../domain/product-model-input.model'
+import type { ProductModel } from '../../domain/product-model.entity'
 import { useModelBrandTabs } from '../../hooks/use-model-brand-tabs.hook'
 import { useProductModels } from '../../hooks/use-product-models.hook'
 import { ALL_BRANDS_TAB } from '../../domain/brand-tabs.model'
 import { BrandTabPicker } from '../components/brand-tab-picker.component'
 import { NewModelModal } from '../components/new-model-modal.component'
+import { DeactivateModelModal } from '../components/deactivate-model-modal.component'
+import { DeleteModelModal } from '../components/delete-model-modal.component'
 import { ModelRow } from '../components/model-row.component'
 import { ModelRowSkeleton } from '../components/model-row-skeleton.component'
 import {
@@ -39,15 +43,44 @@ export function ModelsPage(): JSX.Element {
     openCreate,
     openEdit,
     saveModel,
+    deactivateModel,
+    confirmDeactivate,
+    reactivateModel,
+    openDelete,
+    confirmDelete,
     editingModel,
+    deactivatingModel,
+    deletingModel,
     modalKey,
     modalOpen,
+    deactivateModalOpen,
+    deleteModalOpen,
     closeModal,
   } = useProductModels(brandId, refresh)
   const [addToast, ToastHost] = useToasts()
+  const [showInactiveFilter, setShowInactiveFilter] = useState(false)
 
   const handleSave = async (input: CreateProductModelInput): Promise<void> => {
     const message = await saveModel(input)
+    if (message != null) addToast(message)
+  }
+
+  const handleDeactivate = async (model: ProductModel): Promise<void> => {
+    const message = await deactivateModel(model)
+    if (message != null) addToast(message)
+  }
+
+  const handleConfirmDeactivate = async (): Promise<void> => {
+    const message = await confirmDeactivate()
+    if (message != null) addToast(message)
+  }
+
+  const handleReactivate = async (model: ProductModel): Promise<void> => {
+    addToast(await reactivateModel(model))
+  }
+
+  const handleConfirmDelete = async (): Promise<void> => {
+    const message = await confirmDelete()
     if (message != null) addToast(message)
   }
 
@@ -77,9 +110,16 @@ export function ModelsPage(): JSX.Element {
         lede={`${modelsTotal} modelos en ${brandsTotal} marcas · ${stocksTotal} herramientas activas.`}
         actions={
           <>
-            <Button icon={Download04Icon} onClick={() => addToast('Exportando catálogo de modelos…')}>
-              Exportar
-            </Button>
+            <span className="relative inline-flex">
+              <Button icon={Download04Icon} disabled>
+                Exportar
+              </Button>
+              <span className="absolute -top-2 -right-2">
+                <Chip tone="navy" size="sm">
+                  En desarrollo
+                </Chip>
+              </span>
+            </span>
             <Button variant="primary" icon={PlusSignIcon} onClick={openCreate}>
               Nuevo modelo
             </Button>
@@ -97,10 +137,20 @@ export function ModelsPage(): JSX.Element {
           <SearchInput
             value={state.query}
             onChange={setQuery}
-            placeholder="Buscar por código…"
+            placeholder="Buscar por nombre de modelo…"
             ariaLabel="Buscar modelo"
             className="h-8 max-w-[320px] flex-1"
           />
+          <div className="flex items-center gap-1.5">
+            <Checkbox
+              label="Ver dados de baja"
+              checked={showInactiveFilter}
+              onChange={(event) => setShowInactiveFilter(event.target.checked)}
+            />
+            <Chip tone="navy" size="sm">
+              En desarrollo
+            </Chip>
+          </div>
           <span className="ml-auto text-[13px] text-muted">
             Mostrando <b className="text-ink">{state.total}</b> modelos
           </span>
@@ -117,11 +167,13 @@ export function ModelsPage(): JSX.Element {
               <thead>
                 <tr>
                   <th className={`${MODELS_TABLE_TH} w-8`}>
-                    <Checkbox />
+                    <span title="Selección múltiple en desarrollo">
+                      <Checkbox disabled />
+                    </span>
                   </th>
                   <th className={MODELS_TABLE_TH}>Marca</th>
-                  <th className={MODELS_TABLE_TH}>Código</th>
-                  <th className={MODELS_TABLE_TH}>Herram.</th>
+                  <th className={MODELS_TABLE_TH}>Nombre del modelo</th>
+                  <th className={MODELS_TABLE_TH}>Existencias</th>
                   <th className={MODELS_TABLE_TH}>Uso</th>
                   <th className={`${MODELS_TABLE_TH} w-37.5`} />
                 </tr>
@@ -133,8 +185,11 @@ export function ModelsPage(): JSX.Element {
                     <ModelRow
                       key={model.id}
                       model={model}
+                      pending={state.pendingId === model.id}
                       onEdit={() => openEdit(model)}
-                      onDelete={() => undefined}
+                      onDeactivate={() => void handleDeactivate(model)}
+                      onReactivate={() => void handleReactivate(model)}
+                      onDelete={() => openDelete(model)}
                     />
                   ))}
                 {isEmpty && (
@@ -170,6 +225,20 @@ export function ModelsPage(): JSX.Element {
         formError={state.formError}
         onClose={closeModal}
         onSave={(input) => void handleSave(input)}
+      />
+
+      <DeactivateModelModal
+        open={deactivateModalOpen}
+        model={deactivatingModel}
+        onClose={closeModal}
+        onConfirm={() => void handleConfirmDeactivate()}
+      />
+
+      <DeleteModelModal
+        open={deleteModalOpen}
+        model={deletingModel}
+        onClose={closeModal}
+        onConfirm={() => void handleConfirmDelete()}
       />
 
       {ToastHost}

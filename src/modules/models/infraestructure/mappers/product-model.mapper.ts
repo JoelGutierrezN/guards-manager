@@ -6,7 +6,7 @@ import type { ProductModelCollectionDto } from '../dto/product-model-collection.
 
 export class ProductModelMapper {
   static toProductModel(dto: ProductModelDto): ProductModel {
-    const { id, name, brand, stocksTotal, stocksAssigned, usagePercentage, active } = dto
+    const { id, name, brand, stocksTotal, stocksAssigned, usagePercentage, status, discontinuationReason } = dto
 
     return {
       id,
@@ -16,7 +16,8 @@ export class ProductModelMapper {
       stocksTotal: stocksTotal ?? 0,
       stocksAssigned: stocksAssigned ?? 0,
       usagePercentage: usagePercentage ?? 0,
-      active: active ?? true,
+      active: (status ?? 'activo') !== 'baja',
+      discontinuationReason: discontinuationReason ?? null,
     }
   }
 
