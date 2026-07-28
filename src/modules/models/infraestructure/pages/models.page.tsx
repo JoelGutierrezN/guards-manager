@@ -1,8 +1,7 @@
-import { type JSX, useMemo, useState } from 'react'
+import { type JSX, useMemo } from 'react'
 import { Download04Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
 import {
   Button,
-  Checkbox,
   Chip,
   Pager,
   PageHero,
@@ -20,6 +19,7 @@ import { NewModelModal } from '../components/new-model-modal.component'
 import { DeactivateModelModal } from '../components/deactivate-model-modal.component'
 import { DeleteModelModal } from '../components/delete-model-modal.component'
 import { ModelRow } from '../components/model-row.component'
+import { ModelsFiltersMenu } from '../components/models-filters-menu.component'
 import { ModelRowSkeleton } from '../components/model-row-skeleton.component'
 import {
   MODELS_TABLE_HEADER_HEIGHT_PX,
@@ -40,6 +40,7 @@ export function ModelsPage(): JSX.Element {
     reload,
     setPage,
     setQuery,
+    setFilters,
     openCreate,
     openEdit,
     saveModel,
@@ -58,7 +59,6 @@ export function ModelsPage(): JSX.Element {
     closeModal,
   } = useProductModels(brandId, refresh)
   const [addToast, ToastHost] = useToasts()
-  const [showInactiveFilter, setShowInactiveFilter] = useState(false)
 
   const handleSave = async (input: CreateProductModelInput): Promise<void> => {
     const message = await saveModel(input)
@@ -86,10 +86,14 @@ export function ModelsPage(): JSX.Element {
 
   const { modelsTotal, brandsTotal, stocksTotal } = state
   const isEmpty = !showSkeletons && state.status === 'ready' && state.models.length === 0
+  const hasActiveFilters =
+    state.filters.state !== 'todos' || state.filters.withExistences || state.filters.assigned
   const emptyMessage =
     state.query !== ''
       ? `Sin resultados para «${state.query}».`
-      : 'Aún no hay modelos registrados.'
+      : hasActiveFilters
+        ? 'Sin resultados para los filtros seleccionados.'
+        : 'Aún no hay modelos registrados.'
 
   const tableAreaStyle = useMemo(
     () => ({
@@ -133,7 +137,8 @@ export function ModelsPage(): JSX.Element {
       </div>
 
       <div className="reveal-d3 overflow-hidden rounded-[20px] max-h-164 border border-hairline bg-white shadow-[0_1px_2px_rgba(14,15,60,0.04)]">
-        <div className="flex items-center gap-2 border-b border-hairline px-3 py-3">
+        <div className="flex items-center justify-between gap-2 border-b border-hairline px-3 py-3">
+          <ModelsFiltersMenu filters={state.filters} onChange={setFilters} />
           <SearchInput
             value={state.query}
             onChange={setQuery}
@@ -141,16 +146,6 @@ export function ModelsPage(): JSX.Element {
             ariaLabel="Buscar modelo"
             className="h-8 max-w-[320px] flex-1"
           />
-          <div className="flex items-center gap-1.5">
-            <Checkbox
-              label="Ver dados de baja"
-              checked={showInactiveFilter}
-              onChange={(event) => setShowInactiveFilter(event.target.checked)}
-            />
-            <Chip tone="navy" size="sm">
-              En desarrollo
-            </Chip>
-          </div>
         </div>
 
         <div className="overflow-y-hidden overflow-x-hidden" style={tableAreaStyle}>
@@ -166,7 +161,7 @@ export function ModelsPage(): JSX.Element {
                   <th className={MODELS_TABLE_TH}>Marca</th>
                   <th className={MODELS_TABLE_TH}>Nombre del modelo</th>
                   <th className={MODELS_TABLE_TH}>Existencias</th>
-                  <th className={MODELS_TABLE_TH}>Uso</th>
+                  <th className={MODELS_TABLE_TH}>Capacidad de uso</th>
                   <th className={`${MODELS_TABLE_TH} w-37.5`} />
                 </tr>
               </thead>

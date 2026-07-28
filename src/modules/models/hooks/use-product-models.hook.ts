@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { useOverlayState } from '@heroui/react'
 import type { ProductModel } from '../domain/product-model.entity'
+import type { ModelsFilters } from '../domain/models-filters.model'
 import type { CreateProductModelInput } from '../domain/product-model-input.model'
 import type { ModelsWindowManager } from '../application/models-window.model'
 import { modelsReducer } from '../application/models.reducer'
@@ -15,11 +16,21 @@ const SEARCH_DEBOUNCE_MS = 250
 export function useProductModels(brandId: string | null, onMutated?: () => void) {
   const { params, setQueryParams } = useQueryParams()
   const [state, dispatch] = useReducer(modelsReducer, params, ModelsQueryParamsHelper.initialStateFrom)
-  const requestRef = useRef({ page: state.page, query: state.query, brandId: state.brandId })
+  const requestRef = useRef({
+    page: state.page,
+    query: state.query,
+    brandId: state.brandId,
+    filters: state.filters,
+  })
 
   useEffect(() => {
-    requestRef.current = { page: state.page, query: state.query, brandId: state.brandId }
-  }, [state.page, state.query, state.brandId])
+    requestRef.current = {
+      page: state.page,
+      query: state.query,
+      brandId: state.brandId,
+      filters: state.filters,
+    }
+  }, [state.page, state.query, state.brandId, state.filters])
 
   useEffect(() => {
     if (brandId !== state.brandId) {
@@ -28,11 +39,17 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
   }, [brandId, state.brandId])
 
   useEffect(() => {
-    setQueryParams(ModelsQueryParamsHelper.toParams({ page: state.page, query: state.query }))
-  }, [state.page, state.query, setQueryParams])
+    setQueryParams(
+      ModelsQueryParamsHelper.toParams({
+        page: state.page,
+        query: state.query,
+        filters: state.filters,
+      }),
+    )
+  }, [state.page, state.query, state.filters, setQueryParams])
 
   const load = useCallback(async (
-    request: { page: number; query: string; brandId: string | null },
+    request: { page: number; query: string; brandId: string | null; filters: ModelsFilters },
     silent = false,
   ) => {
     if (!silent) dispatch({ type: 'LOAD_START' })
@@ -46,10 +63,15 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
 
   useEffect(() => {
     const handle = setTimeout(() => {
-      void load({ page: state.page, query: state.query, brandId: state.brandId })
+      void load({
+        page: state.page,
+        query: state.query,
+        brandId: state.brandId,
+        filters: state.filters,
+      })
     }, SEARCH_DEBOUNCE_MS)
     return () => clearTimeout(handle)
-  }, [state.page, state.query, state.brandId, load])
+  }, [state.page, state.query, state.brandId, state.filters, load])
 
   const reload = useCallback(() => {
     void load(requestRef.current)
@@ -57,6 +79,10 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
 
   const setPage = useCallback((page: number) => dispatch({ type: 'SET_PAGE', page }), [])
   const setQuery = useCallback((query: string) => dispatch({ type: 'SET_QUERY', query }), [])
+  const setFilters = useCallback(
+    (filters: Partial<ModelsFilters>) => dispatch({ type: 'SET_FILTERS', filters }),
+    [],
+  )
 
   const modal = useOverlayState()
   const [windowManager, setWindowManager] = useState<ModelsWindowManager>({
@@ -194,6 +220,7 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
     reload,
     setPage,
     setQuery,
+    setFilters,
     openCreate,
     openEdit,
     saveModel,

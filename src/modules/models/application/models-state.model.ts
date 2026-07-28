@@ -1,5 +1,7 @@
 import type { ProductModel } from '../domain/product-model.entity'
 import type { ProductModelPage } from '../domain/product-model-page.model'
+import type { ModelsFilters } from '../domain/models-filters.model'
+import { INITIAL_MODELS_FILTERS } from '../domain/models-filters.model'
 
 export type ModelsStatus = 'loading' | 'reloading' | 'ready' | 'error'
 
@@ -19,6 +21,7 @@ export interface ModelsState {
   stocksTotal: number
   query: string
   brandId: string | null
+  filters: ModelsFilters
 }
 
 export type ModelsAction =
@@ -28,6 +31,7 @@ export type ModelsAction =
   | { type: 'SET_PAGE'; page: number }
   | { type: 'SET_QUERY'; query: string }
   | { type: 'SET_BRAND'; brandId: string | null }
+  | { type: 'SET_FILTERS'; filters: Partial<ModelsFilters> }
   | { type: 'SAVE_START' }
   | { type: 'SAVE_ERROR'; message: string }
   | { type: 'SAVE_DONE' }
@@ -54,4 +58,5 @@ export const INITIAL_MODELS_STATE: ModelsState = {
   stocksTotal: 0,
   query: '',
   brandId: null,
+  filters: INITIAL_MODELS_FILTERS,
 }

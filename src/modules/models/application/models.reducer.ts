@@ -31,6 +31,8 @@ export function modelsReducer(state: ModelsState, action: ModelsAction): ModelsS
       return { ...state, query: action.query, page: 1 }
     case 'SET_BRAND':
       return { ...state, brandId: action.brandId, page: 1 }
+    case 'SET_FILTERS':
+      return { ...state, filters: { ...state.filters, ...action.filters }, page: 1 }
     case 'SAVE_START':
       return { ...state, saving: true, formError: null }
     case 'SAVE_ERROR':
