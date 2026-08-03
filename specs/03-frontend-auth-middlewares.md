@@ -97,7 +97,7 @@ cuando SPEC 04 se ejecute, esa base ya existirá.
 ```ts
 // src/modules/auth/infraestructure/dto/login.request.dto.ts
 export interface LoginRequestDto {
-  identifier: string   // email, teléfono o username
+  identifier: string // email, teléfono o username
   password: string
 }
 
@@ -178,19 +178,19 @@ Valor expuesto por el context: `{ user, isAuthenticated, status, error, login, l
 
 ### Persistencia (localStorage, vía StorageService)
 
-| Clave | Contenido | Cuándo se escribe / borra |
-|-------|-----------|---------------------------|
+| Clave          | Contenido                | Cuándo se escribe / borra      |
+| -------------- | ------------------------ | ------------------------------ |
 | `access_token` | `string` (token Sanctum) | set en login, remove en logout |
-| `auth_user` | `User.toPrimitives()` | set en login, remove en logout |
+| `auth_user`    | `User.toPrimitives()`    | set en login, remove en logout |
 
 Una clase con SRP encapsula las dos claves:
 
 ```ts
 // src/modules/auth/infraestructure/storage/auth-session.storage.ts
 export class AuthSessionStorage {
-  static save(session: AuthSession): void   // set access_token + auth_user
-  static read(): AuthSession | null         // rehidrata al cargar la app
-  static clear(): void                      // remove ambas claves
+  static save(session: AuthSession): void // set access_token + auth_user
+  static read(): AuthSession | null // rehidrata al cargar la app
+  static clear(): void // remove ambas claves
 }
 ```
 
@@ -199,7 +199,7 @@ export class AuthSessionStorage {
 ```ts
 // payload de location.state al redirigir a login
 interface FromLocationState {
-  from?: { pathname: string }   // ruta protegida que se intentó abrir
+  from?: { pathname: string } // ruta protegida que se intentó abrir
 }
 ```
 
@@ -221,7 +221,7 @@ interface FromLocationState {
 
 ### Rutas relativas (base `VITE_API_URL` = `http://localhost:8000/api/v1`)
 
-- `POST /login`  → body `{ identifier, password }` → `{ user, token }`
+- `POST /login` → body `{ identifier, password }` → `{ user, token }`
 - `POST /logout` → sin body → `{ message }` (se ignora)
 
 Notas:
@@ -290,7 +290,7 @@ Notas:
     `{ element: <AuthProvider><Outlet/></AuthProvider>, children: [...] }`; rama
     `{ element: <GuestMiddleware/>, children: [{ path: '/', element: <AuthPage/> }] }`;
     rama `{ element: <AuthMiddleware/>, children: [{ Component: AppLayout, children:
-    [dashboard, tools, *] }] }`. Verificación: navegar a `/dashboard` sin token redirige
+[dashboard, tools, *] }] }`. Verificación: navegar a `/dashboard` sin token redirige
     a `/`.
 
 13. **Formulario.** Conectar `auth-form.component.tsx`: campo único `identifier`,
@@ -397,14 +397,14 @@ Notas:
 
 ## 7 — Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| `AuthProvider` usa `useNavigate`/`useLocation`, que solo funcionan dentro de `RouterProvider`. Montarlo en `main.tsx` (fuera del router) rompería en runtime. | Montar `AuthProvider` como elemento del **layout raíz** dentro de `app.router.tsx`, no en `main.tsx`. Los middlewares y el form quedan bajo el router. |
-| `StorageService` guarda con `JSON.stringify`. Si se rehidrata un valor escrito a mano "en crudo" (sin comillas) en localStorage, `JSON.parse` falla y tira `AppError`. | `AuthSessionStorage.read()` envuelve la lectura: ante parseo inválido limpia la sesión y devuelve `null` (estado no autenticado) en vez de romper el arranque. |
-| Pérdida de `location.state.from` en un reload completo dentro del login: el usuario fue rebotado, recarga `/` y `state` se vacía. | Es aceptable: sin `from`, el destino tras login cae al fallback `/dashboard`. No se rompe nada, solo no retoma la ruta original en ese caso límite. |
-| `handleApiError` lanza strings (`'UnauthorizedError'`) para 401 y `ApiError` para 422; mezclar tipos complica leer el mensaje. | El `login` del repo solo necesita el mensaje del 422 (`ApiError.message`); el provider captura y guarda `error.message ?? 'Error de autenticación'` en `state.error`. El 401 en login no aplica (login es ruta guest). |
-| API local apagada o CORS en dev: el login no responde. | El form muestra el estado de error con el mensaje del catch; la pantalla no se rompe, el usuario puede reintentar. |
-| `POST /logout` con token ya expirado responde 401. | El logout es best-effort dentro de try/catch; el 401 se ignora y la sesión local se limpia igual. |
+| Riesgo                                                                                                                                                                 | Mitigación                                                                                                                                                                                                             |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AuthProvider` usa `useNavigate`/`useLocation`, que solo funcionan dentro de `RouterProvider`. Montarlo en `main.tsx` (fuera del router) rompería en runtime.          | Montar `AuthProvider` como elemento del **layout raíz** dentro de `app.router.tsx`, no en `main.tsx`. Los middlewares y el form quedan bajo el router.                                                                 |
+| `StorageService` guarda con `JSON.stringify`. Si se rehidrata un valor escrito a mano "en crudo" (sin comillas) en localStorage, `JSON.parse` falla y tira `AppError`. | `AuthSessionStorage.read()` envuelve la lectura: ante parseo inválido limpia la sesión y devuelve `null` (estado no autenticado) en vez de romper el arranque.                                                         |
+| Pérdida de `location.state.from` en un reload completo dentro del login: el usuario fue rebotado, recarga `/` y `state` se vacía.                                      | Es aceptable: sin `from`, el destino tras login cae al fallback `/dashboard`. No se rompe nada, solo no retoma la ruta original en ese caso límite.                                                                    |
+| `handleApiError` lanza strings (`'UnauthorizedError'`) para 401 y `ApiError` para 422; mezclar tipos complica leer el mensaje.                                         | El `login` del repo solo necesita el mensaje del 422 (`ApiError.message`); el provider captura y guarda `error.message ?? 'Error de autenticación'` en `state.error`. El 401 en login no aplica (login es ruta guest). |
+| API local apagada o CORS en dev: el login no responde.                                                                                                                 | El form muestra el estado de error con el mensaje del catch; la pantalla no se rompe, el usuario puede reintentar.                                                                                                     |
+| `POST /logout` con token ya expirado responde 401.                                                                                                                     | El logout es best-effort dentro de try/catch; el 401 se ignora y la sesión local se limpia igual.                                                                                                                      |
 
 ---
 

@@ -82,18 +82,18 @@ export interface InventoryRepository {
 
 // src/modules/tools/domain/catalog-option.model.ts  (se AÑADE id; se mantiene brand/name)
 export interface CatalogModelNode {
-  id: string        // NUEVO — uuid del modelo (para el spec de acciones)
+  id: string // NUEVO — uuid del modelo (para el spec de acciones)
   name: string
-  count: number     // mapea de productModels[].totalProducts
+  count: number // mapea de productModels[].totalProducts
 }
 export interface CatalogBrandNode {
-  id: string        // NUEVO — uuid de la marca
-  brand: string     // mapea de data[].name
-  count: number     // mapea de data[].totalProducts
+  id: string // NUEVO — uuid de la marca
+  brand: string // mapea de data[].name
+  count: number // mapea de data[].totalProducts
   models: CatalogModelNode[]
 }
 export interface CatalogTree {
-  maxStock: number  // meta.maxStock — tope del slider
+  maxStock: number // meta.maxStock — tope del slider
   brands: CatalogBrandNode[]
 }
 ```
@@ -121,12 +121,12 @@ export interface CatalogTreeDto {
 
 ### Mapeo de pestañas (en `tools.page.tsx`)
 
-| Pestaña                 | Clave       | Campo de /products/stats |
-|-------------------------|-------------|--------------------------|
-| Todas                   | `all`       | `total`                  |
-| Disponibles             | `available` | `available`              |
-| Asignadas               | `assigned`  | `assigned`               |
-| Stock bajo / agotadas   | `low`       | `criticalStock`          |
+| Pestaña               | Clave       | Campo de /products/stats |
+| --------------------- | ----------- | ------------------------ |
+| Todas                 | `all`       | `total`                  |
+| Disponibles           | `available` | `available`              |
+| Asignadas             | `assigned`  | `assigned`               |
+| Stock bajo / agotadas | `low`       | `criticalStock`          |
 
 ### Estado del hook de carga
 
@@ -257,11 +257,11 @@ type OverviewStatus = 'loading' | 'ready' | 'error'
 
 ## 7 — Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| Sin sesión no hay `access_token`: toda llamada daría `401`. | SPEC 03 (dependencia) conecta el login y escribe `access_token`; el interceptor lo adjunta. Para probar, inicia sesión normalmente. |
-| CORS / API local apagada en dev. | Estados de carga/error con "Reintentar"; la pantalla no se rompe, solo no muestra datos. |
-| Discrepancia de ruta en la doc (`/v1/products/stats` vs cURL). | Se fija la ruta relativa correcta (`/products/stats`) tomando el cURL como autoritativo; anotado en el modelo de datos. |
+| Riesgo                                                         | Mitigación                                                                                                                          |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Sin sesión no hay `access_token`: toda llamada daría `401`.    | SPEC 03 (dependencia) conecta el login y escribe `access_token`; el interceptor lo adjunta. Para probar, inicia sesión normalmente. |
+| CORS / API local apagada en dev.                               | Estados de carga/error con "Reintentar"; la pantalla no se rompe, solo no muestra datos.                                            |
+| Discrepancia de ruta en la doc (`/v1/products/stats` vs cURL). | Se fija la ruta relativa correcta (`/products/stats`) tomando el cURL como autoritativo; anotado en el modelo de datos.             |
 
 ---
 

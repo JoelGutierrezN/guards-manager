@@ -1,7 +1,7 @@
 export type ToolStatus = 'ok' | 'warn' | 'low'
 
 export interface Tool {
-  id: number
+  id: string
   name: string
   brand: string
   model: string

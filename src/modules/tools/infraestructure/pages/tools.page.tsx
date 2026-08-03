@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router'
 import { ArrowDown01Icon, Download01Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
 import { PageHero, Tabs, Button, useToasts } from '../../../shared/infraestructure/components/ui'
 import type { TabItem } from '../../../shared/infraestructure/components/ui'
-import { useToolsInventory } from '../../hooks/use-tools-inventory.hook'
-import { useInventoryOverview } from '../../hooks/use-inventory-overview.hook'
+import { useTools } from '../../hooks/use-tools.hook'
+import { useToolsOverview } from '../../hooks/use-tools-overview.hook'
 import { ToolFiltersPanel } from '../components/tool-filters.component'
 import { ToolTable } from '../components/tool-table.component'
 import { NewToolModal } from '../components/new-tool-modal.component'
@@ -15,13 +15,12 @@ import { ToolProgressOverlay } from '../components/tool-progress-overlay.compone
 import type { Tool } from '../../domain/tool.entity'
 import type { ToolsTabKey } from '../../domain/tools-tab.model'
 import { DEFAULT_STOCK_RANGE } from '../../application/tools-state.model'
-import { MOCK_TOOLS_STATS } from '../mocks/tools-stats.mock'
 import '../../tools.css'
 
 export function ToolsPage(): JSX.Element {
   const navigate = useNavigate()
   const [addToast, toastHost] = useToasts()
-  const { stats, catalog, status: overviewStatus, reload } = useInventoryOverview()
+  const { stats, catalog, status: overviewStatus, reload } = useToolsOverview()
 
   const tabItems = useMemo<TabItem<ToolsTabKey>[]>(
     () => [
@@ -40,6 +39,7 @@ export function ToolsPage(): JSX.Element {
 
   const {
     state,
+    reloadList,
     toggleBrand,
     toggleModel,
     setStockRange,
@@ -59,7 +59,7 @@ export function ToolsPage(): JSX.Element {
     closeDelete,
     confirmDelete,
     progress,
-  } = useToolsInventory()
+  } = useTools()
 
   const [minStock, maxStock] = state.filters.stockRange
   const rangeActive = minStock > DEFAULT_STOCK_RANGE[0] || maxStock < DEFAULT_STOCK_RANGE[1]
@@ -67,14 +67,12 @@ export function ToolsPage(): JSX.Element {
     state.filters.brands.length + state.filters.models.length + (rangeActive ? 1 : 0)
 
   const handleNewToolSave = (tool: { name: string; brand: string; model: string }) => {
-    // TODO API: POST /api/tools (crear herramienta en el catálogo) y refrescar listado/stats.
     addToast(`Herramienta "${tool.name}" creada en el catálogo`)
     closeNewTool()
   }
 
   const handleConfirmIngreso = (quantity: number) => {
     if (state.ingresoTool) {
-      // TODO API: POST /api/tools/{id}/stock-in (registrar ingreso) antes de actualizar el inventario.
       confirmIngreso(state.ingresoTool, quantity)
     }
   }
@@ -89,7 +87,6 @@ export function ToolsPage(): JSX.Element {
   }
 
   const handleConfirmDelete = (tool: Tool) => {
-    // TODO API: DELETE /api/tools/{id} (eliminar del catálogo) antes de actualizar el listado.
     confirmDelete(tool)
     addToast(`Herramienta "${tool.name}" eliminada del catálogo`)
   }
@@ -111,7 +108,6 @@ export function ToolsPage(): JSX.Element {
           <Button icon={ArrowDown01Icon} size="md" onClick={() => navigate('/stockIn')}>
             Ingresar inventario
           </Button>
-          {/* TODO API: GET /api/tools/export (descarga del catálogo en CSV/Excel). */}
           <Button icon={Download01Icon} size="md">
             Exportar
           </Button>
@@ -123,7 +119,7 @@ export function ToolsPage(): JSX.Element {
 
       <div className="reveal d3 flex items-stretch gap-4 max-[1000px]:flex-col">
         {state.showFilters && (
-          <div className="flex w-[244px] shrink-0 max-[1000px]:w-full">
+          <div className="flex w-61 shrink-0 max-[1000px]:w-full">
             <ToolFiltersPanel
               brands={catalog?.brands ?? []}
               maxStock={catalog?.maxStock ?? 0}
@@ -140,13 +136,18 @@ export function ToolsPage(): JSX.Element {
 
         <ToolTable
           rows={state.rows}
-          totalCount={MOCK_TOOLS_STATS.totalCount}
+          status={state.status}
+          error={state.error}
+          total={state.total}
+          lastPage={state.lastPage}
+          perPage={state.perPage}
           showFilters={state.showFilters}
           activeFilterCount={activeFilterCount}
           page={state.page}
           onToggleFilters={toggleFiltersPanel}
           onClearFilters={clearFilters}
           onSetPage={setPage}
+          onReload={reloadList}
           onStock={openStock}
           onIngreso={openIngreso}
           onEdit={openNewTool}

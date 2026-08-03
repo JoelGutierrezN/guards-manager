@@ -1,9 +1,24 @@
 import type { ToolsState, ToolsAction } from './tools-state.model'
 import { DEFAULT_STOCK_RANGE } from './tools-state.model'
-import { InventoryService } from './inventory.service'
+import { ToolsService } from './tools.service'
 
 export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState {
   switch (action.type) {
+    case 'LOAD_START':
+      return { ...state, status: 'loading', error: null }
+    case 'LOAD_SUCCESS':
+      return {
+        ...state,
+        rows: action.result.tools,
+        page: action.result.page,
+        perPage: action.result.perPage,
+        lastPage: action.result.lastPage,
+        total: action.result.total,
+        status: 'ready',
+        error: null,
+      }
+    case 'LOAD_ERROR':
+      return { ...state, status: 'error', error: action.error }
     case 'TOGGLE_BRAND': {
       const hasBrand = state.filters.brands.includes(action.brand)
       const updatedBrands = hasBrand
@@ -44,7 +59,11 @@ export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState
       return { ...state, ingresoTool: null, progress: { tool: action.tool, total: action.total } }
     case 'FINISH_INGRESO': {
       if (!state.progress) return { ...state, progress: null }
-      const updatedRows = InventoryService.addStock(state.rows, state.progress.tool.id, state.progress.total)
+      const updatedRows = ToolsService.addStock(
+        state.rows,
+        state.progress.tool.id,
+        state.progress.total,
+      )
       return { ...state, rows: updatedRows, progress: null }
     }
     case 'OPEN_STOCK':
@@ -56,7 +75,11 @@ export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState
     case 'CLOSE_DELETE':
       return { ...state, deleteTool: null }
     case 'CONFIRM_DELETE':
-      return { ...state, rows: state.rows.filter((tool) => tool.id !== action.tool.id), deleteTool: null }
+      return {
+        ...state,
+        rows: state.rows.filter((tool) => tool.id !== action.tool.id),
+        deleteTool: null,
+      }
     default:
       return state
   }

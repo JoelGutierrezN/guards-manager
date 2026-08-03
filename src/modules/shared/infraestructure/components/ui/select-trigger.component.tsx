@@ -20,7 +20,12 @@ export function SelectTrigger({ label, value, className, ...rest }: Props): JSX.
     >
       {label && <span className="mr-0.5 text-muted">{label}</span>}
       <span>{value}</span>
-      <HugeiconsIcon icon={ArrowDown01Icon} size={14} strokeWidth={1.8} className="ml-0.5 text-muted" />
+      <HugeiconsIcon
+        icon={ArrowDown01Icon}
+        size={14}
+        strokeWidth={1.8}
+        className="ml-0.5 text-muted"
+      />
     </button>
   )
 }

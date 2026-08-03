@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useReducer } from 'react'
-import type { InventoryStats } from '../domain/inventory-stats.entity'
+import type { ToolsStats } from '../domain/tools-stats.entity'
 import type { CatalogTree } from '../domain/catalog-option.model'
-import { inventoryRepository } from '../infraestructure/repositories/inventory.repository'
+import { toolsRepository } from '../infraestructure/repositories/tools.repository'
 
 export type OverviewStatus = 'loading' | 'ready' | 'error'
 
 interface OverviewState {
-  stats: InventoryStats | null
+  stats: ToolsStats | null
   catalog: CatalogTree | null
   status: OverviewStatus
 }
 
 type OverviewAction =
   | { type: 'FETCH_START' }
-  | { type: 'FETCH_SUCCESS'; stats: InventoryStats; catalog: CatalogTree }
+  | { type: 'FETCH_SUCCESS'; stats: ToolsStats; catalog: CatalogTree }
   | { type: 'FETCH_ERROR' }
 
 function overviewReducer(state: OverviewState, action: OverviewAction): OverviewState {
@@ -33,15 +33,15 @@ const initialState: OverviewState = {
   status: 'loading',
 }
 
-export function useInventoryOverview() {
+export function useToolsOverview() {
   const [state, dispatch] = useReducer(overviewReducer, initialState)
 
   const load = useCallback(async () => {
     dispatch({ type: 'FETCH_START' })
     try {
       const [stats, catalog] = await Promise.all([
-        inventoryRepository.getStats(),
-        inventoryRepository.getCatalogTree(),
+        toolsRepository.getStats(),
+        toolsRepository.getCatalogTree(),
       ])
       dispatch({ type: 'FETCH_SUCCESS', stats, catalog })
     } catch {

@@ -18,10 +18,13 @@ interface UseNewModelFormOptions {
   onSave: (input: CreateProductModelInput) => void
 }
 
-function initialStateFrom({ brands, initialBrandId, editModel }: UseNewModelFormOptions): NewModelFormState {
+function initialStateFrom({
+  brands,
+  initialBrandId,
+  editModel,
+}: UseNewModelFormOptions): NewModelFormState {
   const brandId = editModel?.brandId ?? initialBrandId ?? ''
-  const brandName =
-    editModel?.brandName ?? brands.find((brand) => brand.id === brandId)?.name ?? ''
+  const brandName = editModel?.brandName ?? brands.find((brand) => brand.id === brandId)?.name ?? ''
 
   return {
     step: brandId !== '' ? 'name' : 'brand',
@@ -57,7 +60,8 @@ export function useNewModelForm(options: UseNewModelFormOptions) {
     brandRepository
       .detail(state.brandId)
       .then((brand) => {
-        if (sequence === detailSequenceRef.current) dispatch({ type: 'BRAND_DETAIL_SUCCESS', brand })
+        if (sequence === detailSequenceRef.current)
+          dispatch({ type: 'BRAND_DETAIL_SUCCESS', brand })
       })
       .catch(() => {
         if (sequence === detailSequenceRef.current) dispatch({ type: 'BRAND_DETAIL_ERROR' })
@@ -65,7 +69,13 @@ export function useNewModelForm(options: UseNewModelFormOptions) {
   }, [enabled, state.brandId])
 
   const classifyCheck = useCallback(
-    (result: ProductModelNameCheck): { status: NameCheckStatus; duplicateModel: NewModelFormState['duplicateModel']; similarModels: NewModelFormState['similarModels'] } => {
+    (
+      result: ProductModelNameCheck,
+    ): {
+      status: NameCheckStatus
+      duplicateModel: NewModelFormState['duplicateModel']
+      similarModels: NewModelFormState['similarModels']
+    } => {
       const editId = editModel?.id ?? null
       const duplicateModel =
         result.exactMatch != null && result.exactMatch.id !== editId ? result.exactMatch : null
@@ -88,7 +98,12 @@ export function useNewModelForm(options: UseNewModelFormOptions) {
         return verdict.status
       } catch {
         if (sequence === checkSequenceRef.current) {
-          dispatch({ type: 'CHECK_RESULT', status: 'error', duplicateModel: null, similarModels: [] })
+          dispatch({
+            type: 'CHECK_RESULT',
+            status: 'error',
+            duplicateModel: null,
+            similarModels: [],
+          })
         }
         return 'error'
       }

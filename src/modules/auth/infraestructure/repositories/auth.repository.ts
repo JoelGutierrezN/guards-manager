@@ -12,7 +12,10 @@ class AuthRepositoryImpl implements AuthRepositoryContract {
   }
 
   async login(identifier: string, password: string): Promise<AuthSession> {
-    const response = await this.datasource.post<LoginResponseDto>('/login', { identifier, password })
+    const response = await this.datasource.post<LoginResponseDto>('/login', {
+      identifier,
+      password,
+    })
     return AuthMapper.toAuthSession(response)
   }
 

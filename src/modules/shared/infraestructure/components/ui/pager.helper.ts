@@ -9,7 +9,8 @@ export class PagerPagesHelper {
 
     const needsLeadingEllipsis = surroundingPages.length > 0 && surroundingPages[0] > 2
     const needsTrailingEllipsis =
-      surroundingPages.length > 0 && surroundingPages[surroundingPages.length - 1] < clampedTotal - 1
+      surroundingPages.length > 0 &&
+      surroundingPages[surroundingPages.length - 1] < clampedTotal - 1
 
     const result: Array<number | 'ellipsis'> = [1]
 

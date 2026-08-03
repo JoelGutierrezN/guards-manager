@@ -30,14 +30,14 @@ Datos falsos (mock) en `<módulo>/infraestructure/mocks/` para poder borrarlos d
 
 ### Convención de nombres de archivos
 
-| Tipo          | Sufijo               |
-|---------------|----------------------|
-| Componente    | `*.component.tsx`    |
-| Hook          | `*.hook.ts`          |
-| Service       | `*.service.ts`       |
-| Helper        | `*.helper.ts`        |
-| Modelo/tipo   | `*.model.ts`         |
-| Entidad       | `*.entity.ts`        |
+| Tipo        | Sufijo            |
+| ----------- | ----------------- |
+| Componente  | `*.component.tsx` |
+| Hook        | `*.hook.ts`       |
+| Service     | `*.service.ts`    |
+| Helper      | `*.helper.ts`     |
+| Modelo/tipo | `*.model.ts`      |
+| Entidad     | `*.entity.ts`     |
 
 ## Reglas de código (obligatorias)
 

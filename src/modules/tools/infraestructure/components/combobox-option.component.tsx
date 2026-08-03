@@ -13,9 +13,7 @@ interface Props {
 export function ComboboxOption({ optionValue, label, isSelected, onSelect }: Props): JSX.Element {
   const buttonClassName = cn(
     'flex w-full cursor-pointer items-center justify-between rounded-[8px] px-2.5 py-2 text-left text-[13px] font-medium transition-colors',
-    isSelected
-      ? 'bg-brand-soft text-brand font-semibold'
-      : 'text-ink-2 hover:bg-paper-tint',
+    isSelected ? 'bg-brand-soft text-brand font-semibold' : 'text-ink-2 hover:bg-paper-tint',
   )
 
   return (

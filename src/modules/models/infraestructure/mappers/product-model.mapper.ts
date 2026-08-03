@@ -1,14 +1,29 @@
 import { PaginationMapper } from '../../../shared/infraestructure/mappers/pagination.mapper'
 import type { ProductModel } from '../../domain/product-model.entity'
 import type { ProductModelPage } from '../../domain/product-model-page.model'
-import type { NameCheckMatch, ProductModelNameCheck } from '../../domain/product-model-name-check.model'
+import type {
+  NameCheckMatch,
+  ProductModelNameCheck,
+} from '../../domain/product-model-name-check.model'
 import type { ProductModelDto } from '../dto/product-model.dto'
 import type { ProductModelCollectionDto } from '../dto/product-model-collection.dto'
-import type { NameCheckModelDto, ProductModelNameCheckDto } from '../dto/product-model-name-check.dto'
+import type {
+  NameCheckModelDto,
+  ProductModelNameCheckDto,
+} from '../dto/product-model-name-check.dto'
 
 export class ProductModelMapper {
   static toProductModel(dto: ProductModelDto): ProductModel {
-    const { id, name, brand, stocksTotal, stocksAssigned, usagePercentage, status, discontinuationReason } = dto
+    const {
+      id,
+      name,
+      brand,
+      stocksTotal,
+      stocksAssigned,
+      usagePercentage,
+      status,
+      discontinuationReason,
+    } = dto
 
     return {
       id,
@@ -34,7 +49,8 @@ export class ProductModelMapper {
   static toNameCheck(dto: ProductModelNameCheckDto): ProductModelNameCheck {
     return {
       exists: dto.exists,
-      exactMatch: dto.productModel != null ? ProductModelMapper.toNameCheckMatch(dto.productModel) : null,
+      exactMatch:
+        dto.productModel != null ? ProductModelMapper.toNameCheckMatch(dto.productModel) : null,
       similar: dto.similar.map((model) => ProductModelMapper.toNameCheckMatch(model)),
     }
   }

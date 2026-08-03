@@ -28,5 +28,10 @@ export type NewModelFormAction =
   | { type: 'BRAND_DETAIL_ERROR' }
   | { type: 'SET_NAME'; name: string }
   | { type: 'CHECK_START' }
-  | { type: 'CHECK_RESULT'; status: NameCheckStatus; duplicateModel: NameCheckMatch | null; similarModels: NameCheckMatch[] }
+  | {
+      type: 'CHECK_RESULT'
+      status: NameCheckStatus
+      duplicateModel: NameCheckMatch | null
+      similarModels: NameCheckMatch[]
+    }
   | { type: 'SET_SIMILAR_CONFIRMED'; confirmed: boolean }

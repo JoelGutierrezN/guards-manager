@@ -86,15 +86,17 @@ export function Combobox({
           onFocus={handleFocus}
           readOnly={!isOpen}
         />
-        <HugeiconsIcon icon={ArrowDown01Icon} size={14} strokeWidth={1.8} className="shrink-0 text-muted" />
+        <HugeiconsIcon
+          icon={ArrowDown01Icon}
+          size={14}
+          strokeWidth={1.8}
+          className="shrink-0 text-muted"
+        />
       </div>
 
       {isOpen && (
         <>
-          <div
-            className="fixed inset-0 z-[4]"
-            onClick={() => setIsOpen(false)}
-          />
+          <div className="fixed inset-0 z-[4]" onClick={() => setIsOpen(false)} />
           <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-[6] max-h-[280px] overflow-auto rounded-[16px] border border-hairline bg-white p-1 shadow-[0_12px_36px_-8px_rgba(14,15,60,0.18)]">
             {filteredOptions.length === 0 && !query && (
               <div className="py-4 text-center text-[13px] text-muted">Sin opciones</div>

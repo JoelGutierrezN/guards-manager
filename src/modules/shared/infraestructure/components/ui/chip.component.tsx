@@ -18,12 +18,7 @@ const TONES: Record<ChipTone, string> = {
   danger: 'bg-danger-soft border-transparent text-danger',
 }
 
-export function Chip({
-  tone = 'default',
-  size = 'md',
-  dot,
-  children,
-}: ChipProps): JSX.Element {
+export function Chip({ tone = 'default', size = 'md', dot, children }: ChipProps): JSX.Element {
   return (
     <span
       className={cn(

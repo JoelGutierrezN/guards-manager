@@ -6,7 +6,10 @@ interface ToastEntry {
   message: string
 }
 
-export function useToasts(): readonly [addToast: (message: string) => void, toastHost: JSX.Element] {
+export function useToasts(): readonly [
+  addToast: (message: string) => void,
+  toastHost: JSX.Element,
+] {
   const [items, setItems] = useState<ToastEntry[]>([])
 
   const addToast = useCallback((message: string) => {

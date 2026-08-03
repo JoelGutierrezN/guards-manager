@@ -10,6 +10,7 @@ interface Props {
   selectedBrands: string[]
   selectedModels: string[]
   defaultExpanded?: boolean
+  forceExpanded?: boolean
   onToggleBrand: (brand: string) => void
   onToggleModel: (model: string) => void
 }
@@ -19,14 +20,16 @@ export function ToolFilterBrandNode({
   selectedBrands,
   selectedModels,
   defaultExpanded = false,
+  forceExpanded = false,
   onToggleBrand,
   onToggleModel,
 }: Props): JSX.Element {
   const [expanded, setExpanded] = useState(defaultExpanded)
+  const isExpanded = forceExpanded || expanded
 
   const chevronClass = useMemo(
-    () => cn('inline-flex transition-transform', !expanded && '-rotate-90'),
-    [expanded],
+    () => cn('inline-flex transition-transform', !isExpanded && '-rotate-90'),
+    [isExpanded],
   )
 
   return (
@@ -37,30 +40,30 @@ export function ToolFilterBrandNode({
             type="button"
             className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-muted transition-colors hover:text-ink"
             onClick={() => setExpanded((previous) => !previous)}
-            aria-label={expanded ? `Colapsar ${node.brand}` : `Expandir ${node.brand}`}
+            aria-label={isExpanded ? `Colapsar ${node.brand}` : `Expandir ${node.brand}`}
           >
             <span className={chevronClass}>
               <Icon icon={ArrowDown01Icon} size={13} />
             </span>
           </button>
           <Checkbox
-            checked={selectedBrands.includes(node.brand)}
-            onChange={() => onToggleBrand(node.brand)}
+            checked={selectedBrands.includes(node.id)}
+            onChange={() => onToggleBrand(node.id)}
             label={node.brand}
           />
         </div>
         <span className="font-mono text-[11px] text-muted">{node.count}</span>
       </div>
 
-      {expanded && (
+      {isExpanded && (
         <div className="ml-2 mt-1 flex flex-col gap-1 border-l border-hairline pl-3">
           {node.models.map((model) => (
             <ToolFilterCheckItem
               key={model.id}
-              filterKey={model.name}
+              filterKey={model.id}
               label={model.name}
               count={model.count}
-              checked={selectedModels.includes(model.name)}
+              checked={selectedModels.includes(model.id)}
               onToggle={onToggleModel}
             />
           ))}

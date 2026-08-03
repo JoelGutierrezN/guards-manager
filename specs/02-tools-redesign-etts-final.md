@@ -66,7 +66,7 @@ export interface Tool {
   brand: string
   model: string
   total: number
-  available: number   // NUEVO — unidades disponibles (total - assigned)
+  available: number // NUEVO — unidades disponibles (total - assigned)
   assigned: number
   status: ToolStatus
 }
@@ -78,7 +78,7 @@ export type ToolsTabKey = 'all' | 'available' | 'assigned' | 'low'
 // src/modules/tools/domain/tool-filters.model.ts
 export interface ToolFilters {
   brands: string[]
-  models: string[]             // NUEVO — filtro por modelo dentro de una marca
+  models: string[] // NUEVO — filtro por modelo dentro de una marca
   stockRange: [number, number] // NUEVO — slider 0..50+
 }
 
@@ -171,14 +171,14 @@ export interface ToolsState {
 - [ ] No existen checkboxes en las filas ni panel de acciones masivas.
 - [ ] El botón "Ingresar inventario" abre `ToolIngresoModal`, no navega a `/stockIn`.
 - [ ] El panel de filtros muestra slider "RANGO DE STOCK" y árbol jerárquico
-  Marca → Modelos (colapsable, con conteos); no hay checkboxes de Estado.
+      Marca → Modelos (colapsable, con conteos); no hay checkboxes de Estado.
 - [ ] La tabla tiene columnas: HERRAMIENTA · MARCA · MODELO · STOCK DISP. / TOTAL · ASIGN. · acciones.
 - [ ] La celda STOCK DISP. / TOTAL muestra `available / total` + barra de color
-  (azul oscuro = ok, amarillo = warn, rojo = low/agotado).
+      (azul oscuro = ok, amarillo = warn, rojo = low/agotado).
 - [ ] La toolbar de la tabla incluye un input con placeholder
-  "Buscar por nombre, modelo o SKU..." que filtra las filas visibles.
+      "Buscar por nombre, modelo o SKU..." que filtra las filas visibles.
 - [ ] El `PageHero` muestra título "Catálogo de herramientas" con itálica en
-  "de herramientas" y el lede del diseño.
+      "de herramientas" y el lede del diseño.
 - [ ] `tsc -b` y `eslint` sin errores nuevos; `vite build` compila.
 
 ---

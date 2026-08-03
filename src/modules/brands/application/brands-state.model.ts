@@ -1,7 +1,6 @@
 import type { Brand } from '../domain/brand.entity'
 import type { BrandPage } from '../domain/brand-page.model'
 
-
 export type BrandsStatus = 'loading' | 'reloading' | 'ready' | 'error'
 
 export interface BrandsState {

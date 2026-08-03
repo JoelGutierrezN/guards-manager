@@ -1,27 +1,62 @@
-import { useCallback, useReducer } from 'react'
+import { useCallback, useEffect, useReducer, useRef } from 'react'
 import type { Tool } from '../domain/tool.entity'
 import type { ToolsTabKey } from '../domain/tools-tab.model'
-import type { ProgressEntry, ToolsState } from '../application/tools-state.model'
-import { DEFAULT_STOCK_RANGE } from '../application/tools-state.model'
+import type { ProgressEntry } from '../application/tools-state.model'
 import { toolsReducer } from '../application/tools.reducer'
-// TODO API: cargar el listado desde GET /api/tools (reemplazar MOCK_TOOLS y manejar carga async con loading/error).
-import { MOCK_TOOLS } from '../infraestructure/mocks/tools.mock'
+import { toolsRepository } from '../infraestructure/repositories/tools.repository'
+import type { ToolsListRequest } from '../infraestructure/helpers/tools-query-params.helper'
+import { ToolsQueryParamsHelper } from '../infraestructure/helpers/tools-query-params.helper'
+import { useQueryParams } from '../../shared/hooks/use-query-params.hook'
 
-const initialState: ToolsState = {
-  rows: MOCK_TOOLS,
-  filters: { brands: [], models: [], stockRange: DEFAULT_STOCK_RANGE },
-  tab: 'all',
-  page: 1,
-  showFilters: true,
-  newToolOpen: false,
-  ingresoTool: null,
-  stockTool: null,
-  deleteTool: null,
-  progress: null,
-}
+const FILTERS_DEBOUNCE_MS = 250
 
-export function useToolsInventory() {
-  const [state, dispatch] = useReducer(toolsReducer, initialState)
+export function useTools() {
+  const { params, setQueryParams } = useQueryParams()
+  const [state, dispatch] = useReducer(
+    toolsReducer,
+    params,
+    ToolsQueryParamsHelper.initialStateFrom,
+  )
+  const requestRef = useRef<ToolsListRequest>({
+    page: state.page,
+    tab: state.tab,
+    filters: state.filters,
+  })
+
+  useEffect(() => {
+    requestRef.current = { page: state.page, tab: state.tab, filters: state.filters }
+  }, [state.page, state.tab, state.filters])
+
+  useEffect(() => {
+    setQueryParams(
+      ToolsQueryParamsHelper.toParams({
+        page: state.page,
+        tab: state.tab,
+        filters: state.filters,
+      }),
+    )
+  }, [state.page, state.tab, state.filters, setQueryParams])
+
+  const load = useCallback(async (request: ToolsListRequest) => {
+    dispatch({ type: 'LOAD_START' })
+    try {
+      const result = await toolsRepository.listProducts(ToolsQueryParamsHelper.toApiParams(request))
+      dispatch({ type: 'LOAD_SUCCESS', result })
+    } catch {
+      dispatch({ type: 'LOAD_ERROR', error: 'No se pudieron cargar las herramientas.' })
+    }
+  }, [])
+
+  useEffect(() => {
+    const handle = setTimeout(() => {
+      void load({ page: state.page, tab: state.tab, filters: state.filters })
+    }, FILTERS_DEBOUNCE_MS)
+    return () => clearTimeout(handle)
+  }, [state.page, state.tab, state.filters, load])
+
+  const reloadList = useCallback(() => {
+    void load(requestRef.current)
+  }, [load])
 
   const toggleBrand = useCallback((brand: string) => dispatch({ type: 'TOGGLE_BRAND', brand }), [])
   const toggleModel = useCallback((model: string) => dispatch({ type: 'TOGGLE_MODEL', model }), [])
@@ -50,6 +85,7 @@ export function useToolsInventory() {
 
   return {
     state,
+    reloadList,
     toggleBrand,
     toggleModel,
     setStockRange,

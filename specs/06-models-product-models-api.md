@@ -4,6 +4,7 @@
 > **Objetivo:** Conectar la pantalla `/dashboard/models` al recurso `/product-models` con listado paginado y filtrado server-side por marca y nombre sincronizado a la URL, más alta, edición, baja/reactivación y eliminación, dejando el resto de controles inertes y marcados como en desarrollo.
 
 > **Precondición bloqueante (back):** este spec asume dos cosas que **hoy no existen** en el contrato entregado:
+>
 > 1. El `data` de listado y detalle incluye `active: boolean`.
 > 2. Existe `PATCH /v1/product-models/{id}/status` con body `{ "active": false | true }` y respuesta igual a `GET /{id}`.
 >
@@ -75,7 +76,7 @@ export interface ProductModel {
   stocksTotal: number
   stocksAssigned: number
   usagePercentage: number
-  active: boolean          // precondición del back
+  active: boolean // precondición del back
 }
 
 // product-model-page.model.ts
@@ -85,9 +86,9 @@ export interface ProductModelPage {
   perPage: number
   lastPage: number
   total: number
-  modelsTotal: number      // meta.productModels
-  brandsTotal: number      // meta.brands
-  stocksTotal: number      // meta.stocks
+  modelsTotal: number // meta.productModels
+  brandsTotal: number // meta.brands
+  stocksTotal: number // meta.stocks
 }
 
 // product-model-query.model.ts
@@ -166,8 +167,8 @@ export interface ModelsState {
   status: ModelsStatus
   error: string | null
   saving: boolean
-  formError: string | null      // mensaje 422 mostrado dentro del modal
-  pendingId: string | null      // fila con baja/reactivación/eliminación en curso
+  formError: string | null // mensaje 422 mostrado dentro del modal
+  pendingId: string | null // fila con baja/reactivación/eliminación en curso
   page: number
   perPage: number
   lastPage: number
@@ -184,7 +185,7 @@ export type ModelsAction =
   | { type: 'LOAD_SUCCESS'; result: ProductModelPage }
   | { type: 'LOAD_ERROR'; error: string }
   | { type: 'SET_PAGE'; page: number }
-  | { type: 'SET_QUERY'; query: string }          // resetea page a 1
+  | { type: 'SET_QUERY'; query: string } // resetea page a 1
   | { type: 'SET_BRAND'; brandId: string | null } // resetea page a 1
   | { type: 'SAVE_START' }
   | { type: 'SAVE_ERROR'; message: string }
@@ -208,10 +209,10 @@ export interface ModelsWindowManager {
 
 `ModelsQueryParamsHelper` (en `infraestructure/helpers/`), gemelo de `BrandsQueryParamsHelper`:
 
-| Param URL | Estado    | Se omite cuando |
-|-----------|-----------|-----------------|
-| `page`    | `page`    | `page === 1`    |
-| `name`    | `query`   | `query === ''`  |
+| Param URL | Estado    | Se omite cuando                  |
+| --------- | --------- | -------------------------------- |
+| `page`    | `page`    | `page === 1`                     |
+| `name`    | `query`   | `query === ''`                   |
 | `brand`   | `brandId` | `brandId === null` (tab "Todas") |
 
 `brand` **ya lo escribe `useModelBrandTabs`** (hoy existente). Para no tener dos escritores del mismo param, `useProductModels` **lee** `brandId` de la URL y solo escribe `page` y `name`; la selección de tab sigue siendo la única fuente que escribe `brand`.
@@ -234,7 +235,7 @@ export class DeactivateWarningStorage {
 - `POST /product-models` · body `{ name, brand_id }`
 - `PUT /product-models/{id}` · body `{ name, brand_id }`
 - `DELETE /product-models/{id}`
-- `PATCH /product-models/{id}/status` · body `{ active }` *(precondición del back)*
+- `PATCH /product-models/{id}/status` · body `{ active }` _(precondición del back)_
 
 > Igual que en SPEC 04: la doc escribe `/v1/...` pero `VITE_API_URL` ya incluye `/api/v1`, así que la ruta relativa va **sin** `/v1`.
 
@@ -262,7 +263,7 @@ export class DeactivateWarningStorage {
 
 7. **Modal de alta/edición.** Reescribir `new-model-modal.component.tsx`: select de marcas alimentado por `/brands/select` (opciones recibidas por props desde la página, que ya las tiene de `useModelBrandTabs`), preselección de la marca de la tab activa al crear, campo "Código de modelo" → `name`, y render del `formError` bajo el campo. En el hook: `saveModel` (create/update según `windowManager`), que ante 422 despacha `SAVE_ERROR` con el mensaje del back sin cerrar el modal, y ante éxito cierra, recarga listado y refresca las tabs.
 
-8. **Baja y reactivación** *(bloqueado por el back)*. Añadir `setActive` al flujo: acción `ThumbsDownIcon` "Dar de baja" en la fila; `deactivate-model-modal.component.tsx` con la advertencia (no permitirá nuevos stocks ni resguardos; para eliminar hay que recolectar antes las herramientas), mostrado solo si `DeactivateWarningStorage.hasSeen()` es `false`, marcando la bandera al confirmar. Estilo de fila inactiva (fondo tenue, `text-muted`, `Chip` "Dado de baja"), con editar y dar de baja **deshabilitados** y "Reactivar" directo. `ROW_START`/`ROW_DONE` para el estado de fila en curso.
+8. **Baja y reactivación** _(bloqueado por el back)_. Añadir `setActive` al flujo: acción `ThumbsDownIcon` "Dar de baja" en la fila; `deactivate-model-modal.component.tsx` con la advertencia (no permitirá nuevos stocks ni resguardos; para eliminar hay que recolectar antes las herramientas), mostrado solo si `DeactivateWarningStorage.hasSeen()` es `false`, marcando la bandera al confirmar. Estilo de fila inactiva (fondo tenue, `text-muted`, `Chip` "Dado de baja"), con editar y dar de baja **deshabilitados** y "Reactivar" directo. `ROW_START`/`ROW_DONE` para el estado de fila en curso.
 
 9. **Eliminación.** `delete-model-modal.component.tsx` de confirmación; `removeModel` en el hook (DELETE → recarga listado + tabs, toast). El `IconButton` de eliminar se deshabilita cuando `stocksAssigned > 0`, con tooltip: hay que recolectar las herramientas en resguardo primero. Si la página queda vacía tras borrar el último elemento y `page > 1`, retroceder una página.
 
@@ -374,15 +375,15 @@ export class DeactivateWarningStorage {
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
+| Riesgo                                                                                                                                                                                                                      | Mitigación                                                                                                                                                                                                                               |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | El endpoint de baja (`PATCH /{id}/status`) y el campo `active` **no existen todavía**; si el back los entrega con otra forma (ej. `DELETE` lógico, `deactivated_at`, `status: 'inactive'`), el paso 8 hay que reescribirlo. | Está declarado como precondición bloqueante en el encabezado. El resto del plan (pasos 1-7 y 9-12) no depende de ello y se puede implementar y entregar antes. El impacto queda acotado al mapper, al repositorio y a la acción de fila. |
-| La forma exacta del **422** no está documentada; se asume Laravel (`{ message, errors: { name: [...] } }`). Si difiere, el modal mostraría un mensaje vacío o `undefined`. | El mapeo del error se hace en un solo punto con fallback a un mensaje genérico ("No se pudo guardar el modelo") cuando no se reconoce la forma; se verifica manualmente provocando un nombre duplicado. |
-| El contrato documenta `brand_id`, `name` y `limit`, pero no `page`; si `page` se comportara distinto de lo confirmado, la paginación quedaría rota en silencio (siempre la primera página). | El usuario confirmó que `page` funciona. La verificación manual del paso 12 incluye paginar y comprobar que `meta.current_page` avanza. |
-| Dos hooks (`useModelBrandTabs` y `useProductModels`) conviven sobre los mismos query params; un cambio futuro que haga escribir `brand` también al segundo provocaría peticiones dobles o filtros que se pisan. | Queda como decisión escrita: `brand` lo escribe solo `useModelBrandTabs`. El hook de listado recibe `brandId` por parámetro, no lo deriva por su cuenta. |
-| `stocksAssigned` puede quedar desactualizado respecto al back (otro usuario devuelve herramientas en paralelo), habilitando o deshabilitando "Eliminar" con datos viejos. | Tras cada mutación se recarga el listado. Si aun así el `DELETE` falla, el error se muestra en un toast; el estado se corrige con "Reintentar"/recarga. |
-| La altura fija de la tabla calculada a partir de `perPage` puede desalinearse si el back devuelve un `per_page` distinto de 15 o una última página corta. | La altura se reserva con el `perPage` del estado (que se sincroniza con `meta.per_page`) y las filas skeleton usan la misma altura que las reales; la última página corta rellena con espacio, no con salto. |
-| Los conteos de las tabs vienen de `/brands/select` y el lede de `meta` del listado: son dos fuentes que pueden mostrar números distintos por un instante tras una mutación. | Ambas se refrescan tras cada mutación; la ventana de desincronización es la de una recarga y no bloquea ninguna acción. |
+| La forma exacta del **422** no está documentada; se asume Laravel (`{ message, errors: { name: [...] } }`). Si difiere, el modal mostraría un mensaje vacío o `undefined`.                                                  | El mapeo del error se hace en un solo punto con fallback a un mensaje genérico ("No se pudo guardar el modelo") cuando no se reconoce la forma; se verifica manualmente provocando un nombre duplicado.                                  |
+| El contrato documenta `brand_id`, `name` y `limit`, pero no `page`; si `page` se comportara distinto de lo confirmado, la paginación quedaría rota en silencio (siempre la primera página).                                 | El usuario confirmó que `page` funciona. La verificación manual del paso 12 incluye paginar y comprobar que `meta.current_page` avanza.                                                                                                  |
+| Dos hooks (`useModelBrandTabs` y `useProductModels`) conviven sobre los mismos query params; un cambio futuro que haga escribir `brand` también al segundo provocaría peticiones dobles o filtros que se pisan.             | Queda como decisión escrita: `brand` lo escribe solo `useModelBrandTabs`. El hook de listado recibe `brandId` por parámetro, no lo deriva por su cuenta.                                                                                 |
+| `stocksAssigned` puede quedar desactualizado respecto al back (otro usuario devuelve herramientas en paralelo), habilitando o deshabilitando "Eliminar" con datos viejos.                                                   | Tras cada mutación se recarga el listado. Si aun así el `DELETE` falla, el error se muestra en un toast; el estado se corrige con "Reintentar"/recarga.                                                                                  |
+| La altura fija de la tabla calculada a partir de `perPage` puede desalinearse si el back devuelve un `per_page` distinto de 15 o una última página corta.                                                                   | La altura se reserva con el `perPage` del estado (que se sincroniza con `meta.per_page`) y las filas skeleton usan la misma altura que las reales; la última página corta rellena con espacio, no con salto.                             |
+| Los conteos de las tabs vienen de `/brands/select` y el lede de `meta` del listado: son dos fuentes que pueden mostrar números distintos por un instante tras una mutación.                                                 | Ambas se refrescan tras cada mutación; la ventana de desincronización es la de una recarga y no bloquea ninguna acción.                                                                                                                  |
 
 ---
 

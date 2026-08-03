@@ -12,11 +12,6 @@ interface Props {
 
 export function Icon({ icon, size = 16, strokeWidth = 1.8, className }: Props): JSX.Element {
   return (
-    <HugeiconsIcon
-      icon={icon}
-      size={size}
-      strokeWidth={strokeWidth}
-      className={cn(className)}
-    />
+    <HugeiconsIcon icon={icon} size={size} strokeWidth={strokeWidth} className={cn(className)} />
   )
 }

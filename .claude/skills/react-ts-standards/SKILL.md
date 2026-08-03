@@ -25,15 +25,15 @@ No escribir comentarios que expliquen lo que el código ya dice claramente.
 ```tsx
 // ❌
 // Incrementar el contador
-setCount(count + 1);
+setCount(count + 1)
 
 // ✅ — el código habla por sí solo
-setCount(count + 1);
+setCount(count + 1)
 
 // ✅ — comentario útil: explica el POR QUÉ, no el QUÉ
 // Se usa `count + 1` en lugar de la función de actualización para mantener
 // sincronía con el log externo que lee el valor en el mismo frame.
-setCount(count + 1);
+setCount(count + 1)
 ```
 
 ---
@@ -44,31 +44,34 @@ Si un componente acumula 3 o más `useState` relacionados, evaluar `useReducer`.
 
 ```tsx
 // ❌
-const [isLoading, setIsLoading] = useState(false);
-const [error, setError] = useState<string | null>(null);
-const [data, setData] = useState<Guard[]>([]);
+const [isLoading, setIsLoading] = useState(false)
+const [error, setError] = useState<string | null>(null)
+const [data, setData] = useState<Guard[]>([])
 
 // ✅
 type GuardListState = {
-  isLoading: boolean;
-  error: string | null;
-  data: Guard[];
-};
+  isLoading: boolean
+  error: string | null
+  data: Guard[]
+}
 
 type GuardListAction =
   | { type: 'FETCH_START' }
   | { type: 'FETCH_SUCCESS'; payload: Guard[] }
-  | { type: 'FETCH_ERROR'; payload: string };
+  | { type: 'FETCH_ERROR'; payload: string }
 
 function guardListReducer(state: GuardListState, action: GuardListAction): GuardListState {
   switch (action.type) {
-    case 'FETCH_START':  return { ...state, isLoading: true, error: null };
-    case 'FETCH_SUCCESS': return { isLoading: false, error: null, data: action.payload };
-    case 'FETCH_ERROR':  return { isLoading: false, error: action.payload, data: [] };
+    case 'FETCH_START':
+      return { ...state, isLoading: true, error: null }
+    case 'FETCH_SUCCESS':
+      return { isLoading: false, error: null, data: action.payload }
+    case 'FETCH_ERROR':
+      return { isLoading: false, error: action.payload, data: [] }
   }
 }
 
-const [state, dispatch] = useReducer(guardListReducer, { isLoading: false, error: null, data: [] });
+const [state, dispatch] = useReducer(guardListReducer, { isLoading: false, error: null, data: [] })
 ```
 
 ---
@@ -98,16 +101,18 @@ extrae un subcomponente y pásale los datos como props.
 
 ```tsx
 // ❌
-{guards.map((guard) => {
-  const fullName = `${guard.firstName} ${guard.lastName}`;
-  const badgeColor = guard.status === 'active' ? 'green' : 'red';
-  return <span style={{ color: badgeColor }}>{fullName}</span>;
-})}
+{
+  guards.map((guard) => {
+    const fullName = `${guard.firstName} ${guard.lastName}`
+    const badgeColor = guard.status === 'active' ? 'green' : 'red'
+    return <span style={{ color: badgeColor }}>{fullName}</span>
+  })
+}
 
 // ✅ — extrae GuardRow y calcula ahí
-{guards.map((guard) => (
-  <GuardRow key={guard.id} guard={guard} />
-))}
+{
+  guards.map((guard) => <GuardRow key={guard.id} guard={guard} />)
+}
 ```
 
 ---
@@ -118,12 +123,12 @@ Ninguna variable, parámetro ni función puede usar nombres de una sola letra (`
 
 ```tsx
 // ❌
-const n = guards.length;
-guards.forEach((g) => console.log(g.name));
+const n = guards.length
+guards.forEach((g) => console.log(g.name))
 
 // ✅
-const guardCount = guards.length;
-guards.forEach((guard) => console.log(guard.name));
+const guardCount = guards.length
+guards.forEach((guard) => console.log(guard.name))
 ```
 
 > Excepción aceptada: índices en bucles estrictamente numéricos (`i`, `j`) cuando el contexto es inequívoco y no se usa para lógica de negocio. En React, preferir siempre un nombre semántico.
@@ -178,6 +183,7 @@ return <div className={statusClassName}>
 ## 8. Lógica compleja a custom hooks o services
 
 Un componente renderiza y delega. Si crece en lógica, extraer:
+
 - **Custom hook** (`*.hook.ts`): lógica de estado/efectos reutilizable.
 - **Service** (`*.service.ts`): procesos complejos, llamadas a API, transformaciones de datos.
 
@@ -222,13 +228,13 @@ No repetir la misma lógica en varios lugares. Extraer a `*.helper.ts` con respo
 // ✅ — guard.helper.ts
 export class GuardHelper {
   static buildFullName(firstName: string, lastName: string): string {
-    return `${firstName} ${lastName}`;
+    return `${firstName} ${lastName}`
   }
 }
 
 // Uso en cualquier componente
-import { GuardHelper } from '../domain/guard.helper';
-const fullName = GuardHelper.buildFullName(guard.firstName, guard.lastName);
+import { GuardHelper } from '../domain/guard.helper'
+const fullName = GuardHelper.buildFullName(guard.firstName, guard.lastName)
 ```
 
 ---
@@ -241,15 +247,15 @@ Principio de Responsabilidad Única (SRP de SOLID). Una clase = una responsabili
 ```tsx
 // ❌ — función suelta mezclando responsabilidades
 function processGuard(guard: Guard) {
-  const name = `${guard.firstName} ${guard.lastName}`;
-  fetch(`/api/guards/${guard.id}`, { method: 'PUT', body: JSON.stringify({ name }) });
+  const name = `${guard.firstName} ${guard.lastName}`
+  fetch(`/api/guards/${guard.id}`, { method: 'PUT', body: JSON.stringify({ name }) })
 }
 
 // ✅ — clases con responsabilidad única
 // guard.helper.ts — solo transformaciones de datos
 export class GuardHelper {
   static buildFullName(firstName: string, lastName: string): string {
-    return `${firstName} ${lastName}`;
+    return `${firstName} ${lastName}`
   }
 }
 
@@ -259,8 +265,8 @@ export class GuardService {
     const response = await fetch(`/api/guards/${guardId}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
-    });
-    return response.json();
+    })
+    return response.json()
   }
 }
 ```

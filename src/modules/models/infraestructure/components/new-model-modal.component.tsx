@@ -54,7 +54,11 @@ export function NewModelModal({
               {isEdit ? 'Editar registro' : `Nuevo registro · ${stepLabel}`}
             </div>
             <div className="text-[20px] font-semibold tracking-[-0.015em] text-ink">
-              {isEdit ? 'Editar modelo' : isBrandStep ? 'Selecciona la marca' : 'Crear nuevo modelo'}
+              {isEdit
+                ? 'Editar modelo'
+                : isBrandStep
+                  ? 'Selecciona la marca'
+                  : 'Crear nuevo modelo'}
             </div>
           </div>
           <IconButton icon={Cancel01Icon} onClick={onClose} bordered size="sm" />

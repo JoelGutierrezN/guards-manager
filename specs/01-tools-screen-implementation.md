@@ -45,12 +45,20 @@ Estructuras nuevas (nombres y rutas reales):
 // src/modules/tools/domain/tool.entity.ts
 export type ToolStatus = 'ok' | 'warn' | 'low'
 export interface Tool {
-  id: number; name: string; brand: string; model: string
-  total: number; assigned: number; status: ToolStatus
+  id: number
+  name: string
+  brand: string
+  model: string
+  total: number
+  assigned: number
+  status: ToolStatus
 }
 
 // src/modules/tools/domain/tool-filters.model.ts
-export interface ToolFilters { brands: string[]; statuses: string[] }
+export interface ToolFilters {
+  brands: string[]
+  statuses: string[]
+}
 
 // src/modules/tools/domain/tools-tab.model.ts
 export type ToolsTabKey = 'all' | 'available' | 'low' | 'mantto' | 'baja'
@@ -61,16 +69,23 @@ export interface ToolsStats {
   tabCounts: Record<ToolsTabKey, number>
   statusCounts: Record<string, number>
   brandCounts: Record<string, number>
-  totalCount: number; pageCount: number
+  totalCount: number
+  pageCount: number
   stockRange: { min: number; max: number }
 }
 
 // src/modules/tools/application/tools-state.model.ts  (estado del useReducer)
 export interface ToolsState {
-  rows: Tool[]; filters: ToolFilters; selectedIds: Set<number>
-  tab: ToolsTabKey; page: number; showFilters: boolean
-  density: 'dense' | 'comfy'; newToolOpen: boolean
-  ingresoTool: Tool | null; progress: { tool: Tool; total: number } | null
+  rows: Tool[]
+  filters: ToolFilters
+  selectedIds: Set<number>
+  tab: ToolsTabKey
+  page: number
+  showFilters: boolean
+  density: 'dense' | 'comfy'
+  newToolOpen: boolean
+  ingresoTool: Tool | null
+  progress: { tool: Tool; total: number } | null
 }
 ```
 
@@ -126,11 +141,11 @@ Convenciones:
 
 ## 7 — Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| `pnpm build` falla por 9 errores preexistentes en `modules/auth` y `errors/app.error.handler.ts` (`erasableSyntaxOnly`, `captureStackTrace`, export faltante). | No son de este spec; `vite dev`/`vite build` funcionan. Documentado como tarea fuera de alcance. |
-| El mock está acoplado a componentes (KPIs, conteos, catálogo). | Aislado en `infraestructure/mocks/` y cada consumidor lleva `// TODO API:` señalando el reemplazo. |
-| Ítems del sidebar sin pantalla (brands, models, …) podrían dar 404. | Ruta comodín `*` → `ComingSoonPage` dentro del layout. |
+| Riesgo                                                                                                                                                         | Mitigación                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `pnpm build` falla por 9 errores preexistentes en `modules/auth` y `errors/app.error.handler.ts` (`erasableSyntaxOnly`, `captureStackTrace`, export faltante). | No son de este spec; `vite dev`/`vite build` funcionan. Documentado como tarea fuera de alcance.   |
+| El mock está acoplado a componentes (KPIs, conteos, catálogo).                                                                                                 | Aislado en `infraestructure/mocks/` y cada consumidor lleva `// TODO API:` señalando el reemplazo. |
+| Ítems del sidebar sin pantalla (brands, models, …) podrían dar 404.                                                                                            | Ruta comodín `*` → `ComingSoonPage` dentro del layout.                                             |
 
 ---
 

@@ -10,12 +10,34 @@ import type {
 import { INUTIL_STATES } from '../../domain/tool-unit.model'
 
 const STOCK_ASSIGNEES = [
-  'Carlos Mendoza', 'Ana Restrepo', 'Luis Fernández', 'María Gómez',
-  'Jorge Patiño', 'Sofía Lara', 'Diego Cruz', 'Valentina Ruiz',
-  'Andrés Vélez', 'Camila Torres', 'Felipe Soto', 'Daniela Quintero',
+  'Carlos Mendoza',
+  'Ana Restrepo',
+  'Luis Fernández',
+  'María Gómez',
+  'Jorge Patiño',
+  'Sofía Lara',
+  'Diego Cruz',
+  'Valentina Ruiz',
+  'Andrés Vélez',
+  'Camila Torres',
+  'Felipe Soto',
+  'Daniela Quintero',
 ]
 
-const STOCK_MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+const STOCK_MONTHS = [
+  'ene',
+  'feb',
+  'mar',
+  'abr',
+  'may',
+  'jun',
+  'jul',
+  'ago',
+  'sep',
+  'oct',
+  'nov',
+  'dic',
+]
 
 function createSeededRandom(seed: number): () => number {
   let state = (seed * 9301 + 49297) % 233280
@@ -27,8 +49,13 @@ function createSeededRandom(seed: number): () => number {
 
 export class ToolUnitsMock {
   static build(tool: Tool): ToolUnits {
-    const random = createSeededRandom(tool.id * 17 + 3)
-    const abbreviation = tool.model.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 6) || 'STK'
+    const idSeed = [...tool.id].reduce((accumulator, char) => accumulator + char.charCodeAt(0), 0)
+    const random = createSeededRandom(idSeed * 17 + 3)
+    const abbreviation =
+      tool.model
+        .replace(/[^A-Za-z0-9]/g, '')
+        .toUpperCase()
+        .slice(0, 6) || 'STK'
     let sequence = 1 + Math.floor(random() * 40)
 
     const nextSerial = () => `SN-${abbreviation}-${String(sequence++).padStart(4, '0')}`

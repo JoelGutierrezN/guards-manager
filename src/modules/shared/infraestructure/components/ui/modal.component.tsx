@@ -27,7 +27,11 @@ export function Modal({ open, onClose, maxWidth = 480, className, children }: Pr
             : 'translate-y-[10px] scale-[0.98] opacity-0',
           className,
         )}
-        style={{ maxWidth, transitionDuration: open ? '320ms' : '200ms', transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }}
+        style={{
+          maxWidth,
+          transitionDuration: open ? '320ms' : '200ms',
+          transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)',
+        }}
         onClick={(event) => event.stopPropagation()}
       >
         {children}

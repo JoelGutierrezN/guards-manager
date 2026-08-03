@@ -60,8 +60,7 @@ export function ToolIngresoModal({ open, tool, onClose, onConfirm }: Props): JSX
 
         <div className="mb-1 flex items-center justify-between text-[12px] font-medium text-ink-2">
           <span>
-            ¿Cuántas unidades van a ingresar?{' '}
-            <span className="text-danger">*</span>
+            ¿Cuántas unidades van a ingresar? <span className="text-danger">*</span>
           </span>
         </div>
         <input

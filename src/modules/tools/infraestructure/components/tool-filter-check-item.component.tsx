@@ -9,14 +9,16 @@ interface Props {
   onToggle: (key: string) => void
 }
 
-export function ToolFilterCheckItem({ filterKey, label, count, checked, onToggle }: Props): JSX.Element {
+export function ToolFilterCheckItem({
+  filterKey,
+  label,
+  count,
+  checked,
+  onToggle,
+}: Props): JSX.Element {
   return (
     <div className="flex items-center justify-between py-0.5">
-      <Checkbox
-        checked={checked}
-        onChange={() => onToggle(filterKey)}
-        label={label}
-      />
+      <Checkbox checked={checked} onChange={() => onToggle(filterKey)} label={label} />
       <span className="font-mono text-[11px] text-muted">{count}</span>
     </div>
   )

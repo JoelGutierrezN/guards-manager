@@ -25,9 +25,7 @@ export function Tabs<T extends string>({ value, items, onChange }: TabsProps<T>)
             onClick={() => onChange(item.value)}
             className={cn(
               '-mb-px inline-flex cursor-pointer items-center gap-1.5 border-b-2 px-3 py-2 text-[12px] font-medium transition-[color,border-color]',
-              active
-                ? 'border-brand text-ink'
-                : 'border-transparent text-muted hover:text-ink-2',
+              active ? 'border-brand text-ink' : 'border-transparent text-muted hover:text-ink-2',
             )}
           >
             <span>{item.label}</span>

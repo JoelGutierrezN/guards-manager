@@ -1,9 +1,5 @@
 import { type JSX } from 'react'
-import {
-  ArrowLeft01Icon,
-  PencilEdit02Icon,
-  PlusSignIcon,
-} from '@hugeicons/core-free-icons'
+import { ArrowLeft01Icon, PencilEdit02Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Button, Chip, IconButton, useToasts } from '../../../shared/infraestructure/components/ui'
 import { BRAND_DB, usagePct } from '../data/brands.data'
@@ -15,7 +11,15 @@ interface BrandDetailPageProps {
   onModels?: () => void
 }
 
-function Kpi({ label, value, accent }: { label: string; value: string | number; accent?: boolean }): JSX.Element {
+function Kpi({
+  label,
+  value,
+  accent,
+}: {
+  label: string
+  value: string | number
+  accent?: boolean
+}): JSX.Element {
   return (
     <div className="rounded-[26px] border border-hairline bg-white px-4 py-3.5 shadow-[0_1px_2px_rgba(14,15,60,0.04)]">
       <div className="text-[11px] text-muted">{label}</div>
@@ -29,7 +33,11 @@ function Kpi({ label, value, accent }: { label: string; value: string | number; 
 }
 
 /** Detalle de una marca: cabecera, KPIs y tabla de modelos. */
-export function BrandDetailPage({ brandName, onBack, onModels }: BrandDetailPageProps): JSX.Element {
+export function BrandDetailPage({
+  brandName,
+  onBack,
+  onModels,
+}: BrandDetailPageProps): JSX.Element {
   const brand = BRAND_DB[brandName] ?? BRAND_DB.DeWalt
   const [addToast, ToastHost] = useToasts()
   const usage = usagePct(brand.asg, brand.tools)
@@ -83,7 +91,9 @@ export function BrandDetailPage({ brandName, onBack, onModels }: BrandDetailPage
       <div className="reveal-d3 overflow-hidden rounded-[20px] border border-hairline bg-white shadow-[0_1px_2px_rgba(14,15,60,0.04)]">
         <div className="flex min-h-11 items-center justify-between gap-3 border-b border-hairline px-4 py-3">
           <div>
-            <div className="font-mono text-[11px] tracking-[0.04em] text-muted uppercase">Modelos</div>
+            <div className="font-mono text-[11px] tracking-[0.04em] text-muted uppercase">
+              Modelos
+            </div>
             <div className="text-[14px] font-semibold text-ink">
               {brand.models} modelos de {brand.name}
             </div>

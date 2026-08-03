@@ -51,7 +51,10 @@ export function Pager({
       <div className="inline-flex items-center gap-0.5">
         <button
           type="button"
-          className={cn(cell, 'hover:bg-brand-soft disabled:pointer-events-none disabled:text-muted-soft')}
+          className={cn(
+            cell,
+            'hover:bg-brand-soft disabled:pointer-events-none disabled:text-muted-soft',
+          )}
           disabled={page <= 1}
           onClick={() => onChange(page - 1)}
           aria-label="Página anterior"
@@ -78,7 +81,10 @@ export function Pager({
 
         <button
           type="button"
-          className={cn(cell, 'hover:bg-brand-soft disabled:pointer-events-none disabled:text-muted-soft')}
+          className={cn(
+            cell,
+            'hover:bg-brand-soft disabled:pointer-events-none disabled:text-muted-soft',
+          )}
           disabled={page >= max}
           onClick={() => onChange(page + 1)}
           aria-label="Página siguiente"

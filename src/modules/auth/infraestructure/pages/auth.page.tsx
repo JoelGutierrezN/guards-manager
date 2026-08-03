@@ -1,6 +1,6 @@
-import { PackageIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { AuthForm } from "../components/auth-form.component";
+import { PackageIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { AuthForm } from '../components/auth-form.component'
 
 export default function AuthPage() {
   return (
@@ -14,9 +14,7 @@ export default function AuthPage() {
                 <div className="w-12 h-12 rounded-xl bg-primary-foreground/10 backdrop-blur-sm flex items-center justify-center border border-primary-foreground/20">
                   <HugeiconsIcon icon={PackageIcon} strokeWidth={1.5} />
                 </div>
-                <span className="text-2xl font-semibold tracking-tight">
-                  GuardManager
-                </span>
+                <span className="text-2xl font-semibold tracking-tight">GuardManager</span>
               </div>
             </div>
 
@@ -25,8 +23,7 @@ export default function AuthPage() {
                 Gestión óptima de tu inventario
               </h1>
               <p className="text-lg xl:text-xl text-primary-foreground/80 max-w-md leading-relaxed">
-                Transforma la gestión de tu almacén con soluciones inteligentes
-                y eficientes.
+                Transforma la gestión de tu almacén con soluciones inteligentes y eficientes.
               </p>
             </div>
           </div>
@@ -36,5 +33,5 @@ export default function AuthPage() {
         <AuthForm />
       </div>
     </div>
-  );
+  )
 }

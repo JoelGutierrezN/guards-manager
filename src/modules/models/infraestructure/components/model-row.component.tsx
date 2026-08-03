@@ -8,7 +8,7 @@ import {
 import { IconButton } from '../../../shared/infraestructure/components/ui'
 import type { ProductModel } from '../../domain/product-model.entity'
 import { MODELS_TABLE_TD } from './models-table.model'
-import {Chip} from "@heroui/react";
+import { Chip } from '@heroui/react'
 
 interface Props {
   model: ProductModel
@@ -29,8 +29,15 @@ export function ModelRow({
   onReactivate,
   onDelete,
 }: Props): JSX.Element {
-  const { brandName, name, stocksTotal, stocksAssigned, usagePercentage, active, discontinuationReason } =
-    model
+  const {
+    brandName,
+    name,
+    stocksTotal,
+    stocksAssigned,
+    usagePercentage,
+    active,
+    discontinuationReason,
+  } = model
 
   const rowClassName = useMemo(
     () =>
@@ -73,20 +80,22 @@ export function ModelRow({
       <td className={`${MODELS_TABLE_TD} w-42.5 min-w-50`}>
         <div className="flex items-center gap-2">
           <span className={`font-mono font-medium ${textClassName}`}>{name}</span>
-          {!active && (
-              discontinuationReason != null && (
-                <span className="max-w-55 truncate text-zinc-600 capitalize italic text-xs">
-                  {discontinuationReason}
-                </span>
-              )
+          {!active && discontinuationReason != null && (
+            <span className="max-w-55 truncate text-zinc-600 capitalize italic text-xs">
+              {discontinuationReason}
+            </span>
           )}
         </div>
       </td>
       {stocksTotal <= 0 ? (
-            <td className={`${MODELS_TABLE_TD} w-20 font-mono font-medium text-ink-2`}><Chip>Sin existencias</Chip></td>)
-        : (
-            <td className={`${MODELS_TABLE_TD} w-20 font-mono font-medium text-ink-2`}>{stocksTotal}</td>
-        )}
+        <td className={`${MODELS_TABLE_TD} w-20 font-mono font-medium text-ink-2`}>
+          <Chip>Sin existencias</Chip>
+        </td>
+      ) : (
+        <td className={`${MODELS_TABLE_TD} w-20 font-mono font-medium text-ink-2`}>
+          {stocksTotal}
+        </td>
+      )}
       <td className={`${MODELS_TABLE_TD} w-42.5`}>
         <div className="flex items-center gap-2">
           <span className="w-9 font-mono text-[11px] text-ink-2">
@@ -95,7 +104,9 @@ export function ModelRow({
           <div className="h-1 max-w-20 flex-1 overflow-hidden rounded-sm bg-cream-2">
             <div className="h-full bg-brand" style={{ width: usageBarWidth }} />
           </div>
-          <span className="w-8 text-right font-mono text-[11px] text-muted">{usagePercentage}%</span>
+          <span className="w-8 text-right font-mono text-[11px] text-muted">
+            {usagePercentage}%
+          </span>
         </div>
       </td>
       <td className={`${MODELS_TABLE_TD} w-37.5 text-right`}>

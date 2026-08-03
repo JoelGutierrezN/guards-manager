@@ -39,7 +39,9 @@ export function useModelBrandTabs() {
   const selectBrand = useCallback(
     (brandId: string) => {
       if (brandId !== ALL_BRANDS_TAB) {
-        setVisibleIds((ids) => (ids.includes(brandId) ? ids : BrandTabsHelper.replaceLast(ids, brandId)))
+        setVisibleIds((ids) =>
+          ids.includes(brandId) ? ids : BrandTabsHelper.replaceLast(ids, brandId),
+        )
       }
       setQueryParams({ brand: brandId === ALL_BRANDS_TAB ? undefined : brandId })
     },

@@ -6,9 +6,7 @@ interface SidebarCollapseButtonProps {
   onToggle: () => void
 }
 
-export function SidebarCollapseButton({
-  onToggle,
-}: SidebarCollapseButtonProps): JSX.Element {
+export function SidebarCollapseButton({ onToggle }: SidebarCollapseButtonProps): JSX.Element {
   return (
     <button
       type="button"

@@ -7,7 +7,13 @@ export function AuthMiddleware() {
 
   if (!isAuthenticated) {
     const target = sessionExpired ? '/session-expired' : '/'
-    return <Navigate to={target} state={{ from: { pathname: location.pathname, search: location.search } }} replace />
+    return (
+      <Navigate
+        to={target}
+        state={{ from: { pathname: location.pathname, search: location.search } }}
+        replace
+      />
+    )
   }
 
   return <Outlet />

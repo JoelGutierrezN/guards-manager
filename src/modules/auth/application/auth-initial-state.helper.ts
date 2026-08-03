@@ -4,7 +4,14 @@ import type { AuthState } from './auth-state.interfaces'
 export class AuthInitialStateHelper {
   static build(): AuthState {
     const session = AuthSessionStorage.read()
-    if (!session) return { user: null, token: null, status: 'idle', error: null, sessionExpired: false }
-    return { user: session.user, token: session.token, status: 'authenticated', error: null, sessionExpired: false }
+    if (!session)
+      return { user: null, token: null, status: 'idle', error: null, sessionExpired: false }
+    return {
+      user: session.user,
+      token: session.token,
+      status: 'authenticated',
+      error: null,
+      sessionExpired: false,
+    }
   }
 }

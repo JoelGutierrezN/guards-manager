@@ -1,5 +1,6 @@
 import type { Tool } from '../domain/tool.entity'
 import type { ToolFilters } from '../domain/tool-filters.model'
+import type { ToolsPage } from '../domain/tools-page.model'
 import type { ToolsTabKey } from '../domain/tools-tab.model'
 
 export interface ProgressEntry {
@@ -9,11 +10,18 @@ export interface ProgressEntry {
 
 export const DEFAULT_STOCK_RANGE: [number, number] = [0, 50]
 
+export type ToolsStatus = 'loading' | 'ready' | 'error'
+
 export interface ToolsState {
   rows: Tool[]
+  status: ToolsStatus
+  error: string | null
   filters: ToolFilters
   tab: ToolsTabKey
   page: number
+  perPage: number
+  lastPage: number
+  total: number
   showFilters: boolean
   newToolOpen: boolean
   ingresoTool: Tool | null
@@ -22,7 +30,28 @@ export interface ToolsState {
   progress: ProgressEntry | null
 }
 
+export const INITIAL_TOOLS_STATE: ToolsState = {
+  rows: [],
+  status: 'loading',
+  error: null,
+  filters: { brands: [], models: [], stockRange: DEFAULT_STOCK_RANGE },
+  tab: 'all',
+  page: 1,
+  perPage: 25,
+  lastPage: 1,
+  total: 0,
+  showFilters: true,
+  newToolOpen: false,
+  ingresoTool: null,
+  stockTool: null,
+  deleteTool: null,
+  progress: null,
+}
+
 export type ToolsAction =
+  | { type: 'LOAD_START' }
+  | { type: 'LOAD_SUCCESS'; result: ToolsPage }
+  | { type: 'LOAD_ERROR'; error: string }
   | { type: 'TOGGLE_BRAND'; brand: string }
   | { type: 'TOGGLE_MODEL'; model: string }
   | { type: 'SET_STOCK_RANGE'; range: [number, number] }

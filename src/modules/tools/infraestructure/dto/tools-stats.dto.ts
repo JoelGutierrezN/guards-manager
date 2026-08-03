@@ -1,4 +1,4 @@
-export interface InventoryStats {
+export interface ToolsStatsDto {
   total: number
   assigned: number
   available: number

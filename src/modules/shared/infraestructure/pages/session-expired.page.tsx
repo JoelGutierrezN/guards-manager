@@ -32,7 +32,8 @@ export function SessionExpiredPage(): JSX.Element {
         </h1>
 
         <p className="mx-auto mb-8 max-w-[42ch] text-[13px] leading-[1.6] text-ink-3">
-          Por seguridad cerramos tu sesión tras un periodo de inactividad. Vuelve a iniciar sesión para continuar donde lo dejaste.
+          Por seguridad cerramos tu sesión tras un periodo de inactividad. Vuelve a iniciar sesión
+          para continuar donde lo dejaste.
         </p>
 
         <Button variant="primary" size="lg" onClick={() => navigate('/', { state: { from } })}>

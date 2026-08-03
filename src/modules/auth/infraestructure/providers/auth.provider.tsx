@@ -38,7 +38,7 @@ export function AuthProvider() {
       dispatch({ type: 'AUTH_SUCCESS', payload: session })
     } catch (error) {
       const message = axios.isAxiosError(error)
-        ? error.response?.data?.message ?? 'Credenciales inválidas'
+        ? (error.response?.data?.message ?? 'Credenciales inválidas')
         : 'Error de autenticación'
       dispatch({ type: 'AUTH_ERROR', payload: message })
     }
@@ -59,5 +59,9 @@ export function AuthProvider() {
     sessionExpired: state.sessionExpired,
   }
 
-  return <AuthContext.Provider value={contextValue}><Outlet /></AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={contextValue}>
+      <Outlet />
+    </AuthContext.Provider>
+  )
 }

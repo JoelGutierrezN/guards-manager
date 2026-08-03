@@ -2,7 +2,10 @@ import { HttpDataSource } from '../../../shared/infraestructure/datasource/http.
 import type { ProductModelRepository as ProductModelRepositoryContract } from '../../domain/product-model-repository'
 import type { ProductModel } from '../../domain/product-model.entity'
 import type { ProductModelPage } from '../../domain/product-model-page.model'
-import type { CreateProductModelInput, UpdateProductModelInput } from '../../domain/product-model-input.model'
+import type {
+  CreateProductModelInput,
+  UpdateProductModelInput,
+} from '../../domain/product-model-input.model'
 import type { ProductModelNameCheck } from '../../domain/product-model-name-check.model'
 import type { ProductModelCollectionDto } from '../dto/product-model-collection.dto'
 import type { ProductModelNameCheckDto } from '../dto/product-model-name-check.dto'

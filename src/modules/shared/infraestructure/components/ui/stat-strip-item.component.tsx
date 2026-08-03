@@ -20,7 +20,9 @@ function StatStripItemInner({ entry }: StatStripItemProps): JSX.Element {
     () =>
       cn(
         'flex items-center gap-2.5 rounded-[20px] border p-3 transition-[border-color,box-shadow] hover:shadow-[0_2px_6px_-1px_rgba(14,15,60,0.06),0_1px_2px_rgba(14,15,60,0.03)]',
-        entry.tone ? TONE_CLASSES[entry.tone] : 'bg-white border-hairline hover:border-lavender-line',
+        entry.tone
+          ? TONE_CLASSES[entry.tone]
+          : 'bg-white border-hairline hover:border-lavender-line',
       ),
     [entry.tone],
   )

@@ -15,7 +15,11 @@ const SEARCH_DEBOUNCE_MS = 250
 
 export function useProductModels(brandId: string | null, onMutated?: () => void) {
   const { params, setQueryParams } = useQueryParams()
-  const [state, dispatch] = useReducer(modelsReducer, params, ModelsQueryParamsHelper.initialStateFrom)
+  const [state, dispatch] = useReducer(
+    modelsReducer,
+    params,
+    ModelsQueryParamsHelper.initialStateFrom,
+  )
   const requestRef = useRef({
     page: state.page,
     query: state.query,
@@ -48,18 +52,23 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
     )
   }, [state.page, state.query, state.filters, setQueryParams])
 
-  const load = useCallback(async (
-    request: { page: number; query: string; brandId: string | null; filters: ModelsFilters },
-    silent = false,
-  ) => {
-    if (!silent) dispatch({ type: 'LOAD_START' })
-    try {
-      const result = await productModelRepository.list(ModelsQueryParamsHelper.toApiParams(request))
-      dispatch({ type: 'LOAD_SUCCESS', result })
-    } catch {
-      dispatch({ type: 'LOAD_ERROR', error: 'No se pudieron cargar los modelos.' })
-    }
-  }, [])
+  const load = useCallback(
+    async (
+      request: { page: number; query: string; brandId: string | null; filters: ModelsFilters },
+      silent = false,
+    ) => {
+      if (!silent) dispatch({ type: 'LOAD_START' })
+      try {
+        const result = await productModelRepository.list(
+          ModelsQueryParamsHelper.toApiParams(request),
+        )
+        dispatch({ type: 'LOAD_SUCCESS', result })
+      } catch {
+        dispatch({ type: 'LOAD_ERROR', error: 'No se pudieron cargar los modelos.' })
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
     const handle = setTimeout(() => {

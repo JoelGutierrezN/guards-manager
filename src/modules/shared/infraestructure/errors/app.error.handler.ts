@@ -3,11 +3,11 @@ export class AppError extends Error {
   public readonly status?: number
   public readonly details?: unknown
 
-  constructor ({
+  constructor({
     message,
     code,
     status,
-    details
+    details,
   }: {
     message: string
     code: string

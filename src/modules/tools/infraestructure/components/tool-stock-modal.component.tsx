@@ -1,5 +1,11 @@
 import { type JSX, useMemo, useRef, useState } from 'react'
-import { Cancel01Icon, Search01Icon, ViewIcon, SentIcon, File01Icon } from '@hugeicons/core-free-icons'
+import {
+  Cancel01Icon,
+  Search01Icon,
+  ViewIcon,
+  SentIcon,
+  File01Icon,
+} from '@hugeicons/core-free-icons'
 import { Modal, IconButton, Icon, Chip } from '../../../shared/infraestructure/components/ui'
 import type { Tool } from '../../domain/tool.entity'
 import type { ToolUnits } from '../../domain/tool-unit.model'
@@ -138,11 +144,13 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
         </div>
       </div>
 
-      <div ref={bodyRef} className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 pb-6 pt-4">
+      <div
+        ref={bodyRef}
+        className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 pb-6 pt-4"
+      >
         {searching && totalShown === 0 && (
           <div className="px-0.5 py-4 text-center text-[13px] text-muted">
-            Sin coincidencias para{' '}
-            <span className="font-mono text-ink-2">“{query.trim()}”</span>.
+            Sin coincidencias para <span className="font-mono text-ink-2">“{query.trim()}”</span>.
           </div>
         )}
 
@@ -154,7 +162,9 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
               count={filtered.disponibles.length}
             />
             {filtered.disponibles.length === 0 ? (
-              <div className="px-0.5 pt-2 text-[11px] text-muted">Sin unidades en esta categoría.</div>
+              <div className="px-0.5 pt-2 text-[11px] text-muted">
+                Sin unidades en esta categoría.
+              </div>
             ) : (
               <table className="w-full border-collapse text-[13px]">
                 <thead>
@@ -173,8 +183,18 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
                       </td>
                       <td className="w-px whitespace-nowrap border-b border-hairline px-3 py-1 text-right">
                         <span className="inline-flex gap-1">
-                          <IconButton icon={ViewIcon} tip="Ver ítem" size="sm" onClick={goItemDetail} />
-                          <IconButton icon={SentIcon} tip="Asignar" size="sm" onClick={goNewAssignment} />
+                          <IconButton
+                            icon={ViewIcon}
+                            tip="Ver ítem"
+                            size="sm"
+                            onClick={goItemDetail}
+                          />
+                          <IconButton
+                            icon={SentIcon}
+                            tip="Asignar"
+                            size="sm"
+                            onClick={goNewAssignment}
+                          />
                         </span>
                       </td>
                     </tr>
@@ -193,7 +213,9 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
               count={filtered.asignadas.length}
             />
             {filtered.asignadas.length === 0 ? (
-              <div className="px-0.5 pt-2 text-[11px] text-muted">Sin unidades en esta categoría.</div>
+              <div className="px-0.5 pt-2 text-[11px] text-muted">
+                Sin unidades en esta categoría.
+              </div>
             ) : (
               <table className="w-full border-collapse text-[13px]">
                 <thead>
@@ -224,8 +246,18 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
                       </td>
                       <td className="w-px whitespace-nowrap border-b border-hairline px-3 py-1 text-right">
                         <span className="inline-flex gap-1">
-                          <IconButton icon={ViewIcon} tip="Ver ítem" size="sm" onClick={goItemDetail} />
-                          <IconButton icon={File01Icon} tip="Ver resguardo" size="sm" onClick={goItemDetail} />
+                          <IconButton
+                            icon={ViewIcon}
+                            tip="Ver ítem"
+                            size="sm"
+                            onClick={goItemDetail}
+                          />
+                          <IconButton
+                            icon={File01Icon}
+                            tip="Ver resguardo"
+                            size="sm"
+                            onClick={goItemDetail}
+                          />
                         </span>
                       </td>
                     </tr>
@@ -244,7 +276,9 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
               count={filtered.inutilizables.length}
             />
             {filtered.inutilizables.length === 0 ? (
-              <div className="px-0.5 pt-2 text-[11px] text-muted">Sin unidades en esta categoría.</div>
+              <div className="px-0.5 pt-2 text-[11px] text-muted">
+                Sin unidades en esta categoría.
+              </div>
             ) : (
               <table className="w-full border-collapse text-[13px]">
                 <thead>
@@ -270,7 +304,12 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
                         </Chip>
                       </td>
                       <td className="w-px whitespace-nowrap border-b border-hairline bg-danger-soft px-3 py-1 text-right">
-                        <IconButton icon={ViewIcon} tip="Ver ítem" size="sm" onClick={goItemDetail} />
+                        <IconButton
+                          icon={ViewIcon}
+                          tip="Ver ítem"
+                          size="sm"
+                          onClick={goItemDetail}
+                        />
                       </td>
                     </tr>
                   ))}

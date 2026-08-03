@@ -12,7 +12,11 @@ const MIN_SKELETON_CARDS = 3
 
 export function useBrands() {
   const { params, setQueryParams } = useQueryParams()
-  const [state, dispatch] = useReducer(brandsReducer, params, BrandsQueryParamsHelper.initialStateFrom)
+  const [state, dispatch] = useReducer(
+    brandsReducer,
+    params,
+    BrandsQueryParamsHelper.initialStateFrom,
+  )
   const requestRef = useRef({ page: state.page, query: state.query })
 
   useEffect(() => {

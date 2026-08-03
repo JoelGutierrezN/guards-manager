@@ -38,7 +38,9 @@ export class HttpDataSource {
   private static instance: HttpDataSource | null = null
   private readonly client: AxiosInstance
 
-  private constructor(baseURL: string) { /* ...igual que hoy... */ }
+  private constructor(baseURL: string) {
+    /* ...igual que hoy... */
+  }
 
   static getInstance(): HttpDataSource {
     if (!HttpDataSource.instance) {
@@ -69,7 +71,7 @@ export function useHandleApiError(): (error: unknown) => never {
 ```ts
 // src/modules/auth/infraestructure/from-location-state.interfaces.ts (ya existe, se reutiliza)
 export interface FromLocationState {
-  from?: { pathname: string; search?: string }  // se añade `search` para no perder query params
+  from?: { pathname: string; search?: string } // se añade `search` para no perder query params
 }
 ```
 
@@ -164,12 +166,12 @@ Durante la implementación, el usuario revirtió explícitamente la decisión de
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| Mover el manejo de 401 de los repositorios (que capturaban todo con `handleApiError`) a los hooks llamadores puede dejar algún `catch` sin actualizar y tragarse el error silenciosamente. | El paso 3 del plan revisa explícitamente los 3 puntos de llamada actuales (`AuthProvider.login`, `AuthUseCase.logout`, `useInventoryOverview`) y cualquier otro hook que use `brandRepository`; `tsc -b` no detecta esto por tipos, así que se verifica manualmente forzando un 401 en cada flujo. |
-| El guard "solo una vez" mal implementado (ej. con estado de React en vez de `useRef`/módulo) podría re-disparar el flujo en un re-render y causar un loop de navegación. | Usar una referencia estable (`useRef` a nivel de `AuthProvider` o una variable de módulo) que no dispara re-render y se resetea explícitamente solo en `login()` exitoso. |
-| Si `useHandleApiError` depende de `useAuth()`, pero se invoca desde un hook que se ejecuta fuera del árbol de `AuthProvider` (poco probable dado el router actual, pero posible en tests o código futuro), fallaría igual que cualquier otro uso de `useAuth()` hoy. | Mismo riesgo ya aceptado y documentado en SPEC 03 para `useAuth()`/`useNavigate()`; no se introduce nada nuevo, se hereda la mismas restricciones. |
-| Quitar el catch silencioso de `POST /logout` podría hacer que un logout con token expirado, en vez de limpiar y quedarse en `/`, ahora mande al usuario a `/session-expired` (una pantalla "de error" para una acción que el usuario inició voluntariamente). | Es el comportamiento pedido explícitamente por el usuario ("si el token vence, vence y punto"); se acepta como válido y se verifica en el criterio de aceptación correspondiente. |
+| Riesgo                                                                                                                                                                                                                                                               | Mitigación                                                                                                                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mover el manejo de 401 de los repositorios (que capturaban todo con `handleApiError`) a los hooks llamadores puede dejar algún `catch` sin actualizar y tragarse el error silenciosamente.                                                                           | El paso 3 del plan revisa explícitamente los 3 puntos de llamada actuales (`AuthProvider.login`, `AuthUseCase.logout`, `useInventoryOverview`) y cualquier otro hook que use `brandRepository`; `tsc -b` no detecta esto por tipos, así que se verifica manualmente forzando un 401 en cada flujo. |
+| El guard "solo una vez" mal implementado (ej. con estado de React en vez de `useRef`/módulo) podría re-disparar el flujo en un re-render y causar un loop de navegación.                                                                                             | Usar una referencia estable (`useRef` a nivel de `AuthProvider` o una variable de módulo) que no dispara re-render y se resetea explícitamente solo en `login()` exitoso.                                                                                                                          |
+| Si `useHandleApiError` depende de `useAuth()`, pero se invoca desde un hook que se ejecuta fuera del árbol de `AuthProvider` (poco probable dado el router actual, pero posible en tests o código futuro), fallaría igual que cualquier otro uso de `useAuth()` hoy. | Mismo riesgo ya aceptado y documentado en SPEC 03 para `useAuth()`/`useNavigate()`; no se introduce nada nuevo, se hereda la mismas restricciones.                                                                                                                                                 |
+| Quitar el catch silencioso de `POST /logout` podría hacer que un logout con token expirado, en vez de limpiar y quedarse en `/`, ahora mande al usuario a `/session-expired` (una pantalla "de error" para una acción que el usuario inició voluntariamente).        | Es el comportamiento pedido explícitamente por el usuario ("si el token vence, vence y punto"); se acepta como válido y se verifica en el criterio de aceptación correspondiente.                                                                                                                  |
 
 ---
 

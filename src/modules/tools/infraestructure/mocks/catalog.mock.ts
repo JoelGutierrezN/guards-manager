@@ -33,4 +33,3 @@ export const MOCK_MODELS: Record<string, ModelOption[]> = {
   ],
   Fluke: [{ value: '117', label: '117 · Multímetro digital' }],
 }
-

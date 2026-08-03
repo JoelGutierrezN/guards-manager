@@ -1,8 +1,8 @@
 import type { Tool } from '../domain/tool.entity'
 
-export class InventoryService {
+export class ToolsService {
   // TODO API: persistir el ingreso con POST /api/tools/{toolId}/stock-in; aquí solo se actualiza en memoria.
-  static addStock(rows: Tool[], toolId: number, quantity: number): Tool[] {
+  static addStock(rows: Tool[], toolId: string, quantity: number): Tool[] {
     return rows.map((tool) =>
       tool.id === toolId ? { ...tool, total: tool.total + quantity } : tool,
     )

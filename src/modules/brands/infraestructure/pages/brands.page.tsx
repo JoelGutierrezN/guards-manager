@@ -1,11 +1,17 @@
 import type { JSX } from 'react'
 import { PlusSignIcon } from '@hugeicons/core-free-icons'
-import { Button, PageHero, Pager, SearchInput, useToasts } from '../../../shared/infraestructure/components/ui'
+import {
+  Button,
+  PageHero,
+  Pager,
+  SearchInput,
+  useToasts,
+} from '../../../shared/infraestructure/components/ui'
 import { BrandCard } from '../components/brand-card.component'
 import { BrandCardSkeleton } from '../components/brand-card-skeleton.component'
 import { NewBrandModal } from '../components/new-brand-modal.component'
 import { useBrands } from '../../hooks/use-brands.hook'
-import {CreateBrandCard} from "../components/create-brand-card.component.tsx";
+import { CreateBrandCard } from '../components/create-brand-card.component.tsx'
 
 interface Props {
   onSelectBrand?: (name: string) => void
@@ -68,16 +74,15 @@ export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
             <CreateBrandCard openCreate={openCreate} />
 
             {showSkeletons
-                ? skeletonSlots.map((index) => <BrandCardSkeleton key={index} />)
-                : state.brands.map((brand) => (
-                    <BrandCard
-                        key={brand.id}
-                        brand={brand}
-                        onOpen={() => onSelectBrand?.(brand.name)}
-                        onEdit={() => openEdit(brand)}
-                    />
-                ))
-            }
+              ? skeletonSlots.map((index) => <BrandCardSkeleton key={index} />)
+              : state.brands.map((brand) => (
+                  <BrandCard
+                    key={brand.id}
+                    brand={brand}
+                    onOpen={() => onSelectBrand?.(brand.name)}
+                    onEdit={() => openEdit(brand)}
+                  />
+                ))}
           </div>
 
           {!showSkeletons && state.brands.length === 0 && state.query !== '' && (

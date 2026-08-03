@@ -1,7 +1,16 @@
-import { type ChangeEventHandler, type InputHTMLAttributes, type JSX, useEffect, useRef } from 'react'
+import {
+  type ChangeEventHandler,
+  type InputHTMLAttributes,
+  type JSX,
+  useEffect,
+  useRef,
+} from 'react'
 import { cn } from '../../utils/cn'
 
-interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'checked' | 'type'> {
+interface Props extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'onChange' | 'checked' | 'type'
+> {
   checked?: boolean
   indeterminate?: boolean
   onChange?: ChangeEventHandler<HTMLInputElement>
@@ -58,9 +67,7 @@ export function Checkbox({ checked, indeterminate, onChange, label, ...rest }: P
             />
           </svg>
         )}
-        {indeterminate && (
-          <span className="block h-[1.5px] w-2 rounded-full bg-cream" />
-        )}
+        {indeterminate && <span className="block h-[1.5px] w-2 rounded-full bg-cream" />}
       </span>
       {label && <span>{label}</span>}
     </label>

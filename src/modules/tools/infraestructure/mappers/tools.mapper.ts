@@ -1,10 +1,10 @@
-import type { InventoryStats } from '../../domain/inventory-stats.entity'
+import type { ToolsStats } from '../../domain/tools-stats.entity'
 import type { CatalogTree } from '../../domain/catalog-option.model'
-import type { InventoryStatsDto } from '../dto/inventory-stats.dto'
+import type { ToolsStatsDto } from '../dto/tools-stats.dto'
 import type { CatalogTreeDto } from '../dto/catalog-tree.dto'
 
-export class InventoryMapper {
-  static toInventoryStats(dto: InventoryStatsDto): InventoryStats {
+export class ToolsMapper {
+  static toToolsStats(dto: ToolsStatsDto): ToolsStats {
     return {
       total: dto.total,
       assigned: dto.assigned,

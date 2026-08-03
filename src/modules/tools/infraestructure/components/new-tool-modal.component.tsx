@@ -1,5 +1,10 @@
 import { type JSX, useState } from 'react'
-import { Cancel01Icon, InformationCircleIcon, Book02Icon, Layers01Icon } from '@hugeicons/core-free-icons'
+import {
+  Cancel01Icon,
+  InformationCircleIcon,
+  Book02Icon,
+  Layers01Icon,
+} from '@hugeicons/core-free-icons'
 import { Modal, IconButton, Button, Icon } from '../../../shared/infraestructure/components/ui'
 import { useToasts } from '../../../shared/infraestructure/components/ui'
 import { MOCK_BRANDS, MOCK_MODELS } from '../mocks/catalog.mock'
@@ -141,9 +146,8 @@ export function NewToolModal({ open, onClose, onSave }: Props): JSX.Element {
           <div className="flex items-start gap-3 rounded-[10px] border border-hairline bg-paper-tint p-2.5">
             <Icon icon={InformationCircleIcon} size={14} className="mt-0.5 shrink-0 text-brand" />
             <p className="text-[12px] text-muted">
-              Se añade al catálogo y empieza{' '}
-              <strong className="text-ink-2">sin inventario</strong>. Las piezas disponibles se
-              registran en{' '}
+              Se añade al catálogo y empieza <strong className="text-ink-2">sin inventario</strong>.
+              Las piezas disponibles se registran en{' '}
               <strong className="text-ink-2">Ingreso de inventario</strong>.
             </p>
           </div>

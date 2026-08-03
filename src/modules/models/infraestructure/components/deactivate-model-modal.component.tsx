@@ -28,15 +28,15 @@ export function DeactivateModelModal({ open, model, onClose, onConfirm }: Props)
 
         <div className="flex flex-col gap-2 text-[13px] leading-relaxed text-ink-2">
           <p>
-            Un modelo dado de baja <b className="text-ink">no permite dar de alta nuevas existencias</b>. Las herramientas ya resguardadas siguen operando con normalidad.
+            Un modelo dado de baja{' '}
+            <b className="text-ink">no permite dar de alta nuevas existencias</b>. Las herramientas
+            ya resguardadas siguen operando con normalidad.
           </p>
           <p>
             Para poder <b className="text-ink">eliminar</b> el modelo más adelante, primero hay que
             recolectar las herramientas que estén en resguardo.
           </p>
-          <p className="text-[12px] text-muted">
-            Podrás reactivar el modelo cuando quieras.
-          </p>
+          <p className="text-[12px] text-muted">Podrás reactivar el modelo cuando quieras.</p>
         </div>
 
         <div className="mt-[18px] flex justify-end gap-2">

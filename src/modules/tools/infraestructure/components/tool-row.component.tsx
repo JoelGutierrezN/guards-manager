@@ -1,10 +1,15 @@
 import { type JSX, useMemo } from 'react'
-import { ArrowDown01Icon, ArrowRight01Icon, Edit02Icon, Delete02Icon } from '@hugeicons/core-free-icons'
+import {
+  ArrowDown01Icon,
+  ArrowRight01Icon,
+  Edit02Icon,
+  Delete02Icon,
+} from '@hugeicons/core-free-icons'
 import { Button, IconButton, Icon } from '../../../shared/infraestructure/components/ui'
 import { cn } from '../../../shared/infraestructure/utils/cn'
 import type { Tool } from '../../domain/tool.entity'
 import { ToolStatusHelper } from '../../application/tool-status.helper'
-import { InventoryService } from '../../application/inventory.service'
+import { ToolsService } from '../../application/tools.service'
 
 interface Props {
   tool: Tool
@@ -15,7 +20,7 @@ interface Props {
 }
 
 export function ToolRow({ tool, onStock, onIngreso, onEdit, onDelete }: Props): JSX.Element {
-  const usagePercent = useMemo(() => InventoryService.usagePercent(tool), [tool])
+  const usagePercent = useMemo(() => ToolsService.usagePercent(tool), [tool])
   const barColorClass = useMemo(() => ToolStatusHelper.barColorClass(tool.status), [tool.status])
 
   const available = tool.total - tool.assigned

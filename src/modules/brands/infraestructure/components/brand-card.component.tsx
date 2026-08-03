@@ -34,8 +34,8 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <div
-                title={brand.name}
-                className="text-[14px] font-semibold tracking-[-0.01em] truncate text-ink"
+              title={brand.name}
+              className="text-[14px] font-semibold tracking-[-0.01em] truncate text-ink"
             >
               {brand.name}
             </div>
@@ -62,7 +62,9 @@ export function BrandCard({ brand, onOpen, onEdit }: BrandCardProps): JSX.Elemen
         </div>
         <div>
           <div className="text-[11px] text-muted">Asignadas</div>
-          <div className="font-mono text-[18px] font-semibold text-brand">{brand.toolsAssigned}</div>
+          <div className="font-mono text-[18px] font-semibold text-brand">
+            {brand.toolsAssigned}
+          </div>
         </div>
       </div>
 

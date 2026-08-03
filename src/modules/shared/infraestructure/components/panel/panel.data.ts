@@ -41,10 +41,38 @@ export interface RecentAssignment {
 }
 
 export const RECENT_ASSIGNMENTS: RecentAssignment[] = [
-  { id: 'AS-0142', name: 'Hugo Salazar M.', code: 'ETT-0418', count: 2, when: 'hoy 10:14', status: 'abierta' },
-  { id: 'AS-0141', name: 'Rocío Pacheco', code: 'ETT-0203', count: 1, when: 'hoy 09:02', status: 'abierta' },
-  { id: 'AS-0140', name: 'Jorge Treviño', code: 'ETT-0511', count: 4, when: 'ayer 16:33', status: 'parcial' },
-  { id: 'AS-0139', name: 'Marcos Lara', code: 'ETT-0399', count: 1, when: 'ayer 11:20', status: 'vencida' },
+  {
+    id: 'AS-0142',
+    name: 'Hugo Salazar M.',
+    code: 'ETT-0418',
+    count: 2,
+    when: 'hoy 10:14',
+    status: 'abierta',
+  },
+  {
+    id: 'AS-0141',
+    name: 'Rocío Pacheco',
+    code: 'ETT-0203',
+    count: 1,
+    when: 'hoy 09:02',
+    status: 'abierta',
+  },
+  {
+    id: 'AS-0140',
+    name: 'Jorge Treviño',
+    code: 'ETT-0511',
+    count: 4,
+    when: 'ayer 16:33',
+    status: 'parcial',
+  },
+  {
+    id: 'AS-0139',
+    name: 'Marcos Lara',
+    code: 'ETT-0399',
+    count: 1,
+    when: 'ayer 11:20',
+    status: 'vencida',
+  },
 ]
 
 export const STATUS_TONE: Record<AssignmentStatus, ChipTone> = {

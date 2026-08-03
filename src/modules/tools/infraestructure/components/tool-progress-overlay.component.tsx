@@ -39,10 +39,7 @@ export function ToolProgressOverlay({ total, tool, onDone }: Props): JSX.Element
       }}
     >
       <div className="flex w-[360px] flex-col items-center gap-4 rounded-[24px] bg-white px-[30px] py-[34px] shadow-[0_36px_70px_-18px_rgba(14,15,60,0.3),0_12px_26px_-8px_rgba(14,15,60,0.12)]">
-        <div
-          className="tools-spinner"
-          style={{ width: 30, height: 30 }}
-        />
+        <div className="tools-spinner" style={{ width: 30, height: 30 }} />
         <div className="flex flex-col items-center gap-1 text-center">
           <div className="text-[17px] font-semibold tracking-[-0.01em] text-ink">
             Registrando ingreso…
