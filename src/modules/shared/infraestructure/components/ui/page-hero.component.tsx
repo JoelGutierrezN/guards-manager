@@ -23,7 +23,7 @@ function renderTitle(title: string, italic?: string): ReactNode {
 /** Cabecera de página compacta, coherente con el `PageHero` del diseño. */
 export function PageHero({ eyebrow, title, italic, lede, actions }: PageHeroProps): JSX.Element {
   return (
-    <section className="reveal-d1 mb-2 gap-6 border-b border-hairline py-1 flex justify-between">
+    <section className="reveal-d1 gap-6 border-b border-hairline py-1 flex justify-between">
       <div>
         {eyebrow && (
           <div className="mb-3 inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] text-brand uppercase">

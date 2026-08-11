@@ -54,6 +54,12 @@ export default createBrowserRouter([
                 }),
               },
               {
+                path: 'personal',
+                lazy: async () => ({
+                  Component: (await import('../../../employees')).EmployeesPage,
+                }),
+              },
+              {
                 path: '*',
                 lazy: async () => ({
                   Component: (await import('../pages/coming-soon.page')).ComingSoonPage,

@@ -48,7 +48,7 @@ export const SIDEBAR_GROUPS: SidebarGroup[] = [
       { id: 'tools', label: 'Herramientas', icon: Wrench01Icon },
       { id: 'brands', label: 'Marcas', icon: Book02Icon },
       { id: 'models', label: 'Modelos', icon: Layers01Icon },
-      { id: 'employees', label: 'Personal', icon: UserGroupIcon },
+      { id: 'personal', label: 'Personal', icon: UserGroupIcon },
     ],
   },
   {
