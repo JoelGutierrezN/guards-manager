@@ -1,12 +1,20 @@
 import { ScrollShadow } from '@heroui/react'
+import { useState } from 'react'
+import { TableLoader } from '../../../shared/infraestructure/components/tables/table-loader.component.tsx'
+import { TableEmptyContent } from '../../../shared/infraestructure/components/tables/table-empty-content.component.tsx'
 
 const COLUMNS: string[] = ['Nombre', 'Rol', 'Resguardos activos', 'Histórico', 'Fecha de alta', '']
 
 export const EmployeesTable = () => {
+  const [error, setError] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [data, setData] = useState<unknown[]>([])
+
+  const onReload = () => {}
+
   return (
     <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-[18px] border border-hairline bg-white shadow-[0_1px_4px_rgba(14,15,60,0.04)]">
       <div className="h-135 scrollbar-gutter-stable">
-        2
         <ScrollShadow className="h-full overflow-y-auto overflow-x-hidden">
           <table className="w-full table-fixed border-collapse text-[13px]">
             <thead>
@@ -19,31 +27,10 @@ export const EmployeesTable = () => {
               </tr>
             </thead>
             <tbody>
-              {/*status === 'loading' && skeletonSlots.map((slot) => <ToolRowSkeleton key={slot} />)*/}
-              {/*status === 'error' && (
-                <tr>
-                  <td colSpan={6} className="border-b border-hairline">
-                    <Empty
-                      icon={PackageIcon}
-                      title="Error al cargar"
-                      body={error ?? 'No se pudieron cargar las herramientas.'}
-                      action={<Button onClick={onReload}>Reintentar</Button>}
-                    />
-                  </td>
-                </tr>
-              )*/}
-              {/*isEmpty && (
-                <tr>
-                  <td colSpan={6} className="border-b border-hairline">
-                    <Empty
-                      icon={PackageIcon}
-                      title="Sin resultados"
-                      body="Ajusta los filtros o limpia la búsqueda."
-                      action={<Button onClick={onClearFilters}>Limpiar filtros</Button>}
-                    />
-                  </td>
-                </tr>
-              )*/}
+              {!loading && data.length === 0 && (
+                <TableEmptyContent hasError={error} onReload={onReload} />
+              )}
+              {loading && <TableLoader width={6} />}
               {/*status === 'ready' &&
                 rows.map((tool) => (
                   <ToolRow
