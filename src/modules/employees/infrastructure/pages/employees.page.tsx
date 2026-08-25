@@ -56,12 +56,10 @@ export const EmployeesPage = () => {
       <EmployeesTable
         rows={state.rows}
         status={state.status}
-        error={state.error}
         query={state.query}
         page={state.page}
         lastPage={state.lastPage}
         total={state.total}
-        perPage={state.perPage}
         onQueryChange={setQuery}
         onSetPage={setPage}
         onReload={reloadList}
