@@ -1,4 +1,5 @@
 import { type JSX } from 'react'
+import { useNavigate } from 'react-router'
 import { Button, PageHero, useToasts } from '../../../shared/infraestructure/components/ui'
 import {
   AlertIcon,
@@ -8,6 +9,7 @@ import {
   UserMultipleIcon,
 } from '@hugeicons/core-free-icons'
 import { KpiCard } from '../../../shared/infraestructure/components/ui/kpi-card.tsx'
+import type { Employee } from '../../domain/employee.entity'
 import type { CreateEmployeeInput } from '../../domain/employee-input.model'
 import { EmployeesTable } from '../components/employees-table.component'
 import { EmployeeFormModal } from '../components/employee-form-modal.component'
@@ -33,6 +35,7 @@ export const EmployeesPage = (): JSX.Element => {
     closeModal,
   } = useEmployees()
   const [addToast, ToastHost] = useToasts()
+  const navigate = useNavigate()
 
   const handleSave = async (input: CreateEmployeeInput): Promise<void> => {
     const message = await saveEmployee(input)
@@ -41,6 +44,10 @@ export const EmployeesPage = (): JSX.Element => {
 
   const handleExport = async (): Promise<void> => {
     addToast(await exportEmployees())
+  }
+
+  const handleOpenFile = (employee: Employee): void => {
+    navigate(`/personal/${employee.id}`)
   }
 
   return (
@@ -101,6 +108,7 @@ export const EmployeesPage = (): JSX.Element => {
         onReload={reloadList}
         onClearQuery={clearQuery}
         onEdit={openEdit}
+        onOpen={handleOpenFile}
       />
 
       <EmployeeFormModal

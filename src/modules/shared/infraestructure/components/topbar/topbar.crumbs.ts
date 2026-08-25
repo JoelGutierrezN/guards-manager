@@ -9,6 +9,7 @@ export const TOPBAR_CRUMBS: Record<string, Crumb> = {
   brands: ['Catálogos', 'Marcas'],
   models: ['Catálogos', 'Modelos'],
   employees: ['Catálogos', 'Personal'],
+  personal: ['Catálogos', 'Personal'],
   profile: ['Cuenta', 'Mi perfil'],
   errors: ['Cuenta', 'Estados'],
   assignmentDetail: ['Operación', 'Resguardo', 'AS-0140'],

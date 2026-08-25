@@ -1,4 +1,4 @@
-import { type JSX } from 'react'
+import { type JSX, type KeyboardEvent, type MouseEvent } from 'react'
 import { PencilEdit02Icon } from '@hugeicons/core-free-icons'
 import { Avatar, Chip, IconButton } from '../../../shared/infraestructure/components/ui'
 import type { Employee } from '../../domain/employee.entity'
@@ -7,11 +7,29 @@ import { EmployeeContactCell } from './employee-contact-cell.component'
 interface Props {
   employee: Employee
   onEdit: () => void
+  onOpen: () => void
 }
 
-export function EmployeeRow({ employee, onEdit }: Props): JSX.Element {
+export function EmployeeRow({ employee, onEdit, onOpen }: Props): JSX.Element {
+  const handleEditClick = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.stopPropagation()
+    onEdit()
+  }
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>): void => {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    onOpen()
+  }
+
   return (
-    <tr className="group transition-colors [&_td]:hover:bg-paper-tint">
+    <tr
+      className="group cursor-pointer transition-colors outline-none [&_td]:hover:bg-paper-tint [&_td]:focus-visible:bg-paper-tint"
+      tabIndex={0}
+      aria-label={`Abrir expediente de ${employee.name}`}
+      onClick={onOpen}
+      onKeyDown={handleKeyDown}
+    >
       <td className="px-3 py-2.5 align-middle">
         <div className="flex items-center gap-2.5">
           <Avatar name={employee.name} size="sm" />
@@ -42,7 +60,7 @@ export function EmployeeRow({ employee, onEdit }: Props): JSX.Element {
       {/* TODO API: eliminar empleado con DELETE /employees/{id}. */}
       <td className="px-3 py-2.5 text-right align-middle">
         <div className="flex justify-end opacity-0 transition-opacity group-hover:opacity-100">
-          <IconButton icon={PencilEdit02Icon} tip="Editar" size="sm" onClick={onEdit} />
+          <IconButton icon={PencilEdit02Icon} tip="Editar" size="sm" onClick={handleEditClick} />
         </div>
       </td>
     </tr>

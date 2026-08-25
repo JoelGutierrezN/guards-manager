@@ -3,7 +3,7 @@ import { cn } from '../../utils/cn'
 
 interface AvatarProps {
   name: string
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   tone?: 'default' | 'navy'
 }
 
@@ -11,6 +11,7 @@ const SIZES = {
   sm: 'h-[26px] w-[26px] text-[10px]',
   md: 'h-8 w-8 text-[12px]',
   lg: 'h-11 w-11 text-[14px]',
+  xl: 'h-16 w-16 text-[16px]',
 }
 
 const initials = (name: string): string =>

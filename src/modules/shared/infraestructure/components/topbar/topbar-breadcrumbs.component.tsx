@@ -5,11 +5,11 @@ import { resolveCrumb } from './topbar.crumbs'
 import { TopbarBreadcrumbSegment } from './topbar-breadcrumb-segment.component'
 
 interface Props {
-  activeId: string
+  crumbId: string
 }
 
-export function TopbarBreadcrumbs({ activeId }: Props): JSX.Element {
-  const segments = resolveCrumb(activeId)
+export function TopbarBreadcrumbs({ crumbId }: Props): JSX.Element {
+  const segments = resolveCrumb(crumbId)
 
   return (
     <div className="flex items-center gap-1.5 text-[12px] text-muted">

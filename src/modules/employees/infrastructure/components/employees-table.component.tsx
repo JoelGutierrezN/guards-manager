@@ -28,6 +28,7 @@ interface Props {
   onReload: () => void
   onClearQuery: () => void
   onEdit: (employee: Employee) => void
+  onOpen: (employee: Employee) => void
 }
 
 export function EmployeesTable({
@@ -45,6 +46,7 @@ export function EmployeesTable({
   onReload,
   onClearQuery,
   onEdit,
+  onOpen,
 }: Props): JSX.Element {
   const columnCount = EMPLOYEES_COLUMNS.length
   const isEmpty = status === 'ready' && rows.length === 0
@@ -118,6 +120,7 @@ export function EmployeesTable({
                     key={employee.id}
                     employee={employee}
                     onEdit={() => onEdit(employee)}
+                    onOpen={() => onOpen(employee)}
                   />
                 ))}
             </tbody>

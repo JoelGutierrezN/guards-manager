@@ -15,7 +15,7 @@ export function Sidebar(): JSX.Element {
   const { collapsed, toggle } = useSidebarCollapse()
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const activeId = useMemo(() => AppRouteHelper.activeIdFromPath(pathname), [pathname])
+  const activeId = useMemo(() => AppRouteHelper.navIdFromPath(pathname), [pathname])
   const { user, logout } = useAuth()
 
   const handleLogout = async () => {

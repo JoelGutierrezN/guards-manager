@@ -4,11 +4,12 @@ import type { IconSvgElement } from '@hugeicons/react'
 import { cn } from '../../utils/cn'
 import type { Variant, Size } from './button.model'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant
   size?: Size
   icon?: IconSvgElement
   iconRight?: IconSvgElement
+  tip?: string
 }
 
 const SIZES: Record<Size, string> = {
@@ -32,11 +33,12 @@ export function Button({
   size = 'md',
   icon,
   iconRight,
+  tip,
   className,
   children,
   ...rest
-}: ButtonProps): JSX.Element {
-  return (
+}: Props): JSX.Element {
+  const button = (
     <button
       className={cn(
         'inline-flex cursor-pointer items-center justify-center rounded-full border border-transparent font-semibold tracking-[-0.005em] whitespace-nowrap transition-[background,border-color,color,transform,box-shadow] select-none active:translate-y-[0.5px] disabled:pointer-events-none disabled:opacity-50',
@@ -50,5 +52,16 @@ export function Button({
       {children}
       {iconRight && <HugeiconsIcon icon={iconRight} size={14} strokeWidth={1.8} />}
     </button>
+  )
+
+  if (!tip) return button
+
+  return (
+    <span className="group/tip relative inline-flex">
+      {button}
+      <span className="pointer-events-none absolute top-full left-1/2 z-50 -translate-x-1/2 translate-y-0.5 rounded-[10px] bg-ink px-2 py-1 text-[11px] font-medium whitespace-nowrap text-cream opacity-0 transition-[opacity,transform] duration-[120ms] group-hover/tip:translate-y-1 group-hover/tip:opacity-100">
+        {tip}
+      </span>
+    </span>
   )
 }

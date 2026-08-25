@@ -7,6 +7,7 @@
   --color-brand-mid: #4244a3;
   --color-brand-active: #15164a;
   --color-brand-hover: #1c1d5a;
+  --color-brand-deep: #0e0f3c;
   --color-brand-soft: rgba(39, 40, 113, 0.08);
   --color-brand-soft-2: rgba(39, 40, 113, 0.16);
 
@@ -47,5 +48,50 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes reveal {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.reveal,
+.reveal-d1,
+.reveal-d2,
+.reveal-d3,
+.reveal-d4 {
+  animation: reveal 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.reveal-d1 {
+  animation-delay: 30ms;
+}
+
+.reveal-d2 {
+  animation-delay: 80ms;
+}
+
+.reveal-d3 {
+  animation-delay: 130ms;
+}
+
+.reveal-d4 {
+  animation-delay: 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-d1,
+  .reveal-d2,
+  .reveal-d3,
+  .reveal-d4 {
+    animation: none;
   }
 }

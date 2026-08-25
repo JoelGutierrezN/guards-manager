@@ -93,7 +93,7 @@ export function ToolsPage(): JSX.Element {
 
   return (
     <>
-      <div className="reveal d1">
+      <div className="reveal-d1">
         <PageHero
           eyebrow="Catálogos · herramientas"
           title="Catálogo de herramientas"
@@ -102,7 +102,7 @@ export function ToolsPage(): JSX.Element {
         />
       </div>
 
-      <div className="reveal d2 mb-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="reveal-d2 mb-3 flex flex-wrap items-center justify-between gap-3">
         <Tabs value={state.tab} onChange={setTab} items={tabItems} />
         <div className="flex flex-wrap gap-2">
           <Button icon={ArrowDown01Icon} size="md" onClick={() => navigate('/stockIn')}>
@@ -117,7 +117,7 @@ export function ToolsPage(): JSX.Element {
         </div>
       </div>
 
-      <div className="reveal d3 flex items-stretch gap-4 max-[1000px]:flex-col">
+      <div className="reveal-d3 flex items-stretch gap-4 max-[1000px]:flex-col">
         {state.showFilters && (
           <div className="flex w-61 shrink-0 max-[1000px]:w-full">
             <ToolFiltersPanel
