@@ -1,12 +1,15 @@
 import { type JSX } from 'react'
-import { Avatar, Chip } from '../../../shared/infraestructure/components/ui'
+import { PencilEdit02Icon } from '@hugeicons/core-free-icons'
+import { Avatar, Chip, IconButton } from '../../../shared/infraestructure/components/ui'
 import type { Employee } from '../../domain/employee.entity'
+import { EmployeeContactCell } from './employee-contact-cell.component'
 
 interface Props {
   employee: Employee
+  onEdit: () => void
 }
 
-export function EmployeeRow({ employee }: Props): JSX.Element {
+export function EmployeeRow({ employee, onEdit }: Props): JSX.Element {
   return (
     <tr className="group transition-colors [&_td]:hover:bg-paper-tint">
       <td className="px-3 py-2.5 align-middle">
@@ -21,6 +24,9 @@ export function EmployeeRow({ employee }: Props): JSX.Element {
       <td className="px-3 py-2.5 align-middle">
         <Chip size="sm">{employee.roleName}</Chip>
       </td>
+      <td className="px-3 py-2.5 align-middle">
+        <EmployeeContactCell email={employee.email} phone={employee.phone} />
+      </td>
       <td className="px-3 py-2.5 align-middle font-mono text-[13px] font-medium text-ink-2">
         {employee.activeToolsCount}
       </td>
@@ -30,8 +36,12 @@ export function EmployeeRow({ employee }: Props): JSX.Element {
       <td className="px-3 py-2.5 align-middle font-mono text-[13px] text-muted">
         {employee.hireDate}
       </td>
-      {/* TODO API: acciones por empleado (editar / eliminar) con PUT y DELETE /employees/{id}. */}
-      <td className="px-3 py-2.5 align-middle" />
+      {/* TODO API: eliminar empleado con DELETE /employees/{id}. */}
+      <td className="px-3 py-2.5 text-right align-middle">
+        <div className="flex justify-end opacity-0 transition-opacity group-hover:opacity-100">
+          <IconButton icon={PencilEdit02Icon} tip="Editar" size="sm" onClick={onEdit} />
+        </div>
+      </td>
     </tr>
   )
 }

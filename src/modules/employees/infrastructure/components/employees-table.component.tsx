@@ -22,6 +22,7 @@ interface Props {
   onSetPage: (page: number) => void
   onReload: () => void
   onClearQuery: () => void
+  onEdit: (employee: Employee) => void
 }
 
 export function EmployeesTable({
@@ -35,6 +36,7 @@ export function EmployeesTable({
   onSetPage,
   onReload,
   onClearQuery,
+  onEdit,
 }: Props): JSX.Element {
   const columnCount = EMPLOYEES_COLUMNS.length
   const isEmpty = status === 'ready' && rows.length === 0
@@ -79,7 +81,13 @@ export function EmployeesTable({
                 </tr>
               )}
               {status === 'ready' &&
-                rows.map((employee) => <EmployeeRow key={employee.id} employee={employee} />)}
+                rows.map((employee) => (
+                  <EmployeeRow
+                    key={employee.id}
+                    employee={employee}
+                    onEdit={() => onEdit(employee)}
+                  />
+                ))}
             </tbody>
           </table>
         </ScrollShadow>

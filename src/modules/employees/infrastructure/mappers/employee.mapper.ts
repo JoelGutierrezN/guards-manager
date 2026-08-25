@@ -2,16 +2,33 @@ import { PaginationMapper } from '../../../shared/infraestructure/mappers/pagina
 import type { Employee } from '../../domain/employee.entity'
 import type { EmployeesStats } from '../../domain/employees-stats.entity'
 import type { EmployeesListPage } from '../../domain/employees-list-page.model'
-import type { EmployeeCollectionDto, EmployeeDto, EmployeesStatsDto } from '../dto/employee.dto'
+import type { CreateEmployeeInput } from '../../domain/employee-input.model'
+import type {
+  EmployeeCollectionDto,
+  EmployeeDto,
+  EmployeeRequestDto,
+  EmployeesStatsDto,
+} from '../dto/employee.dto'
 
 export class EmployeeMapper {
+  static toRequestBody(input: CreateEmployeeInput): EmployeeRequestDto {
+    return {
+      name: input.name,
+      role_id: input.roleId,
+      email: input.email,
+      phone: input.phone,
+    }
+  }
+
   static toEmployee(dto: EmployeeDto): Employee {
     return {
       id: dto.id,
       identifier: dto.identifier,
       name: dto.name,
-      areaName: dto.areaName,
+      roleId: dto.roleId,
       roleName: dto.roleName,
+      email: dto.email ?? null,
+      phone: dto.phone ?? null,
       activeToolsCount: dto.activeToolsCount,
       historicalToolsCount: dto.historicalToolsCount,
       hireDate: dto.hireDate,

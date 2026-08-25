@@ -1,4 +1,5 @@
-import { Button, PageHero } from '../../../shared/infraestructure/components/ui'
+import { type JSX } from 'react'
+import { Button, PageHero, useToasts } from '../../../shared/infraestructure/components/ui'
 import {
   AlertIcon,
   Download01Icon,
@@ -7,11 +8,33 @@ import {
   UserMultipleIcon,
 } from '@hugeicons/core-free-icons'
 import { KpiCard } from '../../../shared/infraestructure/components/ui/kpi-card.tsx'
+import type { CreateEmployeeInput } from '../../domain/employee-input.model'
 import { EmployeesTable } from '../components/employees-table.component'
+import { EmployeeFormModal } from '../components/employee-form-modal.component'
 import { useEmployees } from '../../hooks/use-employees.hook'
 
-export const EmployeesPage = () => {
-  const { state, kpis, reloadList, setPage, setQuery, clearQuery } = useEmployees()
+export const EmployeesPage = (): JSX.Element => {
+  const {
+    state,
+    kpis,
+    reloadList,
+    setPage,
+    setQuery,
+    clearQuery,
+    openCreate,
+    openEdit,
+    saveEmployee,
+    editingEmployee,
+    modalKey,
+    modalOpen,
+    closeModal,
+  } = useEmployees()
+  const [addToast, ToastHost] = useToasts()
+
+  const handleSave = async (input: CreateEmployeeInput): Promise<void> => {
+    const message = await saveEmployee(input)
+    if (message != null) addToast(message)
+  }
 
   return (
     <div>
@@ -27,9 +50,8 @@ export const EmployeesPage = () => {
               <Button icon={Download01Icon} size="md">
                 Exportar
               </Button>
-              {/* TODO API: modal de alta con POST /employees. */}
-              <Button variant="primary" icon={PlusSignIcon} size="md" onClick={() => {}}>
-                + Nuevo empleado
+              <Button variant="primary" icon={PlusSignIcon} size="md" onClick={openCreate}>
+                Nuevo empleado
               </Button>
             </div>
           </div>
@@ -64,7 +86,20 @@ export const EmployeesPage = () => {
         onSetPage={setPage}
         onReload={reloadList}
         onClearQuery={clearQuery}
+        onEdit={openEdit}
       />
+
+      <EmployeeFormModal
+        key={modalKey}
+        open={modalOpen}
+        editEmployee={editingEmployee}
+        saving={state.saving}
+        formError={state.formError}
+        onClose={closeModal}
+        onSave={(input) => void handleSave(input)}
+      />
+
+      {ToastHost}
     </div>
   )
 }

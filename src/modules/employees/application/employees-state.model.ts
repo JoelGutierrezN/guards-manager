@@ -14,6 +14,8 @@ export interface EmployeesState {
   lastPage: number
   total: number
   stats: EmployeesStats | null
+  saving: boolean
+  formError: string | null
 }
 
 export const INITIAL_EMPLOYEES_STATE: EmployeesState = {
@@ -26,6 +28,8 @@ export const INITIAL_EMPLOYEES_STATE: EmployeesState = {
   lastPage: 1,
   total: 0,
   stats: null,
+  saving: false,
+  formError: null,
 }
 
 export type EmployeesAction =
@@ -34,3 +38,6 @@ export type EmployeesAction =
   | { type: 'LOAD_ERROR'; error: string }
   | { type: 'SET_QUERY'; query: string }
   | { type: 'SET_PAGE'; page: number }
+  | { type: 'SAVE_START' }
+  | { type: 'SAVE_ERROR'; message: string }
+  | { type: 'SAVE_DONE' }

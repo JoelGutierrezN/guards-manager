@@ -22,6 +22,12 @@ export function employeesReducer(state: EmployeesState, action: EmployeesAction)
       return { ...state, query: action.query, page: 1 }
     case 'SET_PAGE':
       return { ...state, page: action.page }
+    case 'SAVE_START':
+      return { ...state, saving: true, formError: null }
+    case 'SAVE_ERROR':
+      return { ...state, saving: false, formError: action.message }
+    case 'SAVE_DONE':
+      return { ...state, saving: false, formError: null }
     default:
       return state
   }

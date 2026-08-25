@@ -4,12 +4,21 @@ export interface EmployeeDto {
   id: string
   identifier: string
   name: string
-  areaName: string
+  roleId: string
   roleName: string
+  email: string | null
+  phone: string | null
   activeToolsCount: number
   historicalToolsCount: number
   hireDate: string
   alertsCount: number
+}
+
+export interface EmployeeRequestDto {
+  name: string
+  role_id: string
+  email: string | null
+  phone: string | null
 }
 
 export interface EmployeesStatsDto {

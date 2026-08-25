@@ -50,6 +50,8 @@ export function SearchInput({
     <div className={wrapClassName}>
       <HugeiconsIcon icon={leadIcon} size={14} strokeWidth={1.8} className="shrink-0 text-muted" />
       <input
+        type="search"
+        autoComplete="off"
         aria-label={ariaLabel}
         placeholder={placeholder}
         value={value}
