@@ -1,3 +1,5 @@
+import type { FilterStateOptionItem } from '../../shared/infraestructure/components/ui'
+
 export type ModelStateFilter = 'todos' | 'activo' | 'baja'
 
 export interface ModelsFilters {
@@ -12,10 +14,7 @@ export const INITIAL_MODELS_FILTERS: ModelsFilters = {
   assigned: false,
 }
 
-export interface ModelStateOption {
-  value: ModelStateFilter
-  label: string
-}
+export type ModelStateOption = FilterStateOptionItem<ModelStateFilter>
 
 export const MODEL_STATE_OPTIONS: ModelStateOption[] = [
   { value: 'todos', label: 'Todos' },

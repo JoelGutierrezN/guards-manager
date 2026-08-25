@@ -8,6 +8,7 @@ export interface EmployeeDto {
   roleName: string
   email: string | null
   phone: string | null
+  status: 'activo' | 'inactivo'
   activeToolsCount: number
   historicalToolsCount: number
   hireDate: string

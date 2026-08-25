@@ -21,6 +21,8 @@ export const EmployeesPage = (): JSX.Element => {
     setPage,
     setQuery,
     clearQuery,
+    setFilters,
+    clearFilters,
     openCreate,
     openEdit,
     saveEmployee,
@@ -79,10 +81,13 @@ export const EmployeesPage = (): JSX.Element => {
         rows={state.rows}
         status={state.status}
         query={state.query}
+        filters={state.filters}
         page={state.page}
         lastPage={state.lastPage}
         total={state.total}
         onQueryChange={setQuery}
+        onFiltersChange={setFilters}
+        onClearFilters={clearFilters}
         onSetPage={setPage}
         onReload={reloadList}
         onClearQuery={clearQuery}

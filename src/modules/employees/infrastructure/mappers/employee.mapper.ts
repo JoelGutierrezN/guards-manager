@@ -29,6 +29,7 @@ export class EmployeeMapper {
       roleName: dto.roleName,
       email: dto.email ?? null,
       phone: dto.phone ?? null,
+      status: dto.status,
       activeToolsCount: dto.activeToolsCount,
       historicalToolsCount: dto.historicalToolsCount,
       hireDate: dto.hireDate,

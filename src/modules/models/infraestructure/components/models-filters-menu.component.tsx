@@ -3,9 +3,8 @@ import { ArrowDown01Icon, FilterHorizontalIcon } from '@hugeicons/core-free-icon
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { ModelsFilters, ModelStateOption } from '../../domain/models-filters.model'
 import { MODEL_STATE_OPTIONS, MODELS_FILTER_TOGGLES } from '../../domain/models-filters.model'
-import { Checkbox } from '../../../shared/infraestructure/components/ui'
+import { Checkbox, FilterStateOption } from '../../../shared/infraestructure/components/ui'
 import { cn } from '../../../shared/infraestructure/utils/cn'
-import { FilterStateOption } from './filter-state-option.component'
 
 interface Props {
   filters: ModelsFilters

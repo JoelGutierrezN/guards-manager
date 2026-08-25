@@ -1,16 +1,20 @@
 import { type JSX, useMemo } from 'react'
 import { Tick02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import type { ModelStateOption } from '../../domain/models-filters.model'
-import { cn } from '../../../shared/infraestructure/utils/cn'
+import { cn } from '../../utils/cn'
+import type { FilterStateOptionItem } from './filter-state-option.model'
 
-interface Props {
-  option: ModelStateOption
+interface Props<TValue extends string> {
+  option: FilterStateOptionItem<TValue>
   selected: boolean
-  onSelect: (option: ModelStateOption) => void
+  onSelect: (option: FilterStateOptionItem<TValue>) => void
 }
 
-export function FilterStateOption({ option, selected, onSelect }: Props): JSX.Element {
+export function FilterStateOption<TValue extends string>({
+  option,
+  selected,
+  onSelect,
+}: Props<TValue>): JSX.Element {
   const rowClassName = useMemo(
     () =>
       cn(

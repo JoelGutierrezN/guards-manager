@@ -3,6 +3,7 @@ import { useOverlayState } from '@heroui/react'
 import { useQueryParams } from '../../shared/hooks/use-query-params.hook'
 import type { Employee } from '../domain/employee.entity'
 import type { CreateEmployeeInput } from '../domain/employee-input.model'
+import type { EmployeesFilters } from '../domain/employees-filters.model'
 import type { EmployeesWindowManager } from '../application/employees-window.model'
 import { employeesReducer } from '../application/employees.reducer'
 import { EmployeesStatsHelper } from '../application/employees-stats.helper'
@@ -22,15 +23,16 @@ export function useEmployees() {
     params,
     EmployeeQueryParamsHelper.initialStateFrom,
   )
-  const requestRef = useRef<EmployeesListRequest>({ page: state.page, query: state.query })
+  const { page, query, filters } = state
+  const requestRef = useRef<EmployeesListRequest>({ page, query, filters })
 
   useEffect(() => {
-    requestRef.current = { page: state.page, query: state.query }
-  }, [state.page, state.query])
+    requestRef.current = { page, query, filters }
+  }, [page, query, filters])
 
   useEffect(() => {
-    setQueryParams(EmployeeQueryParamsHelper.toParams({ page: state.page, query: state.query }))
-  }, [state.page, state.query, setQueryParams])
+    setQueryParams(EmployeeQueryParamsHelper.toParams({ page, query, filters }))
+  }, [page, query, filters, setQueryParams])
 
   const load = useCallback(async (request: EmployeesListRequest) => {
     dispatch({ type: 'LOAD_START' })
@@ -44,18 +46,30 @@ export function useEmployees() {
 
   useEffect(() => {
     const handle = setTimeout(() => {
-      void load({ page: state.page, query: state.query })
+      void load({ page, query, filters })
     }, SEARCH_DEBOUNCE_MS)
     return () => clearTimeout(handle)
-  }, [state.page, state.query, load])
+  }, [page, query, filters, load])
 
   const reloadList = useCallback(() => {
     void load(requestRef.current)
   }, [load])
 
-  const setPage = useCallback((page: number) => dispatch({ type: 'SET_PAGE', page }), [])
-  const setQuery = useCallback((query: string) => dispatch({ type: 'SET_QUERY', query }), [])
+  const setPage = useCallback(
+    (nextPage: number) => dispatch({ type: 'SET_PAGE', page: nextPage }),
+    [],
+  )
+  const setQuery = useCallback(
+    (nextQuery: string) => dispatch({ type: 'SET_QUERY', query: nextQuery }),
+    [],
+  )
   const clearQuery = useCallback(() => dispatch({ type: 'SET_QUERY', query: '' }), [])
+  const setFilters = useCallback(
+    (nextFilters: Partial<EmployeesFilters>) =>
+      dispatch({ type: 'SET_FILTERS', filters: nextFilters }),
+    [],
+  )
+  const clearFilters = useCallback(() => dispatch({ type: 'CLEAR_FILTERS' }), [])
 
   const modal = useOverlayState()
   const [windowManager, setWindowManager] = useState<EmployeesWindowManager>({
@@ -84,13 +98,14 @@ export function useEmployees() {
       dispatch({ type: 'SAVE_START' })
       try {
         if (window === 'edit' && payload != null) {
-          await employeesRepository.update(payload.id, input)
+          const updated = await employeesRepository.update(payload.id, input)
+          dispatch({ type: 'ROW_UPDATED', employee: updated })
         } else {
-          await employeesRepository.create(input)
+          const created = await employeesRepository.create(input)
+          dispatch({ type: 'ROW_ADDED', employee: created })
         }
         dispatch({ type: 'SAVE_DONE' })
         modal.close()
-        void load(requestRef.current)
         return window === 'edit'
           ? `Empleado "${input.name}" actualizado`
           : `Empleado "${input.name}" creado`
@@ -99,7 +114,7 @@ export function useEmployees() {
         return null
       }
     },
-    [windowManager, modal, load],
+    [windowManager, modal],
   )
 
   const editingEmployee = windowManager.window === 'edit' ? windowManager.payload : null
@@ -125,6 +140,8 @@ export function useEmployees() {
     setPage,
     setQuery,
     clearQuery,
+    setFilters,
+    clearFilters,
     openCreate,
     openEdit,
     saveEmployee,

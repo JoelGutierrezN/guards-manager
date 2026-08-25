@@ -16,7 +16,10 @@ export function EmployeeRow({ employee, onEdit }: Props): JSX.Element {
         <div className="flex items-center gap-2.5">
           <Avatar name={employee.name} size="sm" />
           <div className="flex min-w-0 flex-col">
-            <span className="truncate text-[13px] font-medium text-ink">{employee.name}</span>
+            <span className="flex min-w-0 items-center gap-1.5">
+              <span className="truncate text-[13px] font-medium text-ink">{employee.name}</span>
+              {employee.status === 'inactivo' && <Chip size="sm">Inactivo</Chip>}
+            </span>
             <span className="font-mono text-[11px] text-muted">{employee.identifier}</span>
           </div>
         </div>
