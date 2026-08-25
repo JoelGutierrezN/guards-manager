@@ -46,8 +46,20 @@ export class EmployeeQueryParamsHelper {
   }
 
   static toApiParams(request: EmployeesListRequest): URLSearchParams {
-    const { page, filters } = request
-    const params = new URLSearchParams({ page: String(page) })
+    const params = new URLSearchParams({ page: String(request.page) })
+    EmployeeQueryParamsHelper.appendFilters(params, request)
+    return params
+  }
+
+  /** El export ignora la paginación: devuelve todas las filas que casan con los filtros. */
+  static toExportParams(request: EmployeesListRequest): URLSearchParams {
+    const params = new URLSearchParams()
+    EmployeeQueryParamsHelper.appendFilters(params, request)
+    return params
+  }
+
+  private static appendFilters(params: URLSearchParams, request: EmployeesListRequest): void {
+    const { filters } = request
     const query = request.query.trim()
 
     if (query !== '') {
@@ -59,7 +71,6 @@ export class EmployeeQueryParamsHelper {
     if (filters.withTools) params.set('assignment', 'with_tools')
     if (filters.hiredFrom !== '') params.set('hired_from', filters.hiredFrom)
     if (filters.hiredTo !== '') params.set('hired_to', filters.hiredTo)
-    return params
   }
 
   private static statusFrom(value: QueryParamValue): EmployeeStatusFilter {

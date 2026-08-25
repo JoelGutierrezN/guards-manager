@@ -1,6 +1,8 @@
 import Axios, { type AxiosInstance } from 'axios'
 import { StorageService } from '../storage/local.storage'
 import { API_BASE_URL } from '../config/api.config'
+import { ContentDispositionHelper } from '../helpers/content-disposition.helper'
+import type { DownloadedFile } from '../../domain/downloaded-file.model'
 
 export class HttpDataSource {
   private static instance: HttpDataSource | null = null
@@ -43,6 +45,17 @@ export class HttpDataSource {
   async get<T>(url: string): Promise<T> {
     const response = await this.client.get<T>(url)
     return response.data
+  }
+
+  async getFile(url: string, fallbackFilename: string): Promise<DownloadedFile> {
+    const response = await this.client.get<Blob>(url, { responseType: 'blob' })
+    return {
+      blob: response.data,
+      filename: ContentDispositionHelper.filenameFrom(
+        response.headers['content-disposition'],
+        fallbackFilename,
+      ),
+    }
   }
 
   async post<T>(url: string, body?: object): Promise<T> {

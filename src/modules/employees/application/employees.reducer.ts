@@ -33,6 +33,10 @@ export function employeesReducer(state: EmployeesState, action: EmployeesAction)
       return { ...state, saving: false, formError: action.message }
     case 'SAVE_DONE':
       return { ...state, saving: false, formError: null }
+    case 'EXPORT_START':
+      return { ...state, exporting: true }
+    case 'EXPORT_DONE':
+      return { ...state, exporting: false }
     case 'ROW_ADDED': {
       const total = state.total + 1
       return {

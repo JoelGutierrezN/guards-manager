@@ -18,6 +18,7 @@ export interface EmployeesState {
   stats: EmployeesStats | null
   saving: boolean
   formError: string | null
+  exporting: boolean
 }
 
 export const INITIAL_EMPLOYEES_STATE: EmployeesState = {
@@ -33,6 +34,7 @@ export const INITIAL_EMPLOYEES_STATE: EmployeesState = {
   stats: null,
   saving: false,
   formError: null,
+  exporting: false,
 }
 
 export type EmployeesAction =
@@ -48,3 +50,5 @@ export type EmployeesAction =
   | { type: 'SAVE_DONE' }
   | { type: 'ROW_ADDED'; employee: Employee }
   | { type: 'ROW_UPDATED'; employee: Employee }
+  | { type: 'EXPORT_START' }
+  | { type: 'EXPORT_DONE' }

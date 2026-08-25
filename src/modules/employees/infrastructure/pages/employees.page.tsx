@@ -23,6 +23,7 @@ export const EmployeesPage = (): JSX.Element => {
     clearQuery,
     setFilters,
     clearFilters,
+    exportEmployees,
     openCreate,
     openEdit,
     saveEmployee,
@@ -38,6 +39,10 @@ export const EmployeesPage = (): JSX.Element => {
     if (message != null) addToast(message)
   }
 
+  const handleExport = async (): Promise<void> => {
+    addToast(await exportEmployees())
+  }
+
   return (
     <div>
       <PageHero
@@ -48,9 +53,13 @@ export const EmployeesPage = (): JSX.Element => {
         actions={
           <div className="reveal d2 mb-3 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-2">
-              {/* TODO API: descargar GET /employees/export con los filtros activos. */}
-              <Button icon={Download01Icon} size="md">
-                Exportar
+              <Button
+                icon={Download01Icon}
+                size="md"
+                disabled={state.exporting}
+                onClick={() => void handleExport()}
+              >
+                {state.exporting ? 'Exportando…' : 'Exportar'}
               </Button>
               <Button variant="primary" icon={PlusSignIcon} size="md" onClick={openCreate}>
                 Nuevo empleado

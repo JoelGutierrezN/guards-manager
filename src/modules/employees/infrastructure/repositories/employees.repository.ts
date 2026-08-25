@@ -3,8 +3,11 @@ import type { EmployeesRepository as EmployeesRepositoryContract } from '../../d
 import type { Employee } from '../../domain/employee.entity'
 import type { CreateEmployeeInput, UpdateEmployeeInput } from '../../domain/employee-input.model'
 import type { EmployeesListPage } from '../../domain/employees-list-page.model'
+import type { DownloadedFile } from '../../../shared/domain/downloaded-file.model'
 import type { EmployeeCollectionDto, EmployeeDto } from '../dto/employee.dto'
 import { EmployeeMapper } from '../mappers/employee.mapper'
+
+const EXPORT_FALLBACK_FILENAME = 'empleados.xlsx'
 
 class EmployeesRepositoryImpl implements EmployeesRepositoryContract {
   private readonly datasource: HttpDataSource
@@ -18,6 +21,13 @@ class EmployeesRepositoryImpl implements EmployeesRepositoryContract {
       `/employees?${params.toString()}`,
     )
     return EmployeeMapper.toEmployeesListPage(response)
+  }
+
+  async export(params: URLSearchParams): Promise<DownloadedFile> {
+    return this.datasource.getFile(
+      `/employees/export?${params.toString()}`,
+      EXPORT_FALLBACK_FILENAME,
+    )
   }
 
   async create(input: CreateEmployeeInput): Promise<Employee> {

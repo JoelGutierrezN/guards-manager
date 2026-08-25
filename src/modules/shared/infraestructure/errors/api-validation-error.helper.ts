@@ -8,11 +8,17 @@ interface ValidationErrorBody {
 export class ApiValidationErrorHelper {
   static messageFrom(error: unknown, fallback: string): string {
     if (!Axios.isAxiosError(error)) return fallback
-    const body = error.response?.data as ValidationErrorBody | undefined
-    const fieldMessages = body?.errors != null ? Object.values(body.errors).flat() : []
+    return ApiValidationErrorHelper.messageFromBody(error.response?.data, fallback)
+  }
+
+  static messageFromBody(body: unknown, fallback: string): string {
+    const validation = body as ValidationErrorBody | undefined
+    const fieldMessages = validation?.errors != null ? Object.values(validation.errors).flat() : []
     const [firstFieldMessage] = fieldMessages
     if (typeof firstFieldMessage === 'string' && firstFieldMessage !== '') return firstFieldMessage
-    if (typeof body?.message === 'string' && body.message !== '') return body.message
+    if (typeof validation?.message === 'string' && validation.message !== '') {
+      return validation.message
+    }
     return fallback
   }
 }

@@ -9,6 +9,8 @@ import { employeesReducer } from '../application/employees.reducer'
 import { EmployeesStatsHelper } from '../application/employees-stats.helper'
 import { employeesRepository } from '../infrastructure/repositories/employees.repository'
 import { EmployeeFormErrorHelper } from '../infrastructure/helpers/employee-form-error.helper'
+import { EmployeeExportErrorHelper } from '../infrastructure/helpers/employee-export-error.helper'
+import { FileDownloadHelper } from '../../shared/infraestructure/helpers/file-download.helper'
 import {
   EmployeeQueryParamsHelper,
   type EmployeesListRequest,
@@ -70,6 +72,21 @@ export function useEmployees() {
     [],
   )
   const clearFilters = useCallback(() => dispatch({ type: 'CLEAR_FILTERS' }), [])
+
+  const exportEmployees = useCallback(async (): Promise<string> => {
+    dispatch({ type: 'EXPORT_START' })
+    try {
+      const file = await employeesRepository.export(
+        EmployeeQueryParamsHelper.toExportParams(requestRef.current),
+      )
+      FileDownloadHelper.save(file)
+      return `Exportación descargada: ${file.filename}`
+    } catch (error) {
+      return await EmployeeExportErrorHelper.messageFrom(error)
+    } finally {
+      dispatch({ type: 'EXPORT_DONE' })
+    }
+  }, [])
 
   const modal = useOverlayState()
   const [windowManager, setWindowManager] = useState<EmployeesWindowManager>({
@@ -142,6 +159,7 @@ export function useEmployees() {
     clearQuery,
     setFilters,
     clearFilters,
+    exportEmployees,
     openCreate,
     openEdit,
     saveEmployee,
