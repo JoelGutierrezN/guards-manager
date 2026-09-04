@@ -31,16 +31,18 @@ export function AuthProvider() {
     return () => datasource.setUnauthorizedHandler(null)
   }, [])
 
-  async function login(identifier: string, password: string): Promise<void> {
+  async function login(identifier: string, password: string): Promise<boolean> {
     dispatch({ type: 'AUTH_START' })
     try {
       const session = await authUseCase.login(identifier, password)
       dispatch({ type: 'AUTH_SUCCESS', payload: session })
+      return true
     } catch (error) {
       const message = axios.isAxiosError(error)
         ? (error.response?.data?.message ?? 'Credenciales inválidas')
         : 'Error de autenticación'
       dispatch({ type: 'AUTH_ERROR', payload: message })
+      return false
     }
   }
 

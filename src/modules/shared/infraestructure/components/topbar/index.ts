@@ -1,3 +1,3 @@
 export { Topbar } from './topbar.component'
-export { TOPBAR_CRUMBS, resolveCrumb } from './topbar.crumbs'
-export type { Crumb } from './topbar.crumbs'
+export { TopbarCrumbsResolver } from './topbar.crumbs'
+export type { Crumb, CrumbHandle } from './topbar.crumbs'

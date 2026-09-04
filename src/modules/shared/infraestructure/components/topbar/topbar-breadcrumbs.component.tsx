@@ -1,15 +1,13 @@
-import { type JSX } from 'react'
+import { useMemo, type JSX } from 'react'
+import { useMatches } from 'react-router'
 import { Home09Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { resolveCrumb } from './topbar.crumbs'
+import { TopbarCrumbsResolver } from './topbar.crumbs'
 import { TopbarBreadcrumbSegment } from './topbar-breadcrumb-segment.component'
 
-interface Props {
-  crumbId: string
-}
-
-export function TopbarBreadcrumbs({ crumbId }: Props): JSX.Element {
-  const segments = resolveCrumb(crumbId)
+export function TopbarBreadcrumbs(): JSX.Element {
+  const matches = useMatches()
+  const segments = useMemo(() => TopbarCrumbsResolver.resolve(matches), [matches])
 
   return (
     <div className="flex items-center gap-1.5 text-[12px] text-muted">
