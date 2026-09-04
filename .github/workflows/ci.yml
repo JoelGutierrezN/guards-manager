@@ -31,6 +31,9 @@ jobs:
       - name: Type check
         run: pnpm exec tsc --noEmit -p tsconfig.app.json
 
+      - name: Type check (E2E)
+        run: pnpm exec tsc --noEmit -p e2e/tsconfig.json
+
       - name: Lint
         run: pnpm exec eslint .
 
