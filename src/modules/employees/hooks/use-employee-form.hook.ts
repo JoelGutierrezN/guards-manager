@@ -4,7 +4,7 @@ import type { CreateEmployeeInput } from '../domain/employee-input.model'
 import type { EmployeeFormErrors } from '../application/employee-form.model'
 import { employeeFormReducer } from '../application/employee-form.reducer'
 import { EmployeeFormHelper } from '../application/employee-form.helper'
-import { rolesRepository } from '../infrastructure/repositories/roles.repository'
+import { rolesRepository } from '../infraestructure/repositories/roles.repository'
 
 interface UseEmployeeFormOptions {
   enabled: boolean

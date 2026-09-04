@@ -1,1 +1,1 @@
-export * from './infrastructure/pages/employees.page.tsx'
+export * from './infraestructure/pages/employees.page.tsx'

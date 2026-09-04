@@ -8,9 +8,9 @@ import { INITIAL_EMPLOYEE_FILE_STATE } from '../application/employee-file-state.
 import { EmployeeFilePresenter } from '../application/employee-file-presenter.helper'
 import { EmployeeFileSelectionHelper } from '../application/employee-file-selection.helper'
 import { EmployeeFileTabsHelper } from '../application/employee-file-tabs.helper'
-import { EmployeeFileMapper } from '../infrastructure/mappers/employee-file.mapper'
-import { EmployeeFileErrorHelper } from '../infrastructure/helpers/employee-file-error.helper'
-import { employeeFileRepository } from '../infrastructure/repositories/employee-file.repository'
+import { EmployeeFileMapper } from '../infraestructure/mappers/employee-file.mapper'
+import { EmployeeFileErrorHelper } from '../infraestructure/helpers/employee-file-error.helper'
+import { employeeFileRepository } from '../infraestructure/repositories/employee-file.repository'
 import { useEmployeeEdit } from './use-employee-edit.hook'
 
 const EMPTY_HERO = { heroEyebrow: '', heroTitle: '', heroItalic: '', heroLede: '' }

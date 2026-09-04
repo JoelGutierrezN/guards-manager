@@ -22,11 +22,12 @@ src/modules/<feature>/
   infraestructure/ # componentes, servicios, helpers, adaptadores
 ```
 
-Módulos actuales: `auth`, `shared`, `tools`.
+Módulos actuales: `auth`, `shared`, `tools`, `brands`, `models`, `employees`.
+Módulos previstos (fases siguientes): `inventory`, `custodies`, `account`, `dashboard`.
 
-Componentes UI compartidos: `src/modules/shared/infraestructure/components/ui/`
+Componentes UI compartidos: `src/modules/shared/infraestructure/components/ui/` — usa siempre este kit propio primero. De HeroUI solo están permitidas las primitivas ya importadas en el proyecto: `useOverlayState`, `ScrollShadow`, `Spinner`, `Button`, `Chip`, `Form`, `TextField`, `Input`, `Label`, `FieldError`. No introducir otras primitivas de HeroUI.
 
-Datos falsos (mock) en `<módulo>/infraestructure/mocks/` para poder borrarlos de un golpe al integrar la API; marca cada endpoint pendiente con `// TODO API:`. Usa `src/modules/tools` como implementación de referencia (capas DDD, `useReducer` en hook, helpers/servicios como clases).
+Sin mocks ni `// TODO API`: todo dato viene de `HttpDataSource`. Implementación de referencia: `src/modules/employees` (repositorio en `domain/*-repository.ts`, implementación HTTP en `infraestructure/repositories`, DTO + mapper, hook con reducer, helper de query params, página que compone componentes).
 
 ### Convención de nombres de archivos
 

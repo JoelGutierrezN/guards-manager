@@ -63,7 +63,7 @@ export default createBrowserRouter([
                 path: 'personal/:employeeId',
                 lazy: async () => ({
                   Component: (
-                    await import('../../../employees/infrastructure/pages/employee-file.page')
+                    await import('../../../employees/infraestructure/pages/employee-file.page')
                   ).EmployeeFilePage,
                 }),
               },

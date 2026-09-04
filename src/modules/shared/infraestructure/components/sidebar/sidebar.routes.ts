@@ -1,5 +1,4 @@
 import {
-  Alert02Icon,
   Book02Icon,
   DeliveryBox01Icon,
   File01Icon,
@@ -53,9 +52,6 @@ export const SIDEBAR_GROUPS: SidebarGroup[] = [
   },
   {
     title: 'Cuenta',
-    items: [
-      { id: 'profile', label: 'Mi perfil', icon: UserIcon },
-      { id: 'errors', label: 'Estados', icon: Alert02Icon, badge: 'demo' },
-    ],
+    items: [{ id: 'profile', label: 'Mi perfil', icon: UserIcon }],
   },
 ]
