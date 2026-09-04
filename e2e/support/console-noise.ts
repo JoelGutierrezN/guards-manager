@@ -1,9 +1,5 @@
 /**
- * Errores de consola conocidos que NO son fallos de la aplicación y que este WP no puede corregir
- * (archivos ajenos a F0-W1). Cada entrada debe desaparecer junto con su deuda; ver
- * `planning/deuda/f0-w1.md`.
+ * Errores de consola conocidos que NO son fallos de la aplicación. La lista debe permanecer vacía:
+ * cada entrada nueva exige su anotación en `planning/deuda/` y desaparece al corregir el origen.
  */
-export const IGNORED_CONSOLE_ERRORS: RegExp[] = [
-  // panel/activity-chart.component.tsx renderiza <svg height="auto">, atributo inválido en SVG.
-  /<svg> attribute height: Expected length/,
-]
+export const IGNORED_CONSOLE_ERRORS: RegExp[] = []

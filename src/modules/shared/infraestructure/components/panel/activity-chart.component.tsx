@@ -33,8 +33,7 @@ export function ActivityChart(): JSX.Element {
       <svg
         viewBox={`0 0 ${W} ${H}`}
         width="100%"
-        height="auto"
-        className="block"
+        className="block h-auto"
         onMouseLeave={() => setHover(7)}
         onMouseMove={handleMove}
       >
