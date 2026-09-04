@@ -21,9 +21,9 @@ export const AuthForm = (): JSX.Element => {
     const identifier = data.get('identifier') as string
     const password = data.get('password') as string
 
-    await login(identifier, password)
+    const isAuthenticated = await login(identifier, password)
 
-    if (status !== 'error') {
+    if (isAuthenticated) {
       navigate(FromLocationHelper.resolvePath(state), { replace: true })
     }
   }
@@ -33,19 +33,15 @@ export const AuthForm = (): JSX.Element => {
       <div className="flex-1 flex items-center justify-center p-6 sm:p-8 lg:p-12">
         <div className="w-full max-w-md space-y-8">
           <div className="lg:hidden flex items-center gap-3 justify-center mb-8">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <HugeiconsIcon icon={PackageIcon} strokeWidth={1.5} />
+            <div className="w-10 h-10 rounded-xl bg-brand flex items-center justify-center">
+              <HugeiconsIcon icon={PackageIcon} strokeWidth={1.5} className="text-cream" />
             </div>
-            <span className="text-xl font-semibold tracking-tight text-foreground">StockFlow</span>
+            <span className="text-xl font-semibold tracking-tight text-ink">ETTS</span>
           </div>
 
           <div className="space-y-2 text-center lg:text-left">
-            <h2 className="text-3xl font-serif tracking-tight text-foreground">
-              Bienvenido de nuevo
-            </h2>
-            <p className="text-muted-foreground">
-              Ingresa tus credenciales para acceder al sistema
-            </p>
+            <h2 className="text-3xl font-serif tracking-tight text-ink">Bienvenido de nuevo</h2>
+            <p className="text-muted">Ingresa tus credenciales para acceder al sistema</p>
           </div>
 
           <Form
@@ -63,7 +59,7 @@ export const AuthForm = (): JSX.Element => {
               <FieldError />
             </TextField>
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && <p className="text-sm text-danger">{error}</p>}
 
             <div className="flex gap-2">
               <Button type="submit" className="w-full" isDisabled={isLoading}>
@@ -71,56 +67,6 @@ export const AuthForm = (): JSX.Element => {
               </Button>
             </div>
           </Form>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border/50" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-3 text-muted-foreground">O continúa con</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              className="h-12 border-border/50 hover:bg-secondary/50 transition-all"
-            >
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  fill="#34A853"
-                />
-                <path
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  fill="#EA4335"
-                />
-              </svg>
-              Continuar con Google
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="h-12 border-border/50 hover:bg-secondary/50 transition-all"
-            >
-              <svg className="w-5 h-5 mr-3" viewBox="0 0 23 23" fill="none">
-                <path d="M0 0h11v11H0V0z" fill="#F25022" />
-                <path d="M12 0h11v11H12V0z" fill="#7FBA00" />
-                <path d="M0 12h11v11H0V12z" fill="#00A4EF" />
-                <path d="M12 12h11v11H12V12z" fill="#FFB900" />
-              </svg>
-              Continuar con Microsoft
-            </Button>
-          </div>
         </div>
       </div>
     </div>

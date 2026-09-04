@@ -33,7 +33,7 @@ export class ProductModelMapper {
       stocksTotal: stocksTotal ?? 0,
       stocksAssigned: stocksAssigned ?? 0,
       usagePercentage: usagePercentage ?? 0,
-      active: (status ?? 'activo') !== 'baja',
+      active: (status ?? 'activo') === 'activo',
       discontinuationReason: discontinuationReason ?? null,
     }
   }
@@ -42,7 +42,7 @@ export class ProductModelMapper {
     return {
       id: dto.id,
       name: dto.name,
-      active: dto.status !== 'discontinued',
+      active: dto.status === 'activo',
     }
   }
 
