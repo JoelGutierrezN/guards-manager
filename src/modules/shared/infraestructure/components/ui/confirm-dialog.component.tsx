@@ -58,6 +58,8 @@ export function ConfirmDialog({
     onClose()
   }, [loading, onClose])
 
+  if (!open) return <></>
+
   return (
     <Modal open={open} onClose={handleClose} maxWidth={440}>
       <div className="p-6">

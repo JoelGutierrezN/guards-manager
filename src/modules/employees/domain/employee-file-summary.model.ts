@@ -2,6 +2,6 @@ export interface EmployeeFileSummary {
   activeItems: number
   historicalItems: number
   returnedItems: number
-  // TODO API: daños todavía no existen en backend, el contrato siempre envía null
+  // Pendiente Fase 5: los daños todavía no existen en el backend, el contrato siempre envía null
   damagedItems: number | null
 }

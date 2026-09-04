@@ -3,6 +3,7 @@ import { useParams } from 'react-router'
 import { FileDownloadHelper } from '../../shared/infraestructure/helpers/file-download.helper'
 import type { Employee } from '../domain/employee.entity'
 import type { EmployeeFileTab } from '../domain/employee-file-tab.model'
+import type { EmployeeFileDownloadResult } from '../application/employee-file-download-result.model'
 import { employeeFileReducer } from '../application/employee-file.reducer'
 import { INITIAL_EMPLOYEE_FILE_STATE } from '../application/employee-file-state.model'
 import { EmployeeFilePresenter } from '../application/employee-file-presenter.helper'
@@ -47,15 +48,17 @@ export function useEmployeeFile() {
   const toggleAllItems = useCallback(() => dispatch({ type: 'TOGGLE_ALL' }), [])
   const clearSelection = useCallback(() => dispatch({ type: 'CLEAR_SELECTION' }), [])
 
-  const downloadPdf = useCallback(async (): Promise<string> => {
-    if (employeeId == null) return EmployeeFileErrorHelper.notFoundMessage()
+  const downloadPdf = useCallback(async (): Promise<EmployeeFileDownloadResult> => {
+    if (employeeId == null) {
+      return { message: EmployeeFileErrorHelper.notFoundMessage(), succeeded: false }
+    }
     dispatch({ type: 'PDF_START' })
     try {
       const file = await employeeFileRepository.downloadPdf(employeeId)
       FileDownloadHelper.save(file)
-      return `Expediente descargado: ${file.filename}`
+      return { message: `Expediente descargado: ${file.filename}`, succeeded: true }
     } catch (error) {
-      return await EmployeeFileErrorHelper.downloadMessageFrom(error)
+      return { message: await EmployeeFileErrorHelper.downloadMessageFrom(error), succeeded: false }
     } finally {
       dispatch({ type: 'PDF_DONE' })
     }

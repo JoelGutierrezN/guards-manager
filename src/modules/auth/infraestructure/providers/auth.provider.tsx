@@ -47,8 +47,12 @@ export function AuthProvider() {
   }
 
   async function logout(): Promise<void> {
-    await authUseCase.logout()
-    dispatch({ type: 'AUTH_LOGOUT' })
+    try {
+      await authUseCase.logout()
+    } finally {
+      authenticatedRef.current = false
+      dispatch({ type: 'AUTH_LOGOUT' })
+    }
   }
 
   const contextValue: AuthContextValue = {

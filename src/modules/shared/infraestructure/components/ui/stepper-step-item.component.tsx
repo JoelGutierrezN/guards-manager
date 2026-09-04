@@ -62,13 +62,18 @@ function StepperStepItemInner({ view, onSelect }: Props): JSX.Element {
     [view.state],
   )
 
+  const itemClassName = useMemo(
+    () => cn('flex items-center', view.isLast ? 'shrink-0' : 'min-w-0 flex-1'),
+    [view.isLast],
+  )
+
   const handleSelect = useCallback(() => {
     if (!onSelect) return
     onSelect(view.step.id)
   }, [onSelect, view.step.id])
 
   return (
-    <li className={cn('flex items-center', view.isLast ? 'shrink-0' : 'min-w-0 flex-1')}>
+    <li className={itemClassName}>
       <button
         type="button"
         className={triggerClassName}

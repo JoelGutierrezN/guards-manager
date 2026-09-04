@@ -23,4 +23,12 @@ export class SelectableTableSelectionHelper {
   static countSelected(selectedIds: string[], selectableIds: string[]): number {
     return selectableIds.filter((selectableId) => selectedIds.includes(selectableId)).length
   }
+
+  static keepSelectable(selectedIds: string[], selectableIds: string[]): string[] {
+    return selectedIds.filter((selectedId) => selectableIds.includes(selectedId))
+  }
+
+  static hasOrphanIds(selectedIds: string[], selectableIds: string[]): boolean {
+    return selectedIds.some((selectedId) => !selectableIds.includes(selectedId))
+  }
 }

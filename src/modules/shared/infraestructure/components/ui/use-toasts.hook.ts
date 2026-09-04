@@ -1,12 +1,6 @@
 import { type JSX, createElement, useCallback, useState } from 'react'
 import { ToastHost } from './toast-host.component'
-import type { ToastTone } from './toast.model'
-
-interface ToastEntry {
-  id: string
-  message: string
-  tone: ToastTone
-}
+import type { ToastEntry, ToastTone } from './toast.model'
 
 export function useToasts(): readonly [
   addToast: (message: string, tone?: ToastTone) => void,

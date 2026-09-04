@@ -10,8 +10,10 @@ import { ModelsQueryParamsHelper } from '../infraestructure/helpers/models-query
 import { ModelFormErrorHelper } from '../infraestructure/helpers/model-form-error.helper'
 import { DeactivateWarningStorage } from '../infraestructure/storage/deactivate-warning.storage'
 import { useQueryParams } from '../../shared/hooks/use-query-params.hook'
+import { ApiConflictErrorHelper } from '../../shared/infraestructure/errors/api-conflict-error.helper'
 
 const SEARCH_DEBOUNCE_MS = 250
+const DELETE_FALLBACK_MESSAGE = 'No se pudo eliminar el modelo.'
 
 export function useProductModels(brandId: string | null, onMutated?: () => void) {
   const { params, setQueryParams } = useQueryParams()
@@ -204,9 +206,12 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
       }
       onMutated?.()
       return `Modelo "${payload.name}" eliminado`
-    } catch {
+    } catch (error) {
       dispatch({ type: 'ROW_DONE' })
-      return 'No se pudo eliminar el modelo.'
+      if (ApiConflictErrorHelper.isConflict(error)) {
+        return ApiConflictErrorHelper.messageFrom(error, DELETE_FALLBACK_MESSAGE)
+      }
+      return DELETE_FALLBACK_MESSAGE
     }
   }, [windowManager, modal, state.models.length, state.page, load, onMutated])
 

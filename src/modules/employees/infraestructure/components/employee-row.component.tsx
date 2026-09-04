@@ -57,7 +57,7 @@ export function EmployeeRow({ employee, onEdit, onOpen }: Props): JSX.Element {
       <td className="px-3 py-2.5 align-middle font-mono text-[13px] text-muted">
         {employee.hireDate}
       </td>
-      {/* TODO API: eliminar empleado con DELETE /employees/{id}. */}
+      {/* Pendiente Fase 5: eliminar empleado con DELETE /employees/{id}. */}
       <td className="px-3 py-2.5 text-right align-middle">
         <div className="flex justify-end opacity-0 transition-opacity group-hover:opacity-100">
           <IconButton icon={PencilEdit02Icon} tip="Editar" size="sm" onClick={handleEditClick} />

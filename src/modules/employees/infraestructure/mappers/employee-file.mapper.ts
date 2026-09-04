@@ -39,7 +39,7 @@ export class EmployeeFileMapper {
       activeToolsCount: summary.activeItems,
       historicalToolsCount: summary.historicalItems,
       hireDate: employee.hireDate,
-      // TODO API: el expediente todavía no expone alertas
+      // Pendiente Fase 5: el expediente todavía no expone alertas
       alertsCount: NO_ALERTS,
     }
   }

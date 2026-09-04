@@ -15,9 +15,9 @@ export const AuthForm = (): JSX.Element => {
 
   const isLoading = status === 'authenticating'
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const data = new FormData(e.currentTarget)
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
     const identifier = data.get('identifier') as string
     const password = data.get('password') as string
 

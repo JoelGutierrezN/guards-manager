@@ -56,20 +56,20 @@ export function NumberInput({
 
   const applyStep = (direction: number) => {
     setDraftText(null)
-    onChange(NumberInputHelper.clamp(value + step * direction, min, max))
+    onChange(NumberInputHelper.normalize(value + step * direction, min, max, step))
   }
 
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
     const rawText = event.target.value
     setDraftText(rawText)
     const parsed = NumberInputHelper.parse(rawText)
-    if (parsed !== null) onChange(parsed)
+    if (parsed !== null) onChange(NumberInputHelper.normalize(parsed, min, max, step))
   }
 
   const handleBlur = () => {
     const parsed = NumberInputHelper.parse(draftText ?? String(value))
     setDraftText(null)
-    onChange(NumberInputHelper.clamp(parsed ?? min, min, max))
+    onChange(NumberInputHelper.normalize(parsed ?? min, min, max, step))
   }
 
   return (

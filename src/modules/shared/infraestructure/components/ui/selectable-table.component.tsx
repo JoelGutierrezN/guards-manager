@@ -1,4 +1,4 @@
-import { type JSX, type ReactNode, useCallback, useMemo } from 'react'
+import { type JSX, type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { cn } from '../../utils/cn'
 import { TableLoader } from '../tables/table-loader.component'
 import { Checkbox } from './checkbox.component'
@@ -60,6 +60,14 @@ export function SelectableTable<TRow>({
     () => SelectableTableSelectionHelper.countSelected(selectedIds, selectableIds),
     [selectedIds, selectableIds],
   )
+
+  /** Ningún id puede quedar seleccionado de forma invisible: si la fila ya no es
+   * seleccionable (o ya no está en la tabla) se descarta de la selección del padre. */
+  useEffect(() => {
+    if (loading) return
+    if (!SelectableTableSelectionHelper.hasOrphanIds(selectedIds, selectableIds)) return
+    onSelectionChange(SelectableTableSelectionHelper.keepSelectable(selectedIds, selectableIds))
+  }, [loading, selectedIds, selectableIds, onSelectionChange])
 
   const areAllSelected = selectableIds.length > 0 && selectedCount === selectableIds.length
   const isPartiallySelected = selectedCount > 0 && !areAllSelected

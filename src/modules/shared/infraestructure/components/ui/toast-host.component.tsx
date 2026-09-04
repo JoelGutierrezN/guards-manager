@@ -1,12 +1,6 @@
 import { type JSX } from 'react'
 import { Toast } from './toast.component'
-import type { ToastTone } from './toast.model'
-
-interface ToastEntry {
-  id: string
-  message: string
-  tone: ToastTone
-}
+import type { ToastEntry } from './toast.model'
 
 interface Props {
   items: ToastEntry[]

@@ -1,4 +1,4 @@
-import { type JSX } from 'react'
+import { type JSX, useMemo } from 'react'
 import { PlusSignIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ComboboxOption } from './combobox-option.component'
@@ -46,6 +46,11 @@ export function ComboboxPanel({
   )
   const isCreateVisible = Boolean(onCreate) && trimmedQuery !== '' && !hasExactMatch
 
+  const createRowClassName = useMemo(
+    () => (items.length > 0 ? 'mt-1 border-t border-hairline pt-1' : ''),
+    [items.length],
+  )
+
   return (
     <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-[6] max-h-[280px] overflow-auto rounded-[18px] border border-hairline bg-white p-1.5 shadow-[0_12px_36px_-8px_rgba(14,15,60,0.18)]">
       {status === 'loading' && (
@@ -91,7 +96,7 @@ export function ComboboxPanel({
       )}
 
       {isCreateVisible && onCreate && (
-        <div className={items.length > 0 ? 'mt-1 border-t border-hairline pt-1' : ''}>
+        <div className={createRowClassName}>
           <button
             type="button"
             className="flex w-full cursor-pointer items-center gap-2 rounded-[10px] px-2.5 py-2 text-left text-[13px] font-semibold text-brand transition-colors hover:bg-brand-soft"
