@@ -15,6 +15,7 @@ import type { TabItem } from '../../../shared/infraestructure/components/ui'
 import type { Tool } from '../../domain/tool.entity'
 import type { StockUnitStatus } from '../../domain/tool-unit.model'
 import { useStockUnits } from '../../hooks/use-stock-units.hook'
+import { StockUnitsTabCountHelper } from '../helpers/stock-units-tab-count.helper'
 import { ToolStockUnitRow } from './tool-stock-unit-row.component'
 import { ToolStockAssignedRow } from './tool-stock-assigned-row.component'
 
@@ -53,9 +54,9 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
       (Object.keys(TAB_LABELS) as StockUnitStatus[]).map((status) => ({
         value: status,
         label: TAB_LABELS[status],
-        count: state.tabs[status].total,
+        count: StockUnitsTabCountHelper.countFor(tool, status, state.tabs[status]),
       })),
-    [state.tabs],
+    [state.tabs, tool],
   )
 
   const handleClose = () => {
@@ -68,7 +69,7 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
     if (succeeded) addToast('Unidad eliminada')
   }
 
-  const showSkeletons = activeTabState.status === 'loading'
+  const showSkeletons = activeTabState.status === 'loading' || activeTabState.status === 'idle'
   const skeletonSlots = useMemo(
     () => [...Array(activeTabState.perPage).keys()],
     [activeTabState.perPage],
@@ -125,9 +126,9 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
           </div>
         )}
 
-        {!showSkeletons &&
-          activeTabState.status !== 'error' &&
-          activeTabState.units.length === 0 && <Empty title="Sin unidades en esta categoría." />}
+        {activeTabState.status === 'ready' && activeTabState.units.length === 0 && (
+          <Empty title="Sin unidades en esta categoría." />
+        )}
 
         {!showSkeletons && activeTabState.units.length > 0 && (
           <table className="w-full border-collapse text-[13px]">

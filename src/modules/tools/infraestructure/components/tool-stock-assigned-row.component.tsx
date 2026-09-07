@@ -2,7 +2,7 @@ import { type JSX } from 'react'
 import { Chip } from '../../../shared/infraestructure/components/ui'
 import { ITEM_CONDITION_MAP } from '../../../shared/domain/item-condition.model'
 import type { ToolUnit } from '../../domain/tool-unit.model'
-import { StockUnitDateHelper } from '../helpers/stock-unit-date.helper'
+import { StockUnitCustodyHelper } from '../helpers/stock-unit-custody.helper'
 
 interface Props {
   unit: ToolUnit
@@ -22,13 +22,13 @@ export function ToolStockAssignedRow({ unit }: Props): JSX.Element {
         </Chip>
       </td>
       <td className="border-b border-hairline px-3 py-1.5 text-ink-2">
-        {unit.custody ? `${unit.custody.employeeName} · ${unit.custody.employeeIdentifier}` : '—'}
+        {StockUnitCustodyHelper.holderLabel(unit.custody)}
       </td>
       <td className="border-b border-hairline px-3 py-1.5 font-mono text-[12px] text-muted">
         {unit.custody?.code ?? '—'}
       </td>
       <td className="border-b border-hairline px-3 py-1.5 font-mono text-[12px] text-muted">
-        {unit.custody ? StockUnitDateHelper.format(unit.custody.assignedAt) : '—'}
+        {StockUnitCustodyHelper.assignedAtLabel(unit.custody)}
       </td>
     </tr>
   )

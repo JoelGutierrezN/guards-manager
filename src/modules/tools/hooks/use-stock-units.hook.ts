@@ -85,8 +85,12 @@ export function useStockUnits(productId: string | null, open: boolean) {
       await stockUnitsRepository.remove(unit.id)
       dispatch({ type: 'UNIT_REMOVED', tab: state.activeTab, unitId: unit.id })
       const remaining = activeTabState.units.length - 1
-      if (remaining === 0 && activeTabState.page > 1) {
-        dispatch({ type: 'SET_PAGE', tab: state.activeTab, page: activeTabState.page - 1 })
+      const nextPage =
+        remaining === 0 && activeTabState.page > 1 ? activeTabState.page - 1 : activeTabState.page
+      if (nextPage !== activeTabState.page) {
+        dispatch({ type: 'SET_PAGE', tab: state.activeTab, page: nextPage })
+      } else {
+        void loadTab(state.activeTab, nextPage, state.query, true)
       }
       return true
     } catch (error) {
@@ -97,7 +101,14 @@ export function useStockUnits(productId: string | null, open: boolean) {
       dispatch({ type: 'CLOSE_DELETE' })
       return false
     }
-  }, [state.deletingUnit, state.activeTab, activeTabState.units.length, activeTabState.page])
+  }, [
+    state.deletingUnit,
+    state.activeTab,
+    state.query,
+    activeTabState.units.length,
+    activeTabState.page,
+    loadTab,
+  ])
 
   return {
     state,

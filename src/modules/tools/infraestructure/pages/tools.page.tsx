@@ -98,6 +98,12 @@ export function ToolsPage(): JSX.Element {
     if (result !== null && result.tone === 'success') addToast(result.message, result.tone)
   }, [confirmDelete, addToast])
 
+  const handleCloseStock = useCallback(() => {
+    closeStock()
+    reloadList()
+    void reload()
+  }, [closeStock, reloadList, reload])
+
   const handleIngreso = useCallback(
     (tool: Tool) => {
       void navigate(`/stockIn?productId=${encodeURIComponent(tool.id)}`)
@@ -183,7 +189,7 @@ export function ToolsPage(): JSX.Element {
         onNotifyError={notifyError}
       />
 
-      <ToolStockModal open={!!state.stockTool} tool={state.stockTool} onClose={closeStock} />
+      <ToolStockModal open={!!state.stockTool} tool={state.stockTool} onClose={handleCloseStock} />
 
       <ToolDeleteModal
         open={state.deleteTool !== null}

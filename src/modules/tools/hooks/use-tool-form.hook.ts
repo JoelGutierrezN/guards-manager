@@ -21,8 +21,9 @@ interface UseToolFormOptions {
   onNotifyError: (message: string) => void
 }
 
-function toModelParams(brandId: string, query: string): URLSearchParams {
-  const params = new URLSearchParams({ limit: String(MODEL_OPTIONS_LIMIT), state: 'activo' })
+function toModelParams(brandId: string, query: string, activeOnly: boolean): URLSearchParams {
+  const params = new URLSearchParams({ limit: String(MODEL_OPTIONS_LIMIT) })
+  if (activeOnly) params.set('state', 'activo')
   if (brandId !== '') params.set('brand_id', brandId)
   if (query.trim() !== '') params.set('name', query.trim())
   return params
@@ -55,14 +56,21 @@ export function useToolForm({ tool, onSubmit, onNotifyError }: UseToolFormOption
     if (tool === null || state.prefillStatus !== 'idle') return
     let isActive = true
     dispatch({ type: 'PREFILL_START' })
-    productModelRepository
-      .list(toModelParams('', tool.model))
-      .then((page) => {
+    void (async () => {
+      try {
+        const brands = await loadBrands()
+        const brand = brands.find((candidate) => candidate.name === tool.brand) ?? null
+        const page = await productModelRepository.list(
+          toModelParams(brand?.id ?? '', tool.model, false),
+        )
         if (!isActive) return
         const match =
           page.models.find(
             (productModel) =>
-              productModel.name === tool.model && productModel.brandName === tool.brand,
+              productModel.name === tool.model &&
+              (brand === null
+                ? productModel.brandName === tool.brand
+                : productModel.brandId === brand.id),
           ) ?? null
         if (match === null) {
           dispatch({ type: 'PREFILL_ERROR' })
@@ -77,14 +85,14 @@ export function useToolForm({ tool, onSubmit, onNotifyError }: UseToolFormOption
             productModelName: match.name,
           },
         })
-      })
-      .catch(() => {
+      } catch {
         if (isActive) dispatch({ type: 'PREFILL_ERROR' })
-      })
+      }
+    })()
     return () => {
       isActive = false
     }
-  }, [tool, state.prefillStatus])
+  }, [tool, state.prefillStatus, loadBrands])
 
   const loadBrandOptions = useCallback(
     async (query: string): Promise<ComboboxItem[]> => {
@@ -102,7 +110,7 @@ export function useToolForm({ tool, onSubmit, onNotifyError }: UseToolFormOption
   const loadProductModelOptions = useCallback(
     async (query: string): Promise<ComboboxItem[]> => {
       if (state.brandId === '') return []
-      const page = await productModelRepository.list(toModelParams(state.brandId, query))
+      const page = await productModelRepository.list(toModelParams(state.brandId, query, true))
       return page.models.map(toModelItem)
     },
     [state.brandId],

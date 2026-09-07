@@ -13,9 +13,9 @@ export class StockUnitMapper {
       id: dto.id,
       code: dto.code,
       employeeId: dto.employeeId,
-      employeeName: dto.employeeName,
-      employeeIdentifier: dto.employeeIdentifier,
-      assignedAt: dto.assignedAt,
+      employeeName: dto.employeeName ?? null,
+      employeeIdentifier: dto.employeeIdentifier ?? null,
+      assignedAt: dto.assignedAt ?? null,
     }
   }
 

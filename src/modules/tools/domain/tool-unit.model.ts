@@ -6,9 +6,9 @@ export interface StockUnitCustody {
   id: string
   code: string
   employeeId: string
-  employeeName: string
-  employeeIdentifier: string
-  assignedAt: string
+  employeeName: string | null
+  employeeIdentifier: string | null
+  assignedAt: string | null
 }
 
 export interface ToolUnit {
