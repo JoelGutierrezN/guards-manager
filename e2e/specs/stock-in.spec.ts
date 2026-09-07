@@ -28,7 +28,9 @@ test('@fase-1 ingreso de 3 unidades y total reflejado en Herramientas', async ({
     const summaryHeading = page.getByRole('heading', { name: /Ingreso registrado/ })
     await expect(summaryHeading).toBeVisible()
     await expect(summaryHeading).toContainText('3 unidades')
-    await expect(page.getByText(/IV-\d+ — IV-\d+/)).toBeVisible()
+
+    const summary = page.locator('section').filter({ has: summaryHeading })
+    await expect(summary.getByText(/IV-\d+ — IV-\d+/)).toBeVisible()
 
     await page.getByRole('button', { name: 'Ver en Herramientas' }).click()
     await expect(page).toHaveURL(/\/tools\?name=/)
