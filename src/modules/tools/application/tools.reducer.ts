@@ -1,6 +1,5 @@
 import type { ToolsState, ToolsAction } from './tools-state.model'
 import { DEFAULT_STOCK_RANGE } from './tools-state.model'
-import { ToolsService } from './tools.service'
 
 export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState {
   switch (action.type) {
@@ -39,47 +38,40 @@ export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState
       return {
         ...state,
         filters: { brands: [], models: [], stockRange: DEFAULT_STOCK_RANGE },
+        search: '',
         page: 1,
       }
+    case 'SET_SEARCH':
+      return { ...state, search: action.search, page: 1 }
+    case 'TOGGLE_SORT': {
+      const isSameKey = state.sort.key === action.key
+      const direction = isSameKey && state.sort.direction === 'asc' ? 'desc' : 'asc'
+      return { ...state, sort: { key: action.key, direction }, page: 1 }
+    }
     case 'SET_TAB':
       return { ...state, tab: action.tab, page: 1 }
     case 'SET_PAGE':
       return { ...state, page: action.page }
     case 'TOGGLE_FILTERS_PANEL':
       return { ...state, showFilters: !state.showFilters }
-    case 'OPEN_NEW_TOOL':
-      return { ...state, newToolOpen: true }
-    case 'CLOSE_NEW_TOOL':
-      return { ...state, newToolOpen: false }
-    case 'OPEN_INGRESO':
-      return { ...state, ingresoTool: action.tool }
-    case 'CLOSE_INGRESO':
-      return { ...state, ingresoTool: null }
-    case 'CONFIRM_INGRESO':
-      return { ...state, ingresoTool: null, progress: { tool: action.tool, total: action.total } }
-    case 'FINISH_INGRESO': {
-      if (!state.progress) return { ...state, progress: null }
-      const updatedRows = ToolsService.addStock(
-        state.rows,
-        state.progress.tool.id,
-        state.progress.total,
-      )
-      return { ...state, rows: updatedRows, progress: null }
-    }
+    case 'OPEN_TOOL_FORM':
+      return { ...state, isFormOpen: true, formTool: action.tool }
+    case 'CLOSE_TOOL_FORM':
+      return { ...state, isFormOpen: false, formTool: null }
     case 'OPEN_STOCK':
       return { ...state, stockTool: action.tool }
     case 'CLOSE_STOCK':
       return { ...state, stockTool: null }
     case 'OPEN_DELETE':
-      return { ...state, deleteTool: action.tool }
+      return { ...state, deleteTool: action.tool, deleteConflict: null, isDeleting: false }
     case 'CLOSE_DELETE':
-      return { ...state, deleteTool: null }
-    case 'CONFIRM_DELETE':
-      return {
-        ...state,
-        rows: state.rows.filter((tool) => tool.id !== action.tool.id),
-        deleteTool: null,
-      }
+      return { ...state, deleteTool: null, deleteConflict: null, isDeleting: false }
+    case 'DELETE_START':
+      return { ...state, isDeleting: true, deleteConflict: null }
+    case 'DELETE_CONFLICT':
+      return { ...state, isDeleting: false, deleteConflict: action.message }
+    case 'DELETE_DONE':
+      return { ...state, isDeleting: false, deleteTool: null, deleteConflict: null }
     default:
       return state
   }
