@@ -1,14 +1,12 @@
 import type { Tool } from '../domain/tool.entity'
 import type { ToolFilters } from '../domain/tool-filters.model'
 import type { ToolsPage } from '../domain/tools-page.model'
+import type { ToolsSort, ToolsSortKey } from '../domain/tools-sort.model'
 import type { ToolsTabKey } from '../domain/tools-tab.model'
 
-export interface ProgressEntry {
-  tool: Tool
-  total: number
-}
-
 export const DEFAULT_STOCK_RANGE: [number, number] = [0, 50]
+
+export const DEFAULT_TOOLS_SORT: ToolsSort = { key: 'name', direction: 'asc' }
 
 export type ToolsStatus = 'loading' | 'ready' | 'error'
 
@@ -17,17 +15,20 @@ export interface ToolsState {
   status: ToolsStatus
   error: string | null
   filters: ToolFilters
+  search: string
+  sort: ToolsSort
   tab: ToolsTabKey
   page: number
   perPage: number
   lastPage: number
   total: number
   showFilters: boolean
-  newToolOpen: boolean
-  ingresoTool: Tool | null
+  formTool: Tool | null
+  isFormOpen: boolean
   stockTool: Tool | null
   deleteTool: Tool | null
-  progress: ProgressEntry | null
+  deleteConflict: string | null
+  isDeleting: boolean
 }
 
 export const INITIAL_TOOLS_STATE: ToolsState = {
@@ -35,17 +36,20 @@ export const INITIAL_TOOLS_STATE: ToolsState = {
   status: 'loading',
   error: null,
   filters: { brands: [], models: [], stockRange: DEFAULT_STOCK_RANGE },
+  search: '',
+  sort: DEFAULT_TOOLS_SORT,
   tab: 'all',
   page: 1,
   perPage: 25,
   lastPage: 1,
   total: 0,
   showFilters: true,
-  newToolOpen: false,
-  ingresoTool: null,
+  formTool: null,
+  isFormOpen: false,
   stockTool: null,
   deleteTool: null,
-  progress: null,
+  deleteConflict: null,
+  isDeleting: false,
 }
 
 export type ToolsAction =
@@ -56,17 +60,17 @@ export type ToolsAction =
   | { type: 'TOGGLE_MODEL'; model: string }
   | { type: 'SET_STOCK_RANGE'; range: [number, number] }
   | { type: 'CLEAR_FILTERS' }
+  | { type: 'SET_SEARCH'; search: string }
+  | { type: 'TOGGLE_SORT'; key: ToolsSortKey }
   | { type: 'SET_TAB'; tab: ToolsTabKey }
   | { type: 'SET_PAGE'; page: number }
   | { type: 'TOGGLE_FILTERS_PANEL' }
-  | { type: 'OPEN_NEW_TOOL' }
-  | { type: 'CLOSE_NEW_TOOL' }
-  | { type: 'OPEN_INGRESO'; tool: Tool }
-  | { type: 'CLOSE_INGRESO' }
-  | { type: 'CONFIRM_INGRESO'; tool: Tool; total: number }
-  | { type: 'FINISH_INGRESO' }
+  | { type: 'OPEN_TOOL_FORM'; tool: Tool | null }
+  | { type: 'CLOSE_TOOL_FORM' }
   | { type: 'OPEN_STOCK'; tool: Tool }
   | { type: 'CLOSE_STOCK' }
   | { type: 'OPEN_DELETE'; tool: Tool }
   | { type: 'CLOSE_DELETE' }
-  | { type: 'CONFIRM_DELETE'; tool: Tool }
+  | { type: 'DELETE_START' }
+  | { type: 'DELETE_CONFLICT'; message: string }
+  | { type: 'DELETE_DONE' }
