@@ -16,7 +16,10 @@ export class AuthUseCase {
   }
 
   async logout(): Promise<void> {
-    await this.repository.logout()
-    AuthSessionStorage.clear()
+    try {
+      await this.repository.logout()
+    } finally {
+      AuthSessionStorage.clear()
+    }
   }
 }

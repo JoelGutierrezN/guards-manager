@@ -4,8 +4,8 @@ import type { Employee } from '../domain/employee.entity'
 import type { UpdateEmployeeInput } from '../domain/employee-input.model'
 import { INITIAL_EMPLOYEE_EDIT_STATE } from '../application/employee-edit-state.model'
 import { employeeEditReducer } from '../application/employee-edit.reducer'
-import { employeesRepository } from '../infrastructure/repositories/employees.repository'
-import { EmployeeFormErrorHelper } from '../infrastructure/helpers/employee-form-error.helper'
+import { employeesRepository } from '../infraestructure/repositories/employees.repository'
+import { EmployeeFormErrorHelper } from '../infraestructure/helpers/employee-form-error.helper'
 
 export function useEmployeeEdit(onSaved: (employee: Employee) => void) {
   const modal = useOverlayState()

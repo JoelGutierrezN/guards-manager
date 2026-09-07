@@ -13,13 +13,13 @@ export const EMPLOYEE_FILE_PENDING_CONTENT: Record<
   EmployeeFilePendingTab,
   EmployeeFilePendingContent
 > = {
-  // TODO API: documentos firmados pendientes de implementación en backend
+  // Pendiente Fase 4: los documentos firmados llegan con las hojas PDF
   docs: {
     icon: File01Icon,
     title: 'Documentos en camino',
     body: 'Las hojas de resguardo y devolución firmadas aparecerán aquí cuando el módulo de documentos esté listo.',
   },
-  // TODO API: reportes de daño pendientes de implementación en backend
+  // Pendiente Fase 5: los reportes de daño llegan con el expediente completo
   damage: {
     icon: Alert02Icon,
     title: 'Sin reportes de daño',

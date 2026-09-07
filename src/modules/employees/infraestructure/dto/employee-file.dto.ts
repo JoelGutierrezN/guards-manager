@@ -14,7 +14,7 @@ export interface EmployeeFileSummaryDto {
   activeItems: number
   historicalItems: number
   returnedItems: number
-  // TODO API: daños pendientes, el backend siempre responde null
+  // Pendiente Fase 5: daños pendientes, el backend siempre responde null
   damagedItems: number | null
 }
 
@@ -46,8 +46,8 @@ export interface EmployeeFileDto {
   summary: EmployeeFileSummaryDto
   activeItems: EmployeeFileItemDto[]
   history: EmployeeFileEventDto[]
-  // TODO API: documentos pendientes, el backend siempre responde []
+  // Pendiente Fase 4: documentos pendientes, el backend siempre responde []
   documents: unknown[]
-  // TODO API: daños pendientes, el backend siempre responde []
+  // Pendiente Fase 5: daños pendientes, el backend siempre responde []
   damages: unknown[]
 }

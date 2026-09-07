@@ -6,7 +6,7 @@ export interface AuthContextValue {
   isAuthenticated: boolean
   status: AuthStatus
   error: string | null
-  login: (identifier: string, password: string) => Promise<void>
+  login: (identifier: string, password: string) => Promise<boolean>
   logout: () => Promise<void>
   sessionExpired: boolean
 }

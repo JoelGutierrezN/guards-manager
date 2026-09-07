@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useRef } from 'react'
 import { INITIAL_ROLE_OPTIONS_STATE } from '../application/role-options.model'
 import { roleOptionsReducer } from '../application/role-options.reducer'
-import { rolesRepository } from '../infrastructure/repositories/roles.repository'
+import { rolesRepository } from '../infraestructure/repositories/roles.repository'
 
 export function useRoleOptions(enabled: boolean) {
   const [state, dispatch] = useReducer(roleOptionsReducer, INITIAL_ROLE_OPTIONS_STATE)

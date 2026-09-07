@@ -15,11 +15,10 @@ export function Topbar({ onSearch, inboxCount = 3 }: Props): JSX.Element {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const navId = useMemo(() => AppRouteHelper.navIdFromPath(pathname), [pathname])
-  const crumbId = useMemo(() => AppRouteHelper.crumbIdFromPath(pathname), [pathname])
 
   return (
     <header className="sticky top-2.5 z-[5] flex h-[60px] items-center gap-3 rounded-[26px] border border-hairline bg-white/75 px-4 shadow-[0_1px_2px_rgba(26,19,38,0.03)] backdrop-blur-[14px] backdrop-saturate-[1.4]">
-      <TopbarBreadcrumbs crumbId={crumbId} />
+      <TopbarBreadcrumbs />
 
       <div className="ml-auto flex items-center gap-2">
         <TopbarSearch onClick={onSearch} />

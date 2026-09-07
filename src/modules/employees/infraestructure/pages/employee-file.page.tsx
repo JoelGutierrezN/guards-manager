@@ -53,7 +53,8 @@ export function EmployeeFilePage(): JSX.Element {
   }
 
   const handleDownloadPdf = async (): Promise<void> => {
-    addToast(await downloadPdf())
+    const { message, succeeded } = await downloadPdf()
+    addToast(message, succeeded ? 'success' : 'error')
   }
 
   const handleSave = async (input: UpdateEmployeeInput): Promise<void> => {

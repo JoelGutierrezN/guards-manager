@@ -18,9 +18,17 @@ export function Sidebar(): JSX.Element {
   const activeId = useMemo(() => AppRouteHelper.navIdFromPath(pathname), [pathname])
   const { user, logout } = useAuth()
 
-  const handleLogout = async () => {
-    await logout()
-    navigate('/', { replace: true })
+  /** La sesión local se limpia pase lo que pase, así que un `POST /logout` fallido
+   * no puede dejar al usuario dentro ni una promesa rechazada sin manejar. */
+  const handleLogout = (): void => {
+    void (async () => {
+      try {
+        await logout()
+      } catch {
+        // La sesión ya quedó limpia: el fallo del endpoint no debe frenar la salida.
+      }
+      navigate('/', { replace: true })
+    })()
   }
 
   return (

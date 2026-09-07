@@ -43,7 +43,8 @@ export const EmployeesPage = (): JSX.Element => {
   }
 
   const handleExport = async (): Promise<void> => {
-    addToast(await exportEmployees())
+    const { message, succeeded } = await exportEmployees()
+    addToast(message, succeeded ? 'success' : 'error')
   }
 
   const handleOpenFile = (employee: Employee): void => {

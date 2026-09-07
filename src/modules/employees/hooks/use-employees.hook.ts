@@ -5,16 +5,17 @@ import type { Employee } from '../domain/employee.entity'
 import type { CreateEmployeeInput } from '../domain/employee-input.model'
 import type { EmployeesFilters } from '../domain/employees-filters.model'
 import type { EmployeesWindowManager } from '../application/employees-window.model'
+import type { EmployeeExportResult } from '../application/employee-export-result.model'
 import { employeesReducer } from '../application/employees.reducer'
 import { EmployeesStatsHelper } from '../application/employees-stats.helper'
-import { employeesRepository } from '../infrastructure/repositories/employees.repository'
-import { EmployeeFormErrorHelper } from '../infrastructure/helpers/employee-form-error.helper'
-import { EmployeeExportErrorHelper } from '../infrastructure/helpers/employee-export-error.helper'
+import { employeesRepository } from '../infraestructure/repositories/employees.repository'
+import { EmployeeFormErrorHelper } from '../infraestructure/helpers/employee-form-error.helper'
+import { EmployeeExportErrorHelper } from '../infraestructure/helpers/employee-export-error.helper'
 import { FileDownloadHelper } from '../../shared/infraestructure/helpers/file-download.helper'
 import {
   EmployeeQueryParamsHelper,
   type EmployeesListRequest,
-} from '../infrastructure/helpers/employee-query-params.helper'
+} from '../infraestructure/helpers/employee-query-params.helper'
 
 const SEARCH_DEBOUNCE_MS = 250
 
@@ -73,16 +74,16 @@ export function useEmployees() {
   )
   const clearFilters = useCallback(() => dispatch({ type: 'CLEAR_FILTERS' }), [])
 
-  const exportEmployees = useCallback(async (): Promise<string> => {
+  const exportEmployees = useCallback(async (): Promise<EmployeeExportResult> => {
     dispatch({ type: 'EXPORT_START' })
     try {
       const file = await employeesRepository.export(
         EmployeeQueryParamsHelper.toExportParams(requestRef.current),
       )
       FileDownloadHelper.save(file)
-      return `Exportación descargada: ${file.filename}`
+      return { message: `Exportación descargada: ${file.filename}`, succeeded: true }
     } catch (error) {
-      return await EmployeeExportErrorHelper.messageFrom(error)
+      return { message: await EmployeeExportErrorHelper.messageFrom(error), succeeded: false }
     } finally {
       dispatch({ type: 'EXPORT_DONE' })
     }
