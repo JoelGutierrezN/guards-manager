@@ -3,11 +3,15 @@ import type { PaginationMetaDto } from '../../../shared/infraestructure/dto/pagi
 export interface ProductDto {
   id: string
   name: string
-  brand: string | null
-  model: string | null
-  total: number
-  available: number
-  warns: number
+  brand?: string | null
+  brandId?: string | null
+  model?: string | null
+  productModelId?: string | null
+  total?: number
+  available?: number
+  assigned?: number
+  unusable?: number
+  warns?: number
 }
 
 export interface ProductCollectionDto {
