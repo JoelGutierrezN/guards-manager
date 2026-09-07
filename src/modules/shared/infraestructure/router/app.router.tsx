@@ -44,7 +44,7 @@ export default createBrowserRouter([
                 path: 'stockIn',
                 handle: { crumb: ['Inventario', 'Ingreso de inventario'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (await import('../../../inventory')).StockInPage,
                 }),
               },
               {
