@@ -52,7 +52,9 @@ export default createBrowserRouter([
                 path: 'newAssignment',
                 handle: { crumb: ['Operación', 'Nueva asignación'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (
+                    await import('../../../custodies/infraestructure/pages/new-assignment.page')
+                  ).NewAssignmentPage,
                 }),
               },
               {
