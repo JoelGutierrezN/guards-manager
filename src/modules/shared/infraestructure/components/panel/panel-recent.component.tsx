@@ -1,11 +1,20 @@
 import { type JSX } from 'react'
+import { useNavigate } from 'react-router'
 import { ArrowRight01Icon, FilterIcon } from '@hugeicons/core-free-icons'
 import { BentoCell } from './bento-cell.component'
 import { Eyebrow, BentoTitle } from './panel-bits.component'
 import { Avatar, Button, Chip } from '../ui'
 import { RECENT_ASSIGNMENTS, STATUS_TONE, type RecentAssignment } from './panel.data'
 
+const ASSIGNMENTS_PATH = '/assignments'
+
 export function PanelRecent(): JSX.Element {
+  const navigate = useNavigate()
+
+  const goToAssignments = (): void => {
+    void navigate(ASSIGNMENTS_PATH)
+  }
+
   return (
     <BentoCell span={6}>
       <div className="flex items-start justify-between gap-3">
@@ -17,7 +26,7 @@ export function PanelRecent(): JSX.Element {
           <Button size="sm" icon={FilterIcon}>
             Filtrar
           </Button>
-          <Button size="sm" iconRight={ArrowRight01Icon}>
+          <Button size="sm" iconRight={ArrowRight01Icon} onClick={goToAssignments}>
             Ver todas
           </Button>
         </div>
