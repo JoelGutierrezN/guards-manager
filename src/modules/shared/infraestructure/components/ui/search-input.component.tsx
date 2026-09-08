@@ -11,6 +11,7 @@ interface Props {
   leadIcon?: IconSvgElement
   ariaLabel?: string
   disabled?: boolean
+  maxLength?: number
   className?: string
 }
 
@@ -21,6 +22,7 @@ export function SearchInput({
   leadIcon = Search01Icon,
   ariaLabel = 'Buscar',
   disabled = false,
+  maxLength,
   className,
 }: Props): JSX.Element {
   const wrapClassName = useMemo(
@@ -56,6 +58,7 @@ export function SearchInput({
         placeholder={placeholder}
         value={value}
         disabled={disabled}
+        maxLength={maxLength}
         onChange={(event) => onChange(event.target.value)}
         className="h-full min-w-0 flex-1 border-none bg-transparent text-[13px] text-ink outline-none placeholder:text-muted-soft disabled:cursor-not-allowed"
       />

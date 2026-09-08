@@ -8,6 +8,7 @@ import { SessionExpiredPage } from '../pages/session-expired.page'
 import { AppErrorPage } from '../pages/app-error.page'
 import { NotFoundPage } from '../pages/not-found.page'
 import type { CrumbHandle } from '../components/topbar/topbar.crumbs'
+import type { CustodyDetailLoaderData } from '../../../custodies/domain/custody-detail-loader.model'
 
 export default createBrowserRouter([
   {
@@ -51,14 +52,16 @@ export default createBrowserRouter([
                 path: 'newAssignment',
                 handle: { crumb: ['Operación', 'Nueva asignación'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (
+                    await import('../../../custodies/infraestructure/pages/new-assignment.page')
+                  ).NewAssignmentPage,
                 }),
               },
               {
                 path: 'assignments',
                 handle: { crumb: ['Operación', 'Resguardo'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (await import('../../../custodies')).CustodiesPage,
                 }),
               },
               {
@@ -67,9 +70,22 @@ export default createBrowserRouter([
                   crumb: (match: UIMatch) => [
                     'Operación',
                     'Resguardo',
-                    match.params.custodyId ?? '',
+                    (match.data as CustodyDetailLoaderData | undefined)?.custody?.code ?? 'Detalle',
                   ],
                 } satisfies CrumbHandle,
+                lazy: async () => {
+                  const custodiesModule = await import('../../../custodies')
+                  return {
+                    Component: custodiesModule.CustodyDetailPage,
+                    loader: custodiesModule.custodyDetailLoader,
+                  }
+                },
+              },
+              {
+                // La pantalla de devolución llega en la Fase 3; hasta entonces la ruta
+                // existe para no caer en el comodín `*` (NotFoundPage).
+                path: 'assignments/:custodyId/return',
+                handle: { crumb: ['Operación', 'Resguardo', 'Devolución'] },
                 lazy: async () => ({
                   Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
                 }),

@@ -18,6 +18,8 @@ import { EmployeeFileSkeleton } from '../components/employee-file-skeleton.compo
 import { EmployeeFileSummaryCard } from '../components/employee-file-summary-card.component'
 
 const EMPLOYEES_PATH = '/personal'
+const NEW_ASSIGNMENT_PATH = '/newAssignment'
+const INACTIVE_EMPLOYEE_TIP = 'El empleado está dado de baja'
 
 export function EmployeeFilePage(): JSX.Element {
   const {
@@ -68,6 +70,13 @@ export function EmployeeFilePage(): JSX.Element {
     return <EmployeeFileError message={state.error} onRetry={reload} onBack={goToEmployees} />
   }
 
+  const employeeId = state.file.employee.id
+  const isActiveEmployee = state.file.employee.status === 'activo'
+
+  const goToNewAssignment = (): void => {
+    void navigate(`${NEW_ASSIGNMENT_PATH}?employeeId=${employeeId}`)
+  }
+
   return (
     <div className="mx-auto w-full max-w-[1480px]">
       <button
@@ -96,7 +105,14 @@ export function EmployeeFilePage(): JSX.Element {
             <Button icon={PencilEdit02Icon} size="md" onClick={openEdit}>
               Editar
             </Button>
-            <Button variant="primary" icon={SentIcon} size="md" disabled tip="En desarrollo">
+            <Button
+              variant="primary"
+              icon={SentIcon}
+              size="md"
+              disabled={!isActiveEmployee}
+              tip={isActiveEmployee ? undefined : INACTIVE_EMPLOYEE_TIP}
+              onClick={goToNewAssignment}
+            >
               Nueva asignación
             </Button>
           </>
