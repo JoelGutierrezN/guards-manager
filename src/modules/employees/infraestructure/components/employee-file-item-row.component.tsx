@@ -1,4 +1,5 @@
 import { type JSX, useMemo } from 'react'
+import { Link } from 'react-router'
 import { ArrowTurnBackwardIcon, MoreHorizontalIcon } from '@hugeicons/core-free-icons'
 import { Checkbox, Chip, IconButton } from '../../../shared/infraestructure/components/ui'
 import { cn } from '../../../shared/infraestructure/utils/cn'
@@ -18,6 +19,8 @@ const PENDING_TIP = 'En desarrollo'
 
 const DISABLED_ACTION_CLASS_NAME = 'disabled:cursor-not-allowed disabled:opacity-40'
 
+const CUSTODY_LINK_CLASS_NAME = 'text-brand underline-offset-[3px] hover:underline'
+
 export function EmployeeFileItemRow({ item, selected, onToggle }: Props): JSX.Element {
   const cellClassName = useMemo(
     () => cn(BASE_CELL_CLASS_NAME, selected ? 'bg-brand-soft' : 'group-hover/row:bg-paper-tint'),
@@ -30,7 +33,7 @@ export function EmployeeFileItemRow({ item, selected, onToggle }: Props): JSX.El
   )
 
   const custodyCellClassName = useMemo(
-    () => cn(cellClassName, 'cursor-default font-mono text-[11px] text-brand'),
+    () => cn(cellClassName, 'font-mono text-[11px]'),
     [cellClassName],
   )
 
@@ -53,9 +56,10 @@ export function EmployeeFileItemRow({ item, selected, onToggle }: Props): JSX.El
         </div>
       </td>
       <td className={monoCellClassName}>{item.stockConsecutive}</td>
-      {/* La pantalla de asignaciones todavía no existe, por eso el folio no navega. */}
-      <td className={custodyCellClassName} title={PENDING_TIP}>
-        {item.custodyCode}
+      <td className={custodyCellClassName}>
+        <Link to={`/assignments/${item.custodyId}`} className={CUSTODY_LINK_CLASS_NAME}>
+          {item.custodyCode}
+        </Link>
       </td>
       <td className={dateCellClassName}>{EmployeeFilePresenter.dotDate(item.assignedAt)}</td>
       <td className={cellClassName}>
