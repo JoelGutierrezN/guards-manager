@@ -5,6 +5,8 @@ import type {
   CustodyDetail,
   CustodyEmployee,
   CustodyItem,
+  CustodyItemProduct,
+  CustodyItemStock,
   CustodyReturnSummary,
   CustodySheet,
   CustodySignature,
@@ -20,11 +22,15 @@ import type {
   CustodyDto,
   CustodyEmployeeDto,
   CustodyItemDto,
+  CustodyItemProductDto,
   CustodyRequestDto,
   CustodyReturnSummaryDto,
   CustodySheetDto,
   CustodySignatureDto,
 } from '../dto/custody.dto'
+
+const MISSING_LABEL = '—'
+const MISSING_PRODUCT_NAME = 'Unidad dada de baja'
 
 export class CustodyMapper {
   static toRequestBody(input: CreateCustodyInput): CustodyRequestDto {
@@ -72,6 +78,11 @@ export class CustodyMapper {
     return { signedAt: dto.signedAt, signerName: dto.signerName }
   }
 
+  /**
+   * `stock` y `stock.product` llegan en `null` cuando la unidad o el producto fueron dados
+   * de baja: el API emite `stockId`/`productId` como red de seguridad y aquí se degrada a
+   * un marcador de posición en vez de romper el detalle completo.
+   */
   static toItem(dto: CustodyItemDto): CustodyItem {
     return {
       id: dto.id,
@@ -79,17 +90,41 @@ export class CustodyMapper {
       notes: dto.notes ?? null,
       isReturned: dto.isReturned,
       returnedAt: dto.returnedAt ?? null,
-      stock: {
-        id: dto.stock.id,
-        consecutive: dto.stock.consecutive,
-        condition: dto.stock.condition,
-        product: {
-          id: dto.stock.product.id,
-          name: dto.stock.product.name,
-          brand: dto.stock.product.brand ?? null,
-          model: dto.stock.product.model ?? null,
-        },
-      },
+      stock: CustodyMapper.toItemStock(dto),
+    }
+  }
+
+  private static toItemStock(dto: CustodyItemDto): CustodyItemStock {
+    const { stock } = dto
+    if (stock == null) {
+      return {
+        id: dto.stockId,
+        consecutive: MISSING_LABEL,
+        condition: dto.condition,
+        product: CustodyMapper.toItemProduct(null, ''),
+      }
+    }
+
+    return {
+      id: stock.id,
+      consecutive: stock.consecutive,
+      condition: stock.condition,
+      product: CustodyMapper.toItemProduct(stock.product, stock.productId ?? ''),
+    }
+  }
+
+  private static toItemProduct(
+    dto: CustodyItemProductDto | null,
+    fallbackId: string,
+  ): CustodyItemProduct {
+    if (dto == null) {
+      return { id: fallbackId, name: MISSING_PRODUCT_NAME, brand: null, model: null }
+    }
+    return {
+      id: dto.id,
+      name: dto.name,
+      brand: dto.brand ?? null,
+      model: dto.model ?? null,
     }
   }
 

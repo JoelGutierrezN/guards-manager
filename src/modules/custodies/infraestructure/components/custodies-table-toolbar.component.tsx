@@ -3,6 +3,9 @@ import { SearchInput } from '../../../shared/infraestructure/components/ui'
 import type { CustodiesFilters } from '../../domain/custodies-filters.model'
 import { CustodiesFiltersMenu } from './custodies-filters-menu.component'
 
+/** `CustodyIndexRequest` valida `q` con `max:120`; se acota en origen para no provocar 422. */
+const QUERY_MAX_LENGTH = 120
+
 interface Props {
   query: string
   filters: CustodiesFilters
@@ -26,6 +29,7 @@ export function CustodiesTableToolbar({
         onChange={onQueryChange}
         placeholder="Buscar por folio, nombre o ETT-0001…"
         ariaLabel="Buscar resguardos"
+        maxLength={QUERY_MAX_LENGTH}
         className="h-8 max-w-[340px] flex-1"
       />
     </div>

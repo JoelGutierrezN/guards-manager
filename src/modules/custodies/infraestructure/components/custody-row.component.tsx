@@ -1,7 +1,7 @@
 import { type JSX, type KeyboardEvent } from 'react'
 import { Avatar } from '../../../shared/infraestructure/components/ui'
 import type { Custody } from '../../domain/custody.entity'
-import { CustodyDateHelper } from '../helpers/custody-date.helper'
+import { CustodyDateHelper } from '../../application/custody-date.helper'
 import { CustodySignatureChip } from './custody-signature-chip.component'
 import { CustodyStatusChip } from './custody-status-chip.component'
 

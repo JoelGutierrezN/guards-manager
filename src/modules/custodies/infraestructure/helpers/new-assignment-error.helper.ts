@@ -56,6 +56,18 @@ export class NewAssignmentErrorHelper {
     }
   }
 
+  /**
+   * Motivos que debe pintar el aviso general: los del 409 más los errores de campo que
+   * ningún paso del wizard representa (`employee_id`, `items`), que si no quedarían
+   * invisibles tras el mensaje genérico «Revisa los datos marcados.».
+   */
+  static noticeReasons(report: NewAssignmentErrorReport): string[] {
+    const { employee, items } = report.fieldErrors
+    return [...report.reasons, employee, items].filter(
+      (reason): reason is string => reason !== undefined && reason !== '',
+    )
+  }
+
   static unitsMessageFrom(error: unknown): string {
     return ApiValidationErrorHelper.messageFrom(error, UNITS_LOAD_MESSAGE)
   }

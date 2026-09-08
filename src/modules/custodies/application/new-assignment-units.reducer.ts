@@ -1,6 +1,7 @@
-import type {
-  NewAssignmentUnitsAction,
-  NewAssignmentUnitsState,
+import {
+  INITIAL_NEW_ASSIGNMENT_UNITS_STATE,
+  type NewAssignmentUnitsAction,
+  type NewAssignmentUnitsState,
 } from './new-assignment-units-state.model'
 
 const FIRST_PAGE = 1
@@ -34,6 +35,8 @@ export function newAssignmentUnitsReducer(
       return { ...state, selectedIds: action.payload }
     case 'SELECTION_CLEARED':
       return { ...state, selectedIds: [] }
+    case 'RESET':
+      return INITIAL_NEW_ASSIGNMENT_UNITS_STATE
     default:
       return state
   }

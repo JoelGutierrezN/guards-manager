@@ -11,6 +11,7 @@ import { NewAssignmentErrorNotice } from '../components/new-assignment/new-assig
 import { NewAssignmentFooter } from '../components/new-assignment/new-assignment-footer.component'
 import { NewAssignmentSuccess } from '../components/new-assignment/new-assignment-success.component'
 import { NewAssignmentUnitsStep } from '../components/new-assignment/new-assignment-units-step.component'
+import { NewAssignmentErrorHelper } from '../helpers/new-assignment-error.helper'
 import { NewAssignmentNavigationHelper } from '../helpers/new-assignment-navigation.helper'
 
 const EMPLOYEE_HELP = 'Elige un empleado activo para continuar.'
@@ -68,7 +69,7 @@ export function NewAssignmentPage(): JSX.Element {
 
   const handleNewAssignment = useCallback(() => {
     restart()
-    units.clearSelection()
+    units.reset()
   }, [restart, units])
 
   return (
@@ -132,7 +133,12 @@ export function NewAssignmentPage(): JSX.Element {
               />
             )}
 
-            {state.error !== null && <NewAssignmentErrorNotice error={state.error} />}
+            {state.error !== null && (
+              <NewAssignmentErrorNotice
+                message={state.error.message}
+                reasons={NewAssignmentErrorHelper.noticeReasons(state.error)}
+              />
+            )}
 
             <NewAssignmentFooter
               stepId={state.stepId}

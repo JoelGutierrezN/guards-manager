@@ -3,7 +3,7 @@ import { Chip } from '../../../shared/infraestructure/components/ui'
 import { ItemConditionHelper } from '../../../shared/domain/item-condition.helper'
 import type { CustodyItem } from '../../domain/custody.entity'
 import { CustodyPresenter } from '../../application/custody-presenter.helper'
-import { CustodyDateHelper } from '../helpers/custody-date.helper'
+import { CustodyDateHelper } from '../../application/custody-date.helper'
 
 interface Props {
   item: CustodyItem

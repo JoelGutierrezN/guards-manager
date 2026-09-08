@@ -58,6 +58,20 @@ export function CustodiesFiltersMenu({ filters, onChange, onClear }: Props): JSX
     onChange({ employeeId, employeeName })
   }
 
+  /**
+   * `date_to` se valida con `after_or_equal:date_from`: los atributos `min`/`max` sólo
+   * limitan el selector, así que el rango se normaliza también al teclear.
+   */
+  const changeDateFrom = (dateFrom: string): void => {
+    const invertsRange = dateFrom !== '' && filters.dateTo !== '' && filters.dateTo < dateFrom
+    onChange(invertsRange ? { dateFrom, dateTo: dateFrom } : { dateFrom })
+  }
+
+  const changeDateTo = (dateTo: string): void => {
+    const invertsRange = dateTo !== '' && filters.dateFrom !== '' && dateTo < filters.dateFrom
+    onChange(invertsRange ? { dateFrom: dateTo, dateTo } : { dateTo })
+  }
+
   return (
     <div ref={containerRef} className="relative">
       <button
@@ -112,7 +126,7 @@ export function CustodiesFiltersMenu({ filters, onChange, onClear }: Props): JSX
                 className={DATE_INPUT_CLASS}
                 value={filters.dateFrom}
                 max={filters.dateTo || undefined}
-                onChange={(event) => onChange({ dateFrom: event.target.value })}
+                onChange={(event) => changeDateFrom(event.target.value)}
               />
             </label>
             <label className="flex flex-col gap-1 text-[11px] text-muted">
@@ -123,7 +137,7 @@ export function CustodiesFiltersMenu({ filters, onChange, onClear }: Props): JSX
                 className={DATE_INPUT_CLASS}
                 value={filters.dateTo}
                 min={filters.dateFrom || undefined}
-                onChange={(event) => onChange({ dateTo: event.target.value })}
+                onChange={(event) => changeDateTo(event.target.value)}
               />
             </label>
           </div>

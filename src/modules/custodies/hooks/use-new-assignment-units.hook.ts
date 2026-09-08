@@ -22,6 +22,7 @@ interface NewAssignmentUnitsResult {
   setSelectedIds: (selectedIds: string[]) => void
   clearSelection: () => void
   retry: () => void
+  reset: () => void
 }
 
 export function useNewAssignmentUnits(): NewAssignmentUnitsResult {
@@ -88,6 +89,15 @@ export function useNewAssignmentUnits(): NewAssignmentUnitsResult {
 
   const retry = useCallback(() => setRetryToken((token) => token + 1), [])
 
+  /**
+   * Vuelve al estado inicial y fuerza una recarga: tras crear un resguardo la lista
+   * cacheada todavía contiene las unidades recién asignadas.
+   */
+  const reset = useCallback(() => {
+    dispatch({ type: 'RESET' })
+    setRetryToken((token) => token + 1)
+  }, [])
+
   const selectedStocks = useMemo(
     () => state.stocks.filter((stock) => state.selectedIds.includes(stock.id)),
     [state.stocks, state.selectedIds],
@@ -103,5 +113,6 @@ export function useNewAssignmentUnits(): NewAssignmentUnitsResult {
     setSelectedIds,
     clearSelection,
     retry,
+    reset,
   }
 }

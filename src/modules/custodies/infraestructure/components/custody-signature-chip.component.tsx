@@ -1,6 +1,6 @@
 import { type JSX } from 'react'
 import { Chip } from '../../../shared/infraestructure/components/ui'
-import { CustodyDateHelper } from '../helpers/custody-date.helper'
+import { CustodyDateHelper } from '../../application/custody-date.helper'
 
 interface Props {
   signedAt: string | null

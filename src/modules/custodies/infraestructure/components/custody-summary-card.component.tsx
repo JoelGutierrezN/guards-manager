@@ -1,6 +1,6 @@
 import { type JSX } from 'react'
 import type { CustodyDetail } from '../../domain/custody.entity'
-import { CustodyDateHelper } from '../helpers/custody-date.helper'
+import { CustodyDateHelper } from '../../application/custody-date.helper'
 import { CustodySignatureChip } from './custody-signature-chip.component'
 import { CustodyStatusChip } from './custody-status-chip.component'
 import { CustodySummaryRow } from './custody-summary-row.component'

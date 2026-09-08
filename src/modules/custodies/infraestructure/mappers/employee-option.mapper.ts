@@ -8,8 +8,16 @@ export class EmployeeOptionMapper {
       identifier: dto.identifier,
       name: dto.name,
       roleName: dto.roleName ?? null,
-      activeToolsCount: dto.activeToolsCount ?? 0,
+      activeToolsCount: dto.activeToolsCount ?? null,
     }
+  }
+
+  /**
+   * `GET /employees/{id}` no calcula el conteo de herramientas activas (siempre emite 0),
+   * así que se descarta en vez de pintar una cifra falsa.
+   */
+  static toEmployeeOptionWithoutToolsCount(dto: EmployeeOptionDto): EmployeeOption {
+    return { ...EmployeeOptionMapper.toEmployeeOption(dto), activeToolsCount: null }
   }
 
   static toEmployeeOptions(dto: EmployeeOptionCollectionDto): EmployeeOption[] {

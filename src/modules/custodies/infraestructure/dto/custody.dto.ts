@@ -39,7 +39,9 @@ export interface CustodyItemStockDto {
   id: string
   consecutive: string
   condition: ItemCondition
-  product: CustodyItemProductDto
+  /** Se emite cuando el producto fue dado de baja y `product` llega en `null`. */
+  productId?: string
+  product: CustodyItemProductDto | null
 }
 
 export interface CustodyItemDto {
@@ -48,7 +50,9 @@ export interface CustodyItemDto {
   notes: string | null
   isReturned: boolean
   returnedAt: string | null
-  stock: CustodyItemStockDto
+  /** Red de seguridad del API: viaja siempre, incluso si la unidad fue dada de baja. */
+  stockId: string
+  stock: CustodyItemStockDto | null
 }
 
 export interface CustodyReturnSummaryDto {

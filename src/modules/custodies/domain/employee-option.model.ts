@@ -3,5 +3,6 @@ export interface EmployeeOption {
   identifier: string
   name: string
   roleName: string | null
-  activeToolsCount: number
+  /** `null` cuando el origen no publica el conteo (`GET /employees/{id}` no lo incluye). */
+  activeToolsCount: number | null
 }

@@ -3,7 +3,7 @@ import { Chip } from '../../../shared/infraestructure/components/ui'
 import type { CustodyReturnSummary } from '../../domain/custody.entity'
 import { CUSTODY_RETURN_TYPE_MAP } from '../../domain/custody-return-type.model'
 import { CustodyPresenter } from '../../application/custody-presenter.helper'
-import { CustodyDateHelper } from '../helpers/custody-date.helper'
+import { CustodyDateHelper } from '../../application/custody-date.helper'
 
 interface Props {
   entry: CustodyReturnSummary

@@ -1,7 +1,6 @@
 import { type ChangeEvent, type JSX, useCallback } from 'react'
 import { PackageSearchIcon, Search01Icon } from '@hugeicons/core-free-icons'
 import {
-  Button,
   Combobox,
   FormField,
   Input,
@@ -10,6 +9,7 @@ import {
   type ComboboxOptionsLoader,
 } from '../../../../shared/infraestructure/components/ui'
 import type { NewAssignmentUnitsState } from '../../../application/new-assignment-units-state.model'
+import { NewAssignmentErrorNotice } from './new-assignment-error-notice.component'
 import { NewAssignmentPanel } from './new-assignment-panel.component'
 import { NewAssignmentUnitsTable } from './new-assignment-units-table.component'
 
@@ -80,17 +80,7 @@ export function NewAssignmentUnitsStep({
         </div>
 
         {units.status === 'error' && units.errorMessage !== null ? (
-          <div
-            role="alert"
-            className="rounded-[14px] border border-danger-soft bg-danger-soft px-4 py-3 text-[13px] text-danger"
-          >
-            <p className="m-0 font-semibold">{units.errorMessage}</p>
-            <div className="mt-2.5">
-              <Button size="sm" onClick={onRetry}>
-                Reintentar
-              </Button>
-            </div>
-          </div>
+          <NewAssignmentErrorNotice message={units.errorMessage} onRetry={onRetry} />
         ) : (
           <NewAssignmentUnitsTable
             stocks={units.stocks}

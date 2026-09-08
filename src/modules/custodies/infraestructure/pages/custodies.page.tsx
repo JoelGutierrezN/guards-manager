@@ -58,6 +58,7 @@ export function CustodiesPage(): JSX.Element {
       <CustodiesTable
         rows={state.rows}
         status={state.status}
+        error={state.error}
         query={state.query}
         filters={state.filters}
         page={state.page}

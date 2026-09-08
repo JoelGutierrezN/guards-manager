@@ -27,6 +27,7 @@ export type NewAssignmentUnitsAction =
   | { type: 'LOAD_ERROR'; payload: string }
   | { type: 'SELECTION_CHANGED'; payload: string[] }
   | { type: 'SELECTION_CLEARED' }
+  | { type: 'RESET' }
 
 export const INITIAL_NEW_ASSIGNMENT_UNITS_STATE: NewAssignmentUnitsState = {
   product: null,

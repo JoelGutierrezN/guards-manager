@@ -12,10 +12,10 @@ export class EmployeeOptionHelper {
 
   static descriptionOf(employee: EmployeeOption): string {
     const role = employee.roleName ?? 'Sin puesto'
+    const { activeToolsCount } = employee
+    if (activeToolsCount === null) return role
     const tools =
-      employee.activeToolsCount === 1
-        ? '1 herramienta activa'
-        : `${employee.activeToolsCount} herramientas activas`
+      activeToolsCount === 1 ? '1 herramienta activa' : `${activeToolsCount} herramientas activas`
     return `${role} · ${tools}`
   }
 }

@@ -13,9 +13,12 @@ import { CustodiesTableHeaderCell } from './custodies-table-header-cell.componen
 import { CustodiesTableToolbar } from './custodies-table-toolbar.component'
 import { CustodyRow } from './custody-row.component'
 
+const LOAD_ERROR_BODY = 'Ocurrió un error al cargar los resguardos. Inténtalo de nuevo.'
+
 interface Props {
   rows: Custody[]
   status: CustodiesStatus
+  error: string | null
   query: string
   filters: CustodiesFilters
   page: number
@@ -33,6 +36,7 @@ interface Props {
 export function CustodiesTable({
   rows,
   status,
+  error,
   query,
   filters,
   page,
@@ -51,7 +55,8 @@ export function CustodiesTable({
   const hasQuery = query.trim() !== ''
   const hasFilters = CustodiesFiltersHelper.hasActive(filters)
   const showNoResults = isEmpty && (hasQuery || hasFilters)
-  const showEmptyContent = status === 'error' || (isEmpty && !hasQuery && !hasFilters)
+  const showEmptyContent = isEmpty && !hasQuery && !hasFilters
+  const hasError = status === 'error'
 
   const noResultsBody = useMemo(
     () =>
@@ -88,9 +93,21 @@ export function CustodiesTable({
             </thead>
             <tbody>
               {status === 'loading' && <TableLoader width={columnCount} />}
+              {hasError && (
+                <tr>
+                  <td colSpan={columnCount} className="border-b border-hairline lg:h-125">
+                    <Empty
+                      icon={ClipboardIcon}
+                      title="No se pudieron cargar los resguardos"
+                      body={error ?? LOAD_ERROR_BODY}
+                      action={<Button onClick={onReload}>Reintentar</Button>}
+                    />
+                  </td>
+                </tr>
+              )}
               {showEmptyContent && (
                 <TableEmptyContent
-                  hasError={status === 'error'}
+                  hasError={false}
                   onReload={onReload}
                   width={columnCount}
                   icon={ClipboardIcon}

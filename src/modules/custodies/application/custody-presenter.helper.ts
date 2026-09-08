@@ -1,6 +1,6 @@
 import { CUSTODY_STATUS_MAP, type CustodyStatus } from '../domain/custody-status.model'
 import type { Custody, CustodyItem } from '../domain/custody.entity'
-import { CustodyDateHelper } from '../infraestructure/helpers/custody-date.helper'
+import { CustodyDateHelper } from './custody-date.helper'
 
 export class CustodyPresenter {
   static statusLabel(status: CustodyStatus): string {
@@ -31,6 +31,15 @@ export class CustodyPresenter {
 
   static canBeCancelled(custody: Custody): boolean {
     return custody.status === 'ACTIVO'
+  }
+
+  /**
+   * El API sólo acepta devoluciones sobre resguardos vivos: un CANCELADO conserva sus
+   * ítems como pendientes pero `POST custodies/{id}/returns` responde 404.
+   */
+  static canRegisterReturn(custody: Custody): boolean {
+    if (custody.pendingItemsCount === 0) return false
+    return custody.status === 'ACTIVO' || custody.status === 'PARCIALMENTE DEVUELTO'
   }
 
   static quantityText(quantity: number, singular: string, plural: string): string {

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { ArrowLeft01Icon, Cancel01Icon, PackageDeliveredIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Button, PageHero, useToasts } from '../../../shared/infraestructure/components/ui'
+import { CustodyPresenter } from '../../application/custody-presenter.helper'
 import { useCustodyDetail } from '../../hooks/use-custody-detail.hook'
 import { CustodyCancelDialog } from '../components/custody-cancel-dialog.component'
 import { CustodyDetailError } from '../components/custody-detail-error.component'
@@ -13,6 +14,8 @@ import { CustodyReturnsPanel } from '../components/custody-returns-panel.compone
 import { CustodySummaryCard } from '../components/custody-summary-card.component'
 
 const CUSTODIES_PATH = '/assignments'
+const NO_PENDING_ITEMS_TIP = 'No quedan unidades pendientes de devolución'
+const CLOSED_CUSTODY_TIP = 'Este resguardo está cancelado'
 
 export function CustodyDetailPage(): JSX.Element {
   const {
@@ -56,6 +59,9 @@ export function CustodyDetailPage(): JSX.Element {
     void navigate(`${CUSTODIES_PATH}/${custody.id}/return`)
   }
 
+  const canReturn = CustodyPresenter.canRegisterReturn(custody)
+  const returnTip = custody.pendingItemsCount === 0 ? NO_PENDING_ITEMS_TIP : CLOSED_CUSTODY_TIP
+
   return (
     <div className="mx-auto w-full max-w-[1480px]">
       <button
@@ -76,7 +82,8 @@ export function CustodyDetailPage(): JSX.Element {
             <Button
               icon={PackageDeliveredIcon}
               size="md"
-              disabled={custody.pendingItemsCount === 0}
+              disabled={!canReturn}
+              tip={canReturn ? undefined : returnTip}
               onClick={goToReturn}
             >
               Registrar devolución

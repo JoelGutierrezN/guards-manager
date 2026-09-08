@@ -5,7 +5,7 @@ export interface EmployeeOptionDto {
   identifier: string
   name: string
   roleName: string | null
-  activeToolsCount: number
+  activeToolsCount?: number
 }
 
 export interface EmployeeOptionCollectionDto {
