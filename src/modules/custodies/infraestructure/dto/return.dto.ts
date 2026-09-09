@@ -1,3 +1,4 @@
+import type { PaginationMetaDto } from '../../../shared/infraestructure/dto/pagination-meta.dto'
 import type { ItemCondition } from '../../../shared/domain/item-condition.model'
 import type { CustodyReturnType } from '../../domain/custody-return-type.model'
 import type { CustodyAuthorDto, CustodyItemProductDto, CustodySheetDto } from './custody.dto'
@@ -42,6 +43,11 @@ export interface ReturnDto {
   signedAt: string | null
   sheet: CustodySheetDto | null
   createdAt: string
+}
+
+export interface ReturnCollectionDto {
+  data: ReturnDto[]
+  meta: PaginationMetaDto
 }
 
 export interface ReturnItemRequestDto {
