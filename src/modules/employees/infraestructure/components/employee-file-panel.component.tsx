@@ -48,6 +48,8 @@ export function EmployeeFilePanel({
             selectionCount={selectionCount}
             totalCount={file.activeItems.length}
             onClearSelection={onClearSelection}
+            items={file.activeItems}
+            selectedItemIds={selectedItemIds}
           />
           <EmployeeFileItemsTable
             items={file.activeItems}
