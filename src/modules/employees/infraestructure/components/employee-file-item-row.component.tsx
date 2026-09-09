@@ -1,7 +1,8 @@
-import { type JSX, useMemo } from 'react'
-import { Link } from 'react-router'
+import { type JSX, useCallback, useMemo } from 'react'
+import { Link, useNavigate } from 'react-router'
 import { ArrowTurnBackwardIcon, MoreHorizontalIcon } from '@hugeicons/core-free-icons'
 import { Checkbox, Chip, IconButton } from '../../../shared/infraestructure/components/ui'
+import { ReturnNavigationHelper } from '../../../custodies/infraestructure/helpers/return-navigation.helper'
 import { cn } from '../../../shared/infraestructure/utils/cn'
 import { EmployeeFilePresenter } from '../../application/employee-file-presenter.helper'
 import type { EmployeeFileItem } from '../../domain/employee-file-item.model'
@@ -17,11 +18,19 @@ const BASE_CELL_CLASS_NAME =
 
 const PENDING_TIP = 'En desarrollo'
 
+const RETURN_TIP = 'Devolver esta unidad'
+
 const DISABLED_ACTION_CLASS_NAME = 'disabled:cursor-not-allowed disabled:opacity-40'
 
 const CUSTODY_LINK_CLASS_NAME = 'text-brand underline-offset-[3px] hover:underline'
 
 export function EmployeeFileItemRow({ item, selected, onToggle }: Props): JSX.Element {
+  const navigate = useNavigate()
+
+  const handleReturn = useCallback(() => {
+    void navigate(ReturnNavigationHelper.returnPath(item.custodyId, [item.stockId]))
+  }, [navigate, item.custodyId, item.stockId])
+
   const cellClassName = useMemo(
     () => cn(BASE_CELL_CLASS_NAME, selected ? 'bg-brand-soft' : 'group-hover/row:bg-paper-tint'),
     [selected],
@@ -71,11 +80,11 @@ export function EmployeeFileItemRow({ item, selected, onToggle }: Props): JSX.El
         <div className="flex justify-end gap-1 opacity-0 transition-opacity duration-[120ms] group-hover/row:opacity-100">
           <IconButton
             icon={ArrowTurnBackwardIcon}
-            tip={PENDING_TIP}
+            tip={RETURN_TIP}
+            title={RETURN_TIP}
             size="sm"
-            disabled
-            aria-label="Devolver"
-            className={DISABLED_ACTION_CLASS_NAME}
+            aria-label={`Devolver ${item.stockConsecutive}`}
+            onClick={handleReturn}
           />
           <IconButton
             icon={MoreHorizontalIcon}

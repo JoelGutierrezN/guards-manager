@@ -82,12 +82,12 @@ export default createBrowserRouter([
                 },
               },
               {
-                // La pantalla de devolución llega en la Fase 3; hasta entonces la ruta
-                // existe para no caer en el comodín `*` (NotFoundPage).
                 path: 'assignments/:custodyId/return',
                 handle: { crumb: ['Operación', 'Resguardo', 'Devolución'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (
+                    await import('../../../custodies/infraestructure/pages/custody-return.page')
+                  ).CustodyReturnPage,
                 }),
               },
               {
