@@ -1,3 +1,4 @@
+import { PaginationMapper } from '../../../shared/infraestructure/mappers/pagination.mapper'
 import type { CreateReturnInput } from '../../domain/return-input.model'
 import type {
   CustodyReturn,
@@ -5,9 +6,11 @@ import type {
   ReturnItem,
   ReturnItemStock,
 } from '../../domain/return.entity'
+import type { ReturnsListPage } from '../../domain/returns-list-page.model'
 import type { CustodyItemProduct } from '../../domain/custody.entity'
 import type { CustodyItemProductDto } from '../dto/custody.dto'
 import type {
+  ReturnCollectionDto,
   ReturnDto,
   ReturnEmployeeDto,
   ReturnItemDto,
@@ -97,5 +100,12 @@ export class ReturnMapper {
       return { id: fallbackId, name: MISSING_PRODUCT_NAME, brand: null, model: null }
     }
     return { id: dto.id, name: dto.name, brand: dto.brand ?? null, model: dto.model ?? null }
+  }
+
+  static toReturnsListPage(dto: ReturnCollectionDto): ReturnsListPage {
+    return {
+      ...PaginationMapper.toPagination(dto.meta),
+      returns: dto.data.map((entry) => ReturnMapper.toReturn(entry)),
+    }
   }
 }
