@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useMemo, useReducer } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useSearchParams } from 'react-router'
 import { FileDownloadHelper } from '../../shared/infraestructure/helpers/file-download.helper'
 import type { Employee } from '../domain/employee.entity'
-import type { EmployeeFileTab } from '../domain/employee-file-tab.model'
+import {
+  DEFAULT_EMPLOYEE_FILE_TAB,
+  isEmployeeFileTab,
+  type EmployeeFileTab,
+} from '../domain/employee-file-tab.model'
 import type { EmployeeFileDownloadResult } from '../application/employee-file-download-result.model'
-import { employeeFileReducer } from '../application/employee-file.reducer'
-import { INITIAL_EMPLOYEE_FILE_STATE } from '../application/employee-file-state.model'
+import {
+  createInitialEmployeeFileState,
+  employeeFileReducer,
+} from '../application/employee-file.reducer'
 import { EmployeeFilePresenter } from '../application/employee-file-presenter.helper'
 import { EmployeeFileSelectionHelper } from '../application/employee-file-selection.helper'
 import { EmployeeFileTabsHelper } from '../application/employee-file-tabs.helper'
@@ -15,10 +21,19 @@ import { employeeFileRepository } from '../infraestructure/repositories/employee
 import { useEmployeeEdit } from './use-employee-edit.hook'
 
 const EMPTY_HERO = { heroEyebrow: '', heroTitle: '', heroItalic: '', heroLede: '' }
+const TAB_QUERY_PARAM = 'tab'
 
 export function useEmployeeFile() {
   const { employeeId } = useParams<{ employeeId: string }>()
-  const [state, dispatch] = useReducer(employeeFileReducer, INITIAL_EMPLOYEE_FILE_STATE)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [state, dispatch] = useReducer(
+    employeeFileReducer,
+    searchParams.get(TAB_QUERY_PARAM),
+    (rawTab) =>
+      createInitialEmployeeFileState(
+        isEmployeeFileTab(rawTab) ? rawTab : DEFAULT_EMPLOYEE_FILE_TAB,
+      ),
+  )
 
   const load = useCallback(async (targetEmployeeId: string) => {
     dispatch({ type: 'LOAD_START' })
@@ -43,7 +58,24 @@ export function useEmployeeFile() {
     void load(employeeId)
   }, [employeeId, load])
 
-  const setTab = useCallback((tab: EmployeeFileTab) => dispatch({ type: 'SET_TAB', tab }), [])
+  const setTab = useCallback(
+    (tab: EmployeeFileTab) => {
+      dispatch({ type: 'SET_TAB', tab })
+      setSearchParams(
+        (currentParams) => {
+          const nextParams = new URLSearchParams(currentParams)
+          if (tab === DEFAULT_EMPLOYEE_FILE_TAB) {
+            nextParams.delete(TAB_QUERY_PARAM)
+          } else {
+            nextParams.set(TAB_QUERY_PARAM, tab)
+          }
+          return nextParams
+        },
+        { replace: true },
+      )
+    },
+    [setSearchParams],
+  )
   const toggleItem = useCallback((itemId: string) => dispatch({ type: 'TOGGLE_ITEM', itemId }), [])
   const toggleAllItems = useCallback(() => dispatch({ type: 'TOGGLE_ALL' }), [])
   const clearSelection = useCallback(() => dispatch({ type: 'CLEAR_SELECTION' }), [])

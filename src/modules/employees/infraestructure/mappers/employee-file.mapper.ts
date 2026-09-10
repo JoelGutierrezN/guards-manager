@@ -1,9 +1,11 @@
 import type { Employee } from '../../domain/employee.entity'
 import type { EmployeeFile, EmployeeFileProfile } from '../../domain/employee-file.entity'
+import type { EmployeeFileDocument } from '../../domain/employee-file-document.model'
 import type { EmployeeFileEvent } from '../../domain/employee-file-event.model'
 import type { EmployeeFileItem } from '../../domain/employee-file-item.model'
 import type { EmployeeFileSummary } from '../../domain/employee-file-summary.model'
 import type {
+  EmployeeFileDocumentDto,
   EmployeeFileDto,
   EmployeeFileEventDto,
   EmployeeFileItemDto,
@@ -20,6 +22,7 @@ export class EmployeeFileMapper {
       summary: EmployeeFileMapper.toSummary(dto.summary),
       activeItems: dto.activeItems.map((item) => EmployeeFileMapper.toItem(item)),
       history: dto.history.map((event) => EmployeeFileMapper.toEvent(event)),
+      documents: dto.documents.map((document) => EmployeeFileMapper.toDocument(document)),
     }
   }
 
@@ -64,6 +67,19 @@ export class EmployeeFileMapper {
       historicalItems: dto.historicalItems,
       returnedItems: dto.returnedItems,
       damagedItems: dto.damagedItems ?? null,
+      documents: dto.documents,
+    }
+  }
+
+  private static toDocument(dto: EmployeeFileDocumentDto): EmployeeFileDocument {
+    return {
+      id: dto.id,
+      type: dto.type,
+      code: dto.code,
+      title: dto.title,
+      sizeBytes: dto.sizeBytes,
+      createdAt: dto.createdAt,
+      url: dto.url,
     }
   }
 

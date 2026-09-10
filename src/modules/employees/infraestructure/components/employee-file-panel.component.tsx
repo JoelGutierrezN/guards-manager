@@ -4,6 +4,7 @@ import type { TabItem } from '../../../shared/infraestructure/components/ui/tabs
 import type { EmployeeFile } from '../../domain/employee-file.entity'
 import type { EmployeeFileTab } from '../../domain/employee-file-tab.model'
 import { EmployeeFileActionsBar } from './employee-file-actions-bar.component'
+import { EmployeeFileDocumentsGrid } from './employee-file-documents-grid.component'
 import { EmployeeFileItemsTable } from './employee-file-items-table.component'
 import { EmployeeFilePendingPanel } from './employee-file-pending-panel.component'
 import { EmployeeFileTimeline } from './employee-file-timeline.component'
@@ -68,8 +69,10 @@ export function EmployeeFilePanel({
         </div>
       )}
 
-      {(tab === 'docs' || tab === 'damage') && (
-        <EmployeeFilePendingPanel content={EMPLOYEE_FILE_PENDING_CONTENT[tab]} />
+      {tab === 'docs' && <EmployeeFileDocumentsGrid documents={file.documents} />}
+
+      {tab === 'damage' && (
+        <EmployeeFilePendingPanel content={EMPLOYEE_FILE_PENDING_CONTENT.damage} />
       )}
     </div>
   )
