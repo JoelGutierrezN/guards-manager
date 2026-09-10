@@ -1,4 +1,4 @@
-import { type JSX, useMemo } from 'react'
+import { type JSX, useCallback, useMemo } from 'react'
 import { PackageDeliveredIcon } from '@hugeicons/core-free-icons'
 import { Button, Empty, Pager } from '../../../shared/infraestructure/components/ui'
 import type { CustodyReturnSummary } from '../../domain/custody.entity'
@@ -14,6 +14,7 @@ export function CustodyReturnsPanel({ custodyId, returns }: Props): JSX.Element 
   const {
     returns: visibleReturns,
     page,
+    requestedPage,
     lastPage,
     total,
     loading,
@@ -23,16 +24,16 @@ export function CustodyReturnsPanel({ custodyId, returns }: Props): JSX.Element 
   } = useCustodyReturns(custodyId, returns)
 
   const listClassName = useMemo(() => (loading ? 'opacity-60' : undefined), [loading])
-  const headerCount = isPaginated ? total : returns.length
   const showEmpty = error == null && !loading && visibleReturns.length === 0
 
-  const retryPage = (): void => setPage(page)
+  /** Se reintenta la página que falló, no la última que sí cargó. */
+  const retryPage = useCallback((): void => setPage(requestedPage), [setPage, requestedPage])
 
   return (
     <section className="overflow-hidden rounded-[18px] border border-hairline bg-white shadow-[0_1px_4px_rgba(14,15,60,0.04)]">
       <header className="flex items-center justify-between border-b border-hairline px-4 py-3">
         <h2 className="text-[14px] font-semibold text-ink">Historial de devoluciones</h2>
-        <span className="font-mono text-[11px] text-muted">{headerCount}</span>
+        <span className="font-mono text-[11px] text-muted">{total}</span>
       </header>
 
       {error != null && (

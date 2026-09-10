@@ -93,7 +93,6 @@ export function EmployeeFileActionsBar({
               icon={ArrowTurnBackwardIcon}
               disabled={partialCustodyId === null}
               tip={partialCustodyId === null ? MIXED_CUSTODIES_TIP : undefined}
-              title={partialCustodyId === null ? MIXED_CUSTODIES_TIP : undefined}
               onClick={handlePartialReturn}
             >
               Devolución parcial ({selectionCount})
@@ -111,7 +110,6 @@ export function EmployeeFileActionsBar({
               icon={ArrowTurnBackwardIcon}
               disabled={totalCustodyId === null}
               tip={totalCustodyId === null ? NO_ITEMS_TIP : undefined}
-              title={totalCustodyId === null ? NO_ITEMS_TIP : undefined}
               onClick={handleTotalReturn}
             >
               Devolución total

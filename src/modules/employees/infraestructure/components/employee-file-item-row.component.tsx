@@ -81,7 +81,6 @@ export function EmployeeFileItemRow({ item, selected, onToggle }: Props): JSX.El
           <IconButton
             icon={ArrowTurnBackwardIcon}
             tip={RETURN_TIP}
-            title={RETURN_TIP}
             size="sm"
             aria-label={`Devolver ${item.stockConsecutive}`}
             onClick={handleReturn}

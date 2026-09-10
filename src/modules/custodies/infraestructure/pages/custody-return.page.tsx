@@ -142,7 +142,9 @@ export function CustodyReturnPage(): JSX.Element {
             <ReturnFooter
               canSubmit={canSubmit}
               isSubmitting={isSubmitting}
-              helpMessage={canSubmit ? null : NO_SELECTION_HELP}
+              helpMessage={
+                !isSubmitting && state.selectedStockIds.length === 0 ? NO_SELECTION_HELP : null
+              }
               onBack={goToCustody}
               onSubmit={() => void handleSubmit()}
             />

@@ -149,6 +149,11 @@ export function useReturn(): UseReturnResult {
       dispatch({ type: 'SUBMIT_SUCCESS', payload: createdReturn })
       return createdReturn
     } catch (error) {
+      /** Un 404 aquí es un resguardo cancelado entre la carga y el envío: el formulario se cierra. */
+      if (ReturnErrorHelper.isNotFound(error)) {
+        dispatch({ type: 'LOAD_ERROR', payload: ReturnErrorHelper.notFoundMessage() })
+        return null
+      }
       dispatch({
         type: 'SUBMIT_ERROR',
         payload: ReturnErrorHelper.reportFrom(error, selectedStockIds),
