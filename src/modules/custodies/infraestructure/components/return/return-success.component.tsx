@@ -2,7 +2,7 @@ import { type JSX, useMemo } from 'react'
 import {
   ArrowRight01Icon,
   CheckmarkCircle02Icon,
-  Task01Icon,
+  SignatureIcon,
   UserSharingIcon,
 } from '@hugeicons/core-free-icons'
 import { Button, Chip, Icon } from '../../../../shared/infraestructure/components/ui'
@@ -12,14 +12,16 @@ import type { CustodyReturn } from '../../../domain/return.entity'
 
 interface Props {
   createdReturn: CustodyReturn
+  onSign: () => void
   onViewCustody: () => void
   onViewEmployeeFile: () => void
 }
 
-const SIGN_PENDING_TIP = 'La firma de la hoja de devolución llega en la siguiente entrega.'
+const SIGN_HINT = 'Firma ahora la hoja de la devolución o hazlo después desde el resguardo.'
 
 export function ReturnSuccess({
   createdReturn,
+  onSign,
   onViewCustody,
   onViewEmployeeFile,
 }: Props): JSX.Element {
@@ -50,11 +52,9 @@ export function ReturnSuccess({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span title={SIGN_PENDING_TIP}>
-          <Button variant="primary" icon={Task01Icon} disabled>
-            Firmar hoja
-          </Button>
-        </span>
+        <Button variant="primary" icon={SignatureIcon} onClick={onSign}>
+          Firmar hoja
+        </Button>
         <Button iconRight={ArrowRight01Icon} onClick={onViewCustody}>
           Volver al resguardo
         </Button>
@@ -67,7 +67,7 @@ export function ReturnSuccess({
           Ir al expediente
         </Button>
       </div>
-      <p className="m-0 mt-3 text-[11px] text-muted">{SIGN_PENDING_TIP}</p>
+      <p className="m-0 mt-3 text-[11px] text-muted">{SIGN_HINT}</p>
     </section>
   )
 }

@@ -31,6 +31,7 @@ interface Props {
   onReload: () => void
   onClearQuery: () => void
   onOpen: (custody: Custody) => void
+  onSign: (custodyId: string) => void
 }
 
 export function CustodiesTable({
@@ -49,6 +50,7 @@ export function CustodiesTable({
   onReload,
   onClearQuery,
   onOpen,
+  onSign,
 }: Props): JSX.Element {
   const columnCount = CUSTODIES_COLUMNS.length
   const isEmpty = status === 'ready' && rows.length === 0
@@ -131,7 +133,12 @@ export function CustodiesTable({
               )}
               {status === 'ready' &&
                 rows.map((custody) => (
-                  <CustodyRow key={custody.id} custody={custody} onOpen={() => onOpen(custody)} />
+                  <CustodyRow
+                    key={custody.id}
+                    custody={custody}
+                    onOpen={() => onOpen(custody)}
+                    onSign={onSign}
+                  />
                 ))}
             </tbody>
           </table>

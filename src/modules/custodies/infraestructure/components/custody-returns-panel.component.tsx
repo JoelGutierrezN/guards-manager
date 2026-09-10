@@ -8,9 +8,18 @@ import { CustodyReturnRow } from './custody-return-row.component'
 interface Props {
   custodyId: string
   returns: CustodyReturnSummary[]
+  downloading: boolean
+  onSignReturn: (entry: CustodyReturnSummary) => void
+  onDownloadReturnSheet: (entry: CustodyReturnSummary) => void
 }
 
-export function CustodyReturnsPanel({ custodyId, returns }: Props): JSX.Element {
+export function CustodyReturnsPanel({
+  custodyId,
+  returns,
+  downloading,
+  onSignReturn,
+  onDownloadReturnSheet,
+}: Props): JSX.Element {
   const {
     returns: visibleReturns,
     page,
@@ -56,7 +65,13 @@ export function CustodyReturnsPanel({ custodyId, returns }: Props): JSX.Element 
       {error == null && visibleReturns.length > 0 && (
         <ul className={listClassName}>
           {visibleReturns.map((entry) => (
-            <CustodyReturnRow key={entry.id} entry={entry} />
+            <CustodyReturnRow
+              key={entry.id}
+              entry={entry}
+              downloading={downloading}
+              onSign={onSignReturn}
+              onDownloadSheet={onDownloadReturnSheet}
+            />
           ))}
         </ul>
       )}

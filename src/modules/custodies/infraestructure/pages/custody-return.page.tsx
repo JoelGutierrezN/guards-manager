@@ -12,6 +12,7 @@ import { ReturnSuccess } from '../components/return/return-success.component'
 import { ReturnSummaryCard } from '../components/return/return-summary-card.component'
 import { ReturnErrorHelper } from '../helpers/return-error.helper'
 import { ReturnNavigationHelper } from '../helpers/return-navigation.helper'
+import { SignNavigationHelper } from '../helpers/sign-navigation.helper'
 
 const NO_SELECTION_HELP = 'Marca al menos una unidad para continuar.'
 
@@ -51,6 +52,11 @@ export function CustodyReturnPage(): JSX.Element {
     if (employeeId === null) return
     void navigate(ReturnNavigationHelper.employeeFilePath(employeeId))
   }, [navigate, createdReturn, custody])
+
+  const goToSignReturn = useCallback(() => {
+    if (createdReturn === null) return
+    void navigate(SignNavigationHelper.returnSignPath(createdReturn.custodyId, createdReturn.id))
+  }, [navigate, createdReturn])
 
   const handleSubmit = useCallback(async (): Promise<void> => {
     const registeredReturn = await submit()
@@ -98,6 +104,7 @@ export function CustodyReturnPage(): JSX.Element {
         {isDone && createdReturn !== null ? (
           <ReturnSuccess
             createdReturn={createdReturn}
+            onSign={goToSignReturn}
             onViewCustody={goToCustody}
             onViewEmployeeFile={goToEmployeeFile}
           />

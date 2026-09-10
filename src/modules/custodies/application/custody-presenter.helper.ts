@@ -1,5 +1,5 @@
 import { CUSTODY_STATUS_MAP, type CustodyStatus } from '../domain/custody-status.model'
-import type { Custody, CustodyItem } from '../domain/custody.entity'
+import type { Custody, CustodyItem, CustodyItemProduct } from '../domain/custody.entity'
 import { CustodyDateHelper } from './custody-date.helper'
 
 export class CustodyPresenter {
@@ -22,7 +22,10 @@ export class CustodyPresenter {
   }
 
   static itemProductLabel(item: CustodyItem): string {
-    const { product } = item.stock
+    return CustodyPresenter.productLabel(item.stock.product)
+  }
+
+  static productLabel(product: CustodyItemProduct): string {
     const details = [product.brand, product.model].filter(
       (detail): detail is string => detail != null && detail !== '',
     )
