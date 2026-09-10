@@ -27,6 +27,8 @@ export class EmployeeFileTabsHelper {
 
   private static countFor(tab: EmployeeFileTab, file: EmployeeFile | null): number {
     if (file === null) return 0
-    return tab === 'history' ? file.history.length : file.activeItems.length
+    if (tab === 'history') return file.history.length
+    if (tab === 'docs') return file.summary.documents
+    return file.activeItems.length
   }
 }

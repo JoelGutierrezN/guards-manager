@@ -1,4 +1,5 @@
 import type { EmployeeStatus } from './employee-status.model'
+import type { EmployeeFileDocument } from './employee-file-document.model'
 import type { EmployeeFileEvent } from './employee-file-event.model'
 import type { EmployeeFileItem } from './employee-file-item.model'
 import type { EmployeeFileSummary } from './employee-file-summary.model'
@@ -20,4 +21,5 @@ export interface EmployeeFile {
   summary: EmployeeFileSummary
   activeItems: EmployeeFileItem[]
   history: EmployeeFileEvent[]
+  documents: EmployeeFileDocument[]
 }

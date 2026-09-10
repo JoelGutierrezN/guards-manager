@@ -1,5 +1,14 @@
-import type { EmployeeFileAction, EmployeeFileState } from './employee-file-state.model'
+import type { EmployeeFileTab } from '../domain/employee-file-tab.model'
+import {
+  INITIAL_EMPLOYEE_FILE_STATE,
+  type EmployeeFileAction,
+  type EmployeeFileState,
+} from './employee-file-state.model'
 import { EmployeeFileSelectionHelper } from './employee-file-selection.helper'
+
+export function createInitialEmployeeFileState(tab: EmployeeFileTab): EmployeeFileState {
+  return { ...INITIAL_EMPLOYEE_FILE_STATE, tab }
+}
 
 export function employeeFileReducer(
   state: EmployeeFileState,

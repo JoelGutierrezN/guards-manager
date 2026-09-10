@@ -1,3 +1,5 @@
+import type { EmployeeFileDocumentType } from '../../domain/employee-file-document.model'
+
 export interface EmployeeFileProfileDto {
   id: string
   identifier: string
@@ -16,6 +18,7 @@ export interface EmployeeFileSummaryDto {
   returnedItems: number
   // Pendiente Fase 5: daños pendientes, el backend siempre responde null
   damagedItems: number | null
+  documents: number
 }
 
 export interface EmployeeFileItemDto {
@@ -41,13 +44,22 @@ export interface EmployeeFileEventDto {
   occurredAt: string
 }
 
+export interface EmployeeFileDocumentDto {
+  id: string
+  type: EmployeeFileDocumentType
+  code: string
+  title: string
+  sizeBytes: number
+  createdAt: string
+  url: string
+}
+
 export interface EmployeeFileDto {
   employee: EmployeeFileProfileDto
   summary: EmployeeFileSummaryDto
   activeItems: EmployeeFileItemDto[]
   history: EmployeeFileEventDto[]
-  // Pendiente Fase 4: documentos pendientes, el backend siempre responde []
-  documents: unknown[]
+  documents: EmployeeFileDocumentDto[]
   // Pendiente Fase 5: daños pendientes, el backend siempre responde []
   damages: unknown[]
 }
