@@ -105,7 +105,7 @@ export function CustodyDetailPage(): JSX.Element {
 
         <div className="flex min-w-0 flex-col gap-3">
           <CustodyItemsTable items={custody.items} />
-          <CustodyReturnsPanel returns={custody.returns} />
+          <CustodyReturnsPanel custodyId={custody.id} returns={custody.returns} />
         </div>
       </div>
 

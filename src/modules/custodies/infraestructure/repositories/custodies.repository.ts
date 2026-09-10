@@ -3,8 +3,13 @@ import type { CustodiesRepository as CustodiesRepositoryContract } from '../../d
 import type { CustodiesListPage } from '../../domain/custodies-list-page.model'
 import type { CreateCustodyInput } from '../../domain/custody-input.model'
 import type { CustodyDetail } from '../../domain/custody.entity'
+import type { CreateReturnInput } from '../../domain/return-input.model'
+import type { CustodyReturn } from '../../domain/return.entity'
+import type { ReturnsListPage } from '../../domain/returns-list-page.model'
 import type { CustodyCollectionDto, CustodyDetailDto } from '../dto/custody.dto'
+import type { ReturnCollectionDto, ReturnDto } from '../dto/return.dto'
 import { CustodyMapper } from '../mappers/custody.mapper'
+import { ReturnMapper } from '../mappers/return.mapper'
 
 class CustodiesRepositoryImpl implements CustodiesRepositoryContract {
   private readonly datasource: HttpDataSource
@@ -35,6 +40,22 @@ class CustodiesRepositoryImpl implements CustodiesRepositoryContract {
 
   async cancel(custodyId: string): Promise<void> {
     await this.datasource.delete<void>(`/custodies/${custodyId}`)
+  }
+
+  async createReturn(custodyId: string, input: CreateReturnInput): Promise<CustodyReturn> {
+    const response = await this.datasource.post<ReturnDto>(
+      `/custodies/${custodyId}/returns`,
+      ReturnMapper.toRequestBody(input),
+    )
+    return ReturnMapper.toReturn(response)
+  }
+
+  async listReturns(custodyId: string, page: number): Promise<ReturnsListPage> {
+    const params = new URLSearchParams({ page: String(page) })
+    const response = await this.datasource.get<ReturnCollectionDto>(
+      `/custodies/${custodyId}/returns?${params.toString()}`,
+    )
+    return ReturnMapper.toReturnsListPage(response)
   }
 }
 
