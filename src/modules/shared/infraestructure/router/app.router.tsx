@@ -91,6 +91,24 @@ export default createBrowserRouter([
                 }),
               },
               {
+                path: 'assignments/:custodyId/sign',
+                handle: { crumb: ['Operación', 'Resguardo', 'Firma'] },
+                lazy: async () => ({
+                  Component: (
+                    await import('../../../custodies/infraestructure/pages/sign-sheet.page')
+                  ).SignSheetPage,
+                }),
+              },
+              {
+                path: 'assignments/:custodyId/returns/:returnId/sign',
+                handle: { crumb: ['Operación', 'Resguardo', 'Firma de la devolución'] },
+                lazy: async () => ({
+                  Component: (
+                    await import('../../../custodies/infraestructure/pages/sign-sheet.page')
+                  ).SignSheetPage,
+                }),
+              },
+              {
                 path: 'tools',
                 handle: { crumb: ['Catálogos', 'Herramientas'] },
                 lazy: async () => ({

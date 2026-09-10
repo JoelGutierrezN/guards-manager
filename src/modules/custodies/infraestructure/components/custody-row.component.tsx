@@ -2,15 +2,16 @@ import { type JSX, type KeyboardEvent } from 'react'
 import { Avatar } from '../../../shared/infraestructure/components/ui'
 import type { Custody } from '../../domain/custody.entity'
 import { CustodyDateHelper } from '../../application/custody-date.helper'
-import { CustodySignatureChip } from './custody-signature-chip.component'
+import { CustodySignatureCell } from './custody-signature-cell.component'
 import { CustodyStatusChip } from './custody-status-chip.component'
 
 interface Props {
   custody: Custody
   onOpen: () => void
+  onSign: (custodyId: string) => void
 }
 
-export function CustodyRow({ custody, onOpen }: Props): JSX.Element {
+export function CustodyRow({ custody, onOpen, onSign }: Props): JSX.Element {
   const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>): void => {
     if (event.key !== 'Enter' && event.key !== ' ') return
     event.preventDefault()
@@ -52,7 +53,7 @@ export function CustodyRow({ custody, onOpen }: Props): JSX.Element {
         {CustodyDateHelper.date(custody.createdAt)}
       </td>
       <td className="px-3 py-2.5 align-middle">
-        <CustodySignatureChip signedAt={custody.signedAt} />
+        <CustodySignatureCell custody={custody} onSign={onSign} />
       </td>
     </tr>
   )
