@@ -38,8 +38,8 @@ test('@fase-6 crear, editar y eliminar un usuario del sistema', async ({ page })
   await editedRow.getByRole('button', { name: `Eliminar ${editedUserName}` }).click()
   await page.getByRole('button', { name: 'Eliminar', exact: true }).click()
 
-  await expect(page.getByRole('row').filter({ hasText: editedUserName })).toHaveCount(0)
   await expect(page.getByText('Sin resultados')).toBeVisible()
+  await expect(page.getByRole('button', { name: `Eliminar ${editedUserName}` })).toHaveCount(0)
 
   expect(consoleWatcher.errors).toEqual([])
 })

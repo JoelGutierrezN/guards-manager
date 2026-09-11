@@ -5,10 +5,12 @@ import type {
   AuthenticatedUser,
   CreateEmployeeInput,
   CreateProductInput,
+  CreateUserInput,
   CreatedBrand,
   CreatedEmployee,
   CreatedProduct,
   CreatedProductModel,
+  CreatedUser,
   LoginResponse,
   RoleOption,
 } from './api.model'
@@ -83,6 +85,23 @@ export class ApiClient {
       data: { name, brand_id: brandId, product_model_id: productModelId },
     })
     return ApiClient.readJson<CreatedProduct>(response, 'POST /products')
+  }
+
+  /**
+   * Usuario del sistema desechable: los specs que cambian la contraseña o cierran sesión no pueden
+   * usar `testuser`, porque `POST /me/password` revoca el resto de tokens y dejaría sin sesión al
+   * `storageState` compartido que prepara `auth.setup`.
+   */
+  async createUser({
+    password,
+    name = UniqueName.for('Cuenta'),
+    username = UniqueName.for('cuenta').toLowerCase().replace(/\s+/g, '-'),
+    email = UniqueName.email('cuenta'),
+  }: CreateUserInput): Promise<CreatedUser> {
+    const response = await this.context.post(ApiClient.endpoint('/users'), {
+      data: { name, username, email, password },
+    })
+    return ApiClient.readJson<CreatedUser>(response, 'POST /users')
   }
 
   async createEmployee({
