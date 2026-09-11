@@ -3,6 +3,7 @@ import type { EmployeesRepository as EmployeesRepositoryContract } from '../../d
 import type { Employee } from '../../domain/employee.entity'
 import type { CreateEmployeeInput, UpdateEmployeeInput } from '../../domain/employee-input.model'
 import type { EmployeesListPage } from '../../domain/employees-list-page.model'
+import type { EmployeeStatus } from '../../domain/employee-status.model'
 import type { DownloadedFile } from '../../../shared/domain/downloaded-file.model'
 import type { EmployeeCollectionDto, EmployeeDto } from '../dto/employee.dto'
 import { EmployeeMapper } from '../mappers/employee.mapper'
@@ -44,6 +45,15 @@ class EmployeesRepositoryImpl implements EmployeesRepositoryContract {
       EmployeeMapper.toRequestBody(input),
     )
     return EmployeeMapper.toEmployee(response)
+  }
+
+  async updateStatus(id: string, status: EmployeeStatus): Promise<Employee> {
+    const response = await this.datasource.patch<EmployeeDto>(`/employees/${id}`, { status })
+    return EmployeeMapper.toEmployee(response)
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.datasource.delete<void>(`/employees/${id}`)
   }
 }
 

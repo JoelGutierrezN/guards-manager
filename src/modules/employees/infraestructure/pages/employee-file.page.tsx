@@ -1,16 +1,25 @@
 import { type JSX } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import {
   ArrowLeft01Icon,
+  Delete02Icon,
   Download01Icon,
   PencilEdit02Icon,
   SentIcon,
+  UserBlock01Icon,
+  UserCheck01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { Button, PageHero, useToasts } from '../../../shared/infraestructure/components/ui'
+import {
+  Button,
+  ConfirmDialog,
+  PageHero,
+  useToasts,
+} from '../../../shared/infraestructure/components/ui'
 import type { EmployeeFileDocument } from '../../domain/employee-file-document.model'
 import type { UpdateEmployeeInput } from '../../domain/employee-input.model'
 import { useEmployeeFile } from '../../hooks/use-employee-file.hook'
+import { useEmployeeLifecycle } from '../../hooks/use-employee-lifecycle.hook'
 import { EmployeeFormModal } from '../components/employee-form-modal.component'
 import { EmployeeFileError } from '../components/employee-file-error.component'
 import { EmployeeFileIdentityCard } from '../components/employee-file-identity-card.component'
@@ -51,10 +60,18 @@ export function EmployeeFilePage(): JSX.Element {
   } = useEmployeeFile()
   const [addToast, ToastHost] = useToasts()
   const navigate = useNavigate()
+  const { employeeId: routeEmployeeId } = useParams<{ employeeId: string }>()
 
   const goToEmployees = (): void => {
     void navigate(EMPLOYEES_PATH)
   }
+
+  const lifecycle = useEmployeeLifecycle({
+    employeeId: routeEmployeeId ?? '',
+    status: state.file?.employee.status ?? 'activo',
+    onStatusChanged: () => reload(),
+    onDeleted: goToEmployees,
+  })
 
   const handleDownloadPdf = async (): Promise<void> => {
     const { message, succeeded } = await downloadPdf()
@@ -113,6 +130,16 @@ export function EmployeeFilePage(): JSX.Element {
               Editar
             </Button>
             <Button
+              icon={isActiveEmployee ? UserBlock01Icon : UserCheck01Icon}
+              size="md"
+              onClick={lifecycle.openStatusConfirm}
+            >
+              {isActiveEmployee ? 'Dar de baja' : 'Reactivar'}
+            </Button>
+            <Button icon={Delete02Icon} size="md" onClick={lifecycle.openDeleteConfirm}>
+              Eliminar
+            </Button>
+            <Button
               variant="primary"
               icon={SentIcon}
               size="md"
@@ -156,6 +183,35 @@ export function EmployeeFilePage(): JSX.Element {
         formError={formError}
         onClose={closeModal}
         onSave={(input) => void handleSave(input)}
+      />
+
+      <ConfirmDialog
+        open={lifecycle.confirmKind != null}
+        title={
+          lifecycle.confirmKind === 'delete'
+            ? `¿Eliminar a ${state.file.employee.name}?`
+            : `¿${isActiveEmployee ? 'Dar de baja' : 'Reactivar'} a ${state.file.employee.name}?`
+        }
+        eyebrow={lifecycle.confirmKind === 'delete' ? 'Eliminar empleado' : 'Cambiar estado'}
+        body={
+          lifecycle.errorMessage ??
+          (lifecycle.confirmKind === 'delete'
+            ? 'Esta acción no se puede deshacer.'
+            : isActiveEmployee
+              ? 'El empleado dejará de poder recibir nuevas asignaciones.'
+              : 'El empleado volverá a estar disponible para nuevas asignaciones.')
+        }
+        confirmLabel={
+          lifecycle.confirmKind === 'delete'
+            ? 'Eliminar'
+            : isActiveEmployee
+              ? 'Dar de baja'
+              : 'Reactivar'
+        }
+        destructive={lifecycle.confirmKind === 'delete'}
+        loading={lifecycle.loading}
+        onConfirm={() => void lifecycle.confirm()}
+        onClose={lifecycle.closeConfirm}
       />
 
       {ToastHost}

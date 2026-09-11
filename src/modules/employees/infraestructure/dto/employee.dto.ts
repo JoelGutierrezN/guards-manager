@@ -12,6 +12,7 @@ export interface EmployeeDto {
   activeToolsCount: number
   historicalToolsCount: number
   hireDate: string
+  hiredAt?: string | null
   alertsCount: number
 }
 
@@ -20,6 +21,8 @@ export interface EmployeeRequestDto {
   role_id: string
   email: string | null
   phone: string | null
+  hired_at: string | null
+  status: 'activo' | 'inactivo'
 }
 
 export interface EmployeesStatsDto {
