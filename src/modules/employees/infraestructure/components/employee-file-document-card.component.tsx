@@ -1,6 +1,7 @@
 import { type JSX, useMemo } from 'react'
 import { Download01Icon, File01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { FileSizeHelper } from '../../../shared/application/file-size.helper'
 import { Button, Chip, type ChipTone } from '../../../shared/infraestructure/components/ui'
 import { CustodyDateHelper } from '../../../custodies/application/custody-date.helper'
 import type { EmployeeFileDocument } from '../../domain/employee-file-document.model'
@@ -35,7 +36,7 @@ export function EmployeeFileDocumentCard({ document, onDownload }: Props): JSX.E
           <div className="mt-0.5 truncate text-[12px] font-medium text-ink">{document.title}</div>
           <div className="font-mono text-[11px] text-muted">
             {CustodyDateHelper.date(document.createdAt)} ·{' '}
-            {EmployeeFileDocumentHelper.sizeLabel(document.sizeBytes)}
+            {FileSizeHelper.label(document.sizeBytes)}
           </div>
         </div>
       </div>

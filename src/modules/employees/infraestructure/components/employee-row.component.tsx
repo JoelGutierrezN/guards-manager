@@ -17,6 +17,8 @@ export function EmployeeRow({ employee, onEdit, onOpen }: Props): JSX.Element {
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>): void => {
+    // El teclado sobre el botón de editar no debe abrir el expediente: sólo la propia fila.
+    if (event.target !== event.currentTarget) return
     if (event.key !== 'Enter' && event.key !== ' ') return
     event.preventDefault()
     onOpen()

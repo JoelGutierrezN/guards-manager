@@ -13,6 +13,9 @@ interface Props {
 
 export function CustodyRow({ custody, onOpen, onSign }: Props): JSX.Element {
   const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>): void => {
+    // Sin este guardia, el Enter sobre el botón «Firmar» burbujea hasta la fila y el
+    // `preventDefault` cancelaría la activación del botón para abrir el detalle.
+    if (event.target !== event.currentTarget) return
     if (event.key !== 'Enter' && event.key !== ' ') return
     event.preventDefault()
     onOpen()

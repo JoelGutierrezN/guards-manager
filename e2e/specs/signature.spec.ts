@@ -67,6 +67,15 @@ test('@fase-4 firma la hoja de un resguardo y descarga el PDF', async ({ page })
   await expect(page).toHaveURL(new RegExp(`/personal/${employee.id}[?]tab=docs$`))
   await expect(page.getByRole('heading', { name: employeeName })).toBeVisible()
 
+  await expect(page.getByText(`Resguardo ${custody.code}`).first()).toBeVisible()
+
+  const [documentResponse] = await Promise.all([
+    page.waitForResponse((response) => response.url().includes(`/custodies/${custody.id}/sheet`)),
+    page.getByRole('button', { name: 'Descargar', exact: true }).click(),
+  ])
+  expect(documentResponse.status()).toBe(200)
+  expect(documentResponse.headers()['content-type']).toContain('application/pdf')
+
   await page.goto(`/assignments/${custody.id}`)
   await expect(page.getByRole('heading', { name: `Resguardo ${custody.code}` })).toBeVisible()
   await expect(page.getByText('Pendiente de firma')).toHaveCount(0)

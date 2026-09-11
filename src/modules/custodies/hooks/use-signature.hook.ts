@@ -102,10 +102,16 @@ export function useSignature(): UseSignatureResult {
       dispatch({ type: 'SUBMIT_SUCCESS', payload: signature })
       return signature
     } catch (error) {
-      dispatch({ type: 'SUBMIT_ERROR', payload: SignErrorHelper.reportFrom(error) })
+      const report = SignErrorHelper.reportFrom(error)
+      dispatch({ type: 'SUBMIT_ERROR', payload: report })
+      // El 409 significa que otra sesión firmó la hoja: el documento en memoria está obsoleto
+      // y sin recargarlo el formulario seguiría reintentando un POST que siempre da conflicto.
+      if (report.alreadySigned && custodyId != null && custodyId !== '') {
+        void load(custodyId, targetReturnId)
+      }
       return null
     }
-  }, [signDocument, status, signerName, signatureImage])
+  }, [signDocument, status, signerName, signatureImage, custodyId, targetReturnId, load])
 
   const sheetTarget = useMemo<SheetTarget | null>(() => {
     if (signDocument === null) return null

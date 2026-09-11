@@ -36,11 +36,4 @@ export class SignPresenter {
     const units = CustodyPresenter.quantityText(signDocument.itemsCount, 'unidad', 'unidades')
     return `${units} · registrado el ${CustodyDateHelper.dateTime(signDocument.createdAt)}`
   }
-
-  static sizeLabel(sizeBytes: number): string {
-    if (sizeBytes <= 0) return '—'
-    const kilobytes = sizeBytes / 1024
-    if (kilobytes < 1024) return `${Math.max(1, Math.round(kilobytes))} KB`
-    return `${(kilobytes / 1024).toFixed(1)} MB`
-  }
 }

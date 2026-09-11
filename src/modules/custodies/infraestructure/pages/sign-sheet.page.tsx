@@ -1,5 +1,6 @@
 import { type JSX, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router'
+import { FileSizeHelper } from '../../../shared/application/file-size.helper'
 import { PageHero, useToasts } from '../../../shared/infraestructure/components/ui'
 import type { ApiConflictDetail } from '../../../shared/infraestructure/errors/api-conflict.model'
 import { SignPresenter } from '../../application/sign-presenter.helper'
@@ -95,7 +96,7 @@ export function SignSheetPage(): JSX.Element {
       ? `Firmó ${result.signature.signerName}. La hoja PDF ya está disponible.`
       : SignPresenter.signedNotice(signDocument)
   const signedDetail =
-    result?.sheet == null ? null : `Archivo ${SignPresenter.sizeLabel(result.sheet.sizeBytes)}`
+    result?.sheet == null ? null : `Archivo ${FileSizeHelper.label(result.sheet.sizeBytes)}`
 
   return (
     <div className="mx-auto w-full max-w-300">
