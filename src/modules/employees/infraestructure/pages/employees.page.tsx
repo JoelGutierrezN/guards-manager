@@ -89,7 +89,7 @@ export const EmployeesPage = (): JSX.Element => {
         <KpiCard
           title="Requieren atención"
           quantity={kpis.withAlerts}
-          leading="vencidos"
+          leading="con alertas"
           icon={AlertIcon}
         />
       </div>

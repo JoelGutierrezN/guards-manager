@@ -1,4 +1,10 @@
+import type { ItemCondition } from '../../../shared/domain/item-condition.model'
+import type { EmployeeFileAlertType } from '../../domain/employee-file-alert.model'
 import type { EmployeeFileDocumentType } from '../../domain/employee-file-document.model'
+import type {
+  EmployeeFileEventTone,
+  EmployeeFileEventType,
+} from '../../domain/employee-file-event.model'
 
 export interface EmployeeFileProfileDto {
   id: string
@@ -16,9 +22,33 @@ export interface EmployeeFileSummaryDto {
   activeItems: number
   historicalItems: number
   returnedItems: number
-  // Pendiente Fase 5: daños pendientes, el backend siempre responde null
-  damagedItems: number | null
+  damagedItems: number
   documents: number
+}
+
+export interface EmployeeFileAlertDto {
+  type: EmployeeFileAlertType
+  message: string
+  date: string
+}
+
+export interface EmployeeFileDamageStockDto {
+  id: string
+  consecutive: string
+  productName: string
+  brandName: string | null
+  modelName: string | null
+}
+
+export interface EmployeeFileDamageDto {
+  id: string
+  returnId: string
+  returnCode: string
+  date: string
+  condition: ItemCondition
+  notes: string | null
+  stock: EmployeeFileDamageStockDto
+  sheetUrl: string | null
 }
 
 export interface EmployeeFileItemDto {
@@ -36,7 +66,8 @@ export interface EmployeeFileItemDto {
 
 export interface EmployeeFileEventDto {
   id: string
-  type: 'alta' | 'asignacion' | 'devolucion'
+  type: EmployeeFileEventType
+  tone: EmployeeFileEventTone
   title: string
   body: string
   date: string
@@ -60,6 +91,7 @@ export interface EmployeeFileDto {
   activeItems: EmployeeFileItemDto[]
   history: EmployeeFileEventDto[]
   documents: EmployeeFileDocumentDto[]
-  // Pendiente Fase 5: daños pendientes, el backend siempre responde []
-  damages: unknown[]
+  damages: EmployeeFileDamageDto[]
+  alerts: EmployeeFileAlertDto[]
+  alertsCount: number
 }

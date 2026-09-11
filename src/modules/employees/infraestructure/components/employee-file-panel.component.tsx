@@ -2,14 +2,14 @@ import { type JSX } from 'react'
 import { Tabs } from '../../../shared/infraestructure/components/ui'
 import type { TabItem } from '../../../shared/infraestructure/components/ui/tabs.model'
 import type { EmployeeFile } from '../../domain/employee-file.entity'
+import type { EmployeeFileDamage } from '../../domain/employee-file-damage.model'
 import type { EmployeeFileDocument } from '../../domain/employee-file-document.model'
 import type { EmployeeFileTab } from '../../domain/employee-file-tab.model'
 import { EmployeeFileActionsBar } from './employee-file-actions-bar.component'
+import { EmployeeFileDamagesTable } from './employee-file-damages-table.component'
 import { EmployeeFileDocumentsGrid } from './employee-file-documents-grid.component'
 import { EmployeeFileItemsTable } from './employee-file-items-table.component'
-import { EmployeeFilePendingPanel } from './employee-file-pending-panel.component'
 import { EmployeeFileTimeline } from './employee-file-timeline.component'
-import { EMPLOYEE_FILE_PENDING_CONTENT } from './employee-file-pending-panel.model'
 
 interface Props {
   file: EmployeeFile
@@ -24,6 +24,7 @@ interface Props {
   onToggleAll: () => void
   onClearSelection: () => void
   onDownloadDocument: (document: EmployeeFileDocument) => void
+  onDownloadDamageSheet: (damage: EmployeeFileDamage) => void
 }
 
 export function EmployeeFilePanel({
@@ -39,6 +40,7 @@ export function EmployeeFilePanel({
   onToggleAll,
   onClearSelection,
   onDownloadDocument,
+  onDownloadDamageSheet,
 }: Props): JSX.Element {
   return (
     <div className="min-w-0 overflow-hidden rounded-[26px] border border-hairline bg-white shadow-[0_1px_2px_rgba(14,15,60,0.04)]">
@@ -77,7 +79,7 @@ export function EmployeeFilePanel({
       )}
 
       {tab === 'damage' && (
-        <EmployeeFilePendingPanel content={EMPLOYEE_FILE_PENDING_CONTENT.damage} />
+        <EmployeeFileDamagesTable damages={file.damages} onDownloadSheet={onDownloadDamageSheet} />
       )}
     </div>
   )
