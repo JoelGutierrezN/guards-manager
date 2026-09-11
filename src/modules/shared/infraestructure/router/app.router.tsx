@@ -149,7 +149,7 @@ export default createBrowserRouter([
                 path: 'profile',
                 handle: { crumb: ['Cuenta', 'Mi perfil'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (await import('../../../account')).ProfilePage,
                 }),
               },
               {

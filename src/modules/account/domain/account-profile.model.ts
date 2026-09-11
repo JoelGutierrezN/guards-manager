@@ -1,7 +1,8 @@
-export interface UserPrimitives {
+export interface AccountProfile {
   id: string
-  email: string
   name: string
   username: string
+  email: string
   phone: string | null
+  createdAt: string
 }
