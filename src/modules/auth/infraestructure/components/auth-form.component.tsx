@@ -2,7 +2,7 @@ import { type JSX } from 'react'
 import { Button, FieldError, Form, Input, Label, TextField } from '@heroui/react'
 import { PackageIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { useNavigate, useLocation } from 'react-router'
+import { Link, useNavigate, useLocation } from 'react-router'
 import { useAuth } from '../../hooks/use-auth.hook'
 import { FromLocationHelper } from '../from-location.helper'
 import type { FromLocationState } from '../from-location-state.interfaces'
@@ -58,6 +58,10 @@ export const AuthForm = (): JSX.Element => {
               <Input placeholder="Ingresa tu contraseña" />
               <FieldError />
             </TextField>
+
+            <Link to="/forgot-password" className="text-sm text-muted hover:underline">
+              ¿Olvidaste tu contraseña?
+            </Link>
 
             {error && <p className="text-sm text-danger">{error}</p>}
 

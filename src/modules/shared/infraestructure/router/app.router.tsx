@@ -26,6 +26,20 @@ export default createBrowserRouter([
             path: '/',
             element: <AuthPage />,
           },
+          {
+            path: 'forgot-password',
+            lazy: async () => ({
+              Component: (await import('../../../auth/infraestructure/pages/forgot-password.page'))
+                .default,
+            }),
+          },
+          {
+            path: 'reset-password',
+            lazy: async () => ({
+              Component: (await import('../../../auth/infraestructure/pages/reset-password.page'))
+                .default,
+            }),
+          },
         ],
       },
       {
