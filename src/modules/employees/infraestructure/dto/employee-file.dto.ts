@@ -16,6 +16,7 @@ export interface EmployeeFileProfileDto {
   phone: string | null
   status: 'activo' | 'inactivo'
   hireDate: string
+  hiredAt?: string | null
 }
 
 export interface EmployeeFileSummaryDto {

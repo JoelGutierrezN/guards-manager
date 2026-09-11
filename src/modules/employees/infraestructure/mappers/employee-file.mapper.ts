@@ -51,6 +51,7 @@ export class EmployeeFileMapper {
       activeToolsCount: summary.activeItems,
       historicalToolsCount: summary.historicalItems,
       hireDate: employee.hireDate,
+      hiredAt: employee.hiredAt,
       alertsCount,
     }
   }
@@ -66,6 +67,7 @@ export class EmployeeFileMapper {
       phone: dto.phone ?? null,
       status: dto.status,
       hireDate: dto.hireDate,
+      hiredAt: dto.hiredAt ?? null,
     }
   }
 

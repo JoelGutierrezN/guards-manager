@@ -16,6 +16,7 @@ export interface EmployeeFileProfile {
   phone: string | null
   status: EmployeeStatus
   hireDate: string
+  hiredAt: string | null
 }
 
 export interface EmployeeFile {
