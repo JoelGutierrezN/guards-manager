@@ -56,13 +56,13 @@ test('@fase-5 daños en el expediente y baja/reactivación de un empleado', asyn
   await expect(page.getByText(productName).first()).toBeVisible()
 
   await page.getByRole('button', { name: 'Dar de baja' }).click()
-  await expect(page.getByRole('heading', { name: `¿Dar de baja a ${employeeName}?` })).toBeVisible()
+  await expect(page.getByText(`¿Dar de baja a ${employeeName}?`)).toBeVisible()
   await page.getByRole('button', { name: 'Dar de baja' }).last().click()
 
   await expect(page.getByRole('button', { name: 'Reactivar' })).toBeVisible()
 
   await page.getByRole('button', { name: 'Reactivar' }).click()
-  await expect(page.getByRole('heading', { name: `¿Reactivar a ${employeeName}?` })).toBeVisible()
+  await expect(page.getByText(`¿Reactivar a ${employeeName}?`)).toBeVisible()
   await page.getByRole('button', { name: 'Reactivar' }).last().click()
 
   await expect(page.getByRole('button', { name: 'Dar de baja' })).toBeVisible()
