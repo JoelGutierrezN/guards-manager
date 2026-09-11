@@ -167,6 +167,13 @@ export default createBrowserRouter([
                 }),
               },
               {
+                path: 'users',
+                handle: { crumb: ['Cuenta', 'Usuarios'] },
+                lazy: async () => ({
+                  Component: (await import('../../../account')).UsersPage,
+                }),
+              },
+              {
                 path: '*',
                 element: <NotFoundPage />,
               },

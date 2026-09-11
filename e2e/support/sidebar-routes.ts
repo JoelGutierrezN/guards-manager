@@ -11,4 +11,5 @@ export const SIDEBAR_ROUTES: SidebarRoute[] = [
   { label: 'Modelos', path: '/models' },
   { label: 'Personal', path: '/personal' },
   { label: 'Mi perfil', path: '/profile' },
+  { label: 'Usuarios', path: '/users' },
 ]
