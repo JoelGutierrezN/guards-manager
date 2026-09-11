@@ -66,6 +66,16 @@ export function SignSheetPage(): JSX.Element {
     return { message: error.message, reasons: error.reasons }
   }, [error])
 
+  // Un 409 recarga el documento y la pantalla pasa al panel de éxito: sin este aviso el usuario
+  // vería un «Hoja firmada» verde después de que su propio envío fuera rechazado.
+  const conflict = useMemo<ApiConflictDetail | null>(() => {
+    if (error === null || !error.alreadySigned) return null
+    return {
+      message: error.message,
+      reasons: [...error.reasons, SignPresenter.rejectedSignatureReason()],
+    }
+  }, [error])
+
   if (status === 'loading') return <SignSkeleton />
 
   if (status === 'error' || signDocument === null) {
@@ -109,6 +119,7 @@ export function SignSheetPage(): JSX.Element {
             code={signDocument.code}
             message={signedMessage}
             detail={signedDetail}
+            conflict={conflict}
             downloading={downloading}
             canOpenEmployeeFile={signDocument.employeeId !== null}
             onDownload={() => void handleDownload()}

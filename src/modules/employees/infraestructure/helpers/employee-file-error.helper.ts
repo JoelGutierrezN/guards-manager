@@ -5,6 +5,7 @@ import { BlobErrorHelper } from '../../../shared/infraestructure/errors/blob-err
 const NOT_FOUND_MESSAGE = 'No encontramos ese expediente.'
 const GENERIC_MESSAGE = 'No se pudo cargar el expediente.'
 const DOWNLOAD_GENERIC_MESSAGE = 'No se pudo descargar el expediente.'
+const DOCUMENT_DOWNLOAD_GENERIC_MESSAGE = 'No se pudo descargar el documento.'
 const NOT_FOUND_STATUS = 404
 
 export class EmployeeFileErrorHelper {
@@ -16,6 +17,10 @@ export class EmployeeFileErrorHelper {
   static downloadMessageFrom(error: unknown): Promise<string> {
     if (EmployeeFileErrorHelper.isNotFound(error)) return Promise.resolve(NOT_FOUND_MESSAGE)
     return BlobErrorHelper.messageFrom(error, DOWNLOAD_GENERIC_MESSAGE)
+  }
+
+  static documentDownloadMessageFrom(error: unknown): Promise<string> {
+    return BlobErrorHelper.messageFrom(error, DOCUMENT_DOWNLOAD_GENERIC_MESSAGE)
   }
 
   static notFoundMessage(): string {

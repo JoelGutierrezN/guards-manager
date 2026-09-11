@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useReducer } from 'react'
-import { useParams, useSearchParams } from 'react-router'
+import { useParams } from 'react-router'
+import { SheetFilenameHelper } from '../../shared/application/sheet-filename.helper'
+import { useQueryParams } from '../../shared/hooks/use-query-params.hook'
 import { FileDownloadHelper } from '../../shared/infraestructure/helpers/file-download.helper'
 import type { Employee } from '../domain/employee.entity'
-import {
-  DEFAULT_EMPLOYEE_FILE_TAB,
-  isEmployeeFileTab,
-  type EmployeeFileTab,
-} from '../domain/employee-file-tab.model'
+import type { EmployeeFileDocument } from '../domain/employee-file-document.model'
+import type { EmployeeFileTab } from '../domain/employee-file-tab.model'
 import type { EmployeeFileDownloadResult } from '../application/employee-file-download-result.model'
 import {
   createInitialEmployeeFileState,
@@ -14,6 +13,7 @@ import {
 } from '../application/employee-file.reducer'
 import { EmployeeFilePresenter } from '../application/employee-file-presenter.helper'
 import { EmployeeFileSelectionHelper } from '../application/employee-file-selection.helper'
+import { EmployeeFileTabParamsHelper } from '../application/employee-file-tab-params.helper'
 import { EmployeeFileTabsHelper } from '../application/employee-file-tabs.helper'
 import { EmployeeFileMapper } from '../infraestructure/mappers/employee-file.mapper'
 import { EmployeeFileErrorHelper } from '../infraestructure/helpers/employee-file-error.helper'
@@ -21,19 +21,12 @@ import { employeeFileRepository } from '../infraestructure/repositories/employee
 import { useEmployeeEdit } from './use-employee-edit.hook'
 
 const EMPTY_HERO = { heroEyebrow: '', heroTitle: '', heroItalic: '', heroLede: '' }
-const TAB_QUERY_PARAM = 'tab'
 
 export function useEmployeeFile() {
   const { employeeId } = useParams<{ employeeId: string }>()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [state, dispatch] = useReducer(
-    employeeFileReducer,
-    searchParams.get(TAB_QUERY_PARAM),
-    (rawTab) =>
-      createInitialEmployeeFileState(
-        isEmployeeFileTab(rawTab) ? rawTab : DEFAULT_EMPLOYEE_FILE_TAB,
-      ),
-  )
+  const { params, setQueryParams } = useQueryParams()
+  const urlTab = EmployeeFileTabParamsHelper.tabFrom(params)
+  const [state, dispatch] = useReducer(employeeFileReducer, urlTab, createInitialEmployeeFileState)
 
   const load = useCallback(async (targetEmployeeId: string) => {
     dispatch({ type: 'LOAD_START' })
@@ -61,21 +54,17 @@ export function useEmployeeFile() {
   const setTab = useCallback(
     (tab: EmployeeFileTab) => {
       dispatch({ type: 'SET_TAB', tab })
-      setSearchParams(
-        (currentParams) => {
-          const nextParams = new URLSearchParams(currentParams)
-          if (tab === DEFAULT_EMPLOYEE_FILE_TAB) {
-            nextParams.delete(TAB_QUERY_PARAM)
-          } else {
-            nextParams.set(TAB_QUERY_PARAM, tab)
-          }
-          return nextParams
-        },
-        { replace: true },
-      )
+      setQueryParams(EmployeeFileTabParamsHelper.toParams(tab))
     },
-    [setSearchParams],
+    [setQueryParams],
   )
+
+  // `setTab` es el único escritor de la URL; este efecto cubre el sentido contrario (enlace
+  // pegado, Atrás del navegador o cambio de empleado sin desmontar la página).
+  useEffect(() => {
+    if (urlTab !== state.tab) dispatch({ type: 'SET_TAB', tab: urlTab })
+  }, [urlTab, state.tab])
+
   const toggleItem = useCallback((itemId: string) => dispatch({ type: 'TOGGLE_ITEM', itemId }), [])
   const toggleAllItems = useCallback(() => dispatch({ type: 'TOGGLE_ALL' }), [])
   const clearSelection = useCallback(() => dispatch({ type: 'CLEAR_SELECTION' }), [])
@@ -95,6 +84,25 @@ export function useEmployeeFile() {
       dispatch({ type: 'PDF_DONE' })
     }
   }, [employeeId])
+
+  const downloadDocument = useCallback(
+    async (fileDocument: EmployeeFileDocument): Promise<EmployeeFileDownloadResult> => {
+      try {
+        const file = await employeeFileRepository.downloadDocument(
+          fileDocument.url,
+          SheetFilenameHelper.filename(fileDocument.type, fileDocument.code),
+        )
+        FileDownloadHelper.save(file)
+        return { message: `Documento descargado: ${file.filename}`, succeeded: true }
+      } catch (error) {
+        return {
+          message: await EmployeeFileErrorHelper.documentDownloadMessageFrom(error),
+          succeeded: false,
+        }
+      }
+    },
+    [],
+  )
 
   const handleEmployeeSaved = useCallback(
     (employee: Employee) => dispatch({ type: 'EMPLOYEE_UPDATED', employee }),
@@ -137,6 +145,7 @@ export function useEmployeeFile() {
     toggleAllItems,
     clearSelection,
     downloadPdf,
+    downloadDocument,
     tabItems,
     selectionCount,
     allSelected,

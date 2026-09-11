@@ -1,11 +1,7 @@
+import { SheetFilenameHelper } from '../../../shared/application/sheet-filename.helper'
 import type { CustodySheet } from '../../domain/custody.entity'
 import type { SheetTarget } from '../../domain/sheet-target.model'
 import type { SignDocumentType } from '../../domain/sign-document.model'
-
-const FILENAME_PREFIX: Record<SignDocumentType, string> = {
-  resguardo: 'resguardo',
-  devolucion: 'devolucion',
-}
 
 /**
  * Sin firma el API no persiste hoja y `sheet` llega en `null`: la descarga del borrador usa
@@ -20,10 +16,6 @@ export class SheetPathHelper {
     return SheetPathHelper.target(`/returns/${returnId}/sheet`, 'devolucion', code, sheet)
   }
 
-  static filename(type: SignDocumentType, code: string): string {
-    return `${FILENAME_PREFIX[type]}-${code}.pdf`
-  }
-
   private static target(
     fallbackUrl: string,
     type: SignDocumentType,
@@ -34,7 +26,7 @@ export class SheetPathHelper {
     const filename =
       sheet !== null && sheet.filename !== ''
         ? sheet.filename
-        : SheetPathHelper.filename(type, code)
+        : SheetFilenameHelper.filename(type, code)
     return { url, filename }
   }
 }

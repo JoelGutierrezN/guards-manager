@@ -21,7 +21,3 @@ export const EMPLOYEE_FILE_TABS: EmployeeFileTabDescriptor[] = [
   // Pendiente Fase 5: los daños llegan con el expediente completo
   { value: 'damage', label: 'Daños', icon: Alert02Icon, pending: true },
 ]
-
-export function isEmployeeFileTab(value: unknown): value is EmployeeFileTab {
-  return EMPLOYEE_FILE_TABS.some((descriptor) => descriptor.value === value)
-}

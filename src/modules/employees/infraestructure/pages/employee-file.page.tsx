@@ -11,7 +11,6 @@ import { Button, PageHero, useToasts } from '../../../shared/infraestructure/com
 import type { EmployeeFileDocument } from '../../domain/employee-file-document.model'
 import type { UpdateEmployeeInput } from '../../domain/employee-input.model'
 import { useEmployeeFile } from '../../hooks/use-employee-file.hook'
-import { EmployeeFileDocumentDownloadService } from '../services/employee-file-document-download.service'
 import { EmployeeFormModal } from '../components/employee-form-modal.component'
 import { EmployeeFileError } from '../components/employee-file-error.component'
 import { EmployeeFileIdentityCard } from '../components/employee-file-identity-card.component'
@@ -32,6 +31,7 @@ export function EmployeeFilePage(): JSX.Element {
     toggleAllItems,
     clearSelection,
     downloadPdf,
+    downloadDocument,
     tabItems,
     selectionCount,
     allSelected,
@@ -61,8 +61,8 @@ export function EmployeeFilePage(): JSX.Element {
     addToast(message, succeeded ? 'success' : 'error')
   }
 
-  const handleDownloadDocument = async (document: EmployeeFileDocument): Promise<void> => {
-    const { message, succeeded } = await EmployeeFileDocumentDownloadService.download(document)
+  const handleDownloadDocument = async (fileDocument: EmployeeFileDocument): Promise<void> => {
+    const { message, succeeded } = await downloadDocument(fileDocument)
     addToast(message, succeeded ? 'success' : 'error')
   }
 
@@ -144,7 +144,7 @@ export function EmployeeFilePage(): JSX.Element {
           onToggleItem={toggleItem}
           onToggleAll={toggleAllItems}
           onClearSelection={clearSelection}
-          onDownloadDocument={(document) => void handleDownloadDocument(document)}
+          onDownloadDocument={(fileDocument) => void handleDownloadDocument(fileDocument)}
         />
       </div>
 

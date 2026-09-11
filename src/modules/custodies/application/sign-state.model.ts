@@ -26,6 +26,7 @@ export const INITIAL_SIGN_STATE: SignState = {
 
 export type SignAction =
   | { type: 'LOAD_START' }
+  | { type: 'RELOAD_START' }
   | { type: 'LOAD_SUCCESS'; payload: SignDocument }
   | { type: 'LOAD_ERROR'; payload: string }
   | { type: 'SIGNER_NAME_CHANGED'; payload: string }

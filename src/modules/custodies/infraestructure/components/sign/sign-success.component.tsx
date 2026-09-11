@@ -6,12 +6,15 @@ import {
   UserSharingIcon,
 } from '@hugeicons/core-free-icons'
 import { Button, Icon } from '../../../../shared/infraestructure/components/ui'
+import type { ApiConflictDetail } from '../../../../shared/infraestructure/errors/api-conflict.model'
+import { CustodyConflictNotice } from '../custody-conflict-notice.component'
 
 interface Props {
   title: string
   code: string
   message: string
   detail: string | null
+  conflict: ApiConflictDetail | null
   downloading: boolean
   canOpenEmployeeFile: boolean
   onDownload: () => void
@@ -26,6 +29,7 @@ export function SignSuccess({
   code,
   message,
   detail,
+  conflict,
   downloading,
   canOpenEmployeeFile,
   onDownload,
@@ -45,6 +49,12 @@ export function SignSuccess({
         <p className="m-0 mt-2 text-[12px] text-ink-2">{message}</p>
         {detail !== null && <p className="m-0 mt-1 text-[11px] text-muted">{detail}</p>}
       </div>
+
+      {conflict !== null && (
+        <div className="mb-4">
+          <CustodyConflictNotice detail={conflict} />
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2">
         <Button variant="primary" icon={Download01Icon} disabled={downloading} onClick={onDownload}>

@@ -32,6 +32,11 @@ export class SignPresenter {
     return `Esta hoja se firmó${signer} el ${CustodyDateHelper.dateTime(signDocument.signedAt)}.`
   }
 
+  /** Aviso del 409: la hoja ya estaba firmada y el trazo que acaba de enviar el usuario se perdió. */
+  static rejectedSignatureReason(): string {
+    return 'Tu firma no se registró: la hoja ya estaba firmada cuando llegó tu envío.'
+  }
+
   static documentSummary(signDocument: SignDocument): string {
     const units = CustodyPresenter.quantityText(signDocument.itemsCount, 'unidad', 'unidades')
     return `${units} · registrado el ${CustodyDateHelper.dateTime(signDocument.createdAt)}`

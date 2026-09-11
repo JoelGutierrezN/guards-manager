@@ -40,8 +40,12 @@ export function useSignature(): UseSignatureResult {
   const { downloading, download } = useSheetDownload()
 
   const load = useCallback(
-    async (targetCustodyId: string, targetReturnId: string | null): Promise<void> => {
-      dispatch({ type: 'LOAD_START' })
+    async (
+      targetCustodyId: string,
+      targetReturnId: string | null,
+      keepConflict = false,
+    ): Promise<void> => {
+      dispatch({ type: keepConflict ? 'RELOAD_START' : 'LOAD_START' })
       try {
         const signDocument =
           targetReturnId === null
@@ -106,8 +110,10 @@ export function useSignature(): UseSignatureResult {
       dispatch({ type: 'SUBMIT_ERROR', payload: report })
       // El 409 significa que otra sesión firmó la hoja: el documento en memoria está obsoleto
       // y sin recargarlo el formulario seguiría reintentando un POST que siempre da conflicto.
+      // La recarga conserva el conflicto (`keepConflict`) para poder avisar en el panel de éxito
+      // de que la firma que acaba de trazar el usuario no se registró.
       if (report.alreadySigned && custodyId != null && custodyId !== '') {
-        void load(custodyId, targetReturnId)
+        void load(custodyId, targetReturnId, true)
       }
       return null
     }
