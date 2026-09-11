@@ -8,6 +8,7 @@ import {
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Button, PageHero, useToasts } from '../../../shared/infraestructure/components/ui'
+import type { EmployeeFileDamage } from '../../domain/employee-file-damage.model'
 import type { EmployeeFileDocument } from '../../domain/employee-file-document.model'
 import type { UpdateEmployeeInput } from '../../domain/employee-input.model'
 import { useEmployeeFile } from '../../hooks/use-employee-file.hook'
@@ -32,6 +33,7 @@ export function EmployeeFilePage(): JSX.Element {
     clearSelection,
     downloadPdf,
     downloadDocument,
+    downloadDamageSheet,
     tabItems,
     selectionCount,
     allSelected,
@@ -63,6 +65,11 @@ export function EmployeeFilePage(): JSX.Element {
 
   const handleDownloadDocument = async (fileDocument: EmployeeFileDocument): Promise<void> => {
     const { message, succeeded } = await downloadDocument(fileDocument)
+    addToast(message, succeeded ? 'success' : 'error')
+  }
+
+  const handleDownloadDamageSheet = async (damage: EmployeeFileDamage): Promise<void> => {
+    const { message, succeeded } = await downloadDamageSheet(damage)
     addToast(message, succeeded ? 'success' : 'error')
   }
 
@@ -128,7 +135,7 @@ export function EmployeeFilePage(): JSX.Element {
 
       <div className="reveal-d2 mt-4 grid grid-cols-[280px_1fr] gap-4 max-[1100px]:grid-cols-1">
         <div className="flex flex-col gap-3">
-          <EmployeeFileIdentityCard employee={state.file.employee} />
+          <EmployeeFileIdentityCard employee={state.file.employee} alerts={state.file.alerts} />
           <EmployeeFileSummaryCard summary={state.file.summary} />
         </div>
 
@@ -145,6 +152,7 @@ export function EmployeeFilePage(): JSX.Element {
           onToggleAll={toggleAllItems}
           onClearSelection={clearSelection}
           onDownloadDocument={(fileDocument) => void handleDownloadDocument(fileDocument)}
+          onDownloadDamageSheet={(damage) => void handleDownloadDamageSheet(damage)}
         />
       </div>
 

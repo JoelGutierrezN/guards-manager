@@ -4,6 +4,7 @@ import { SheetFilenameHelper } from '../../shared/application/sheet-filename.hel
 import { useQueryParams } from '../../shared/hooks/use-query-params.hook'
 import { FileDownloadHelper } from '../../shared/infraestructure/helpers/file-download.helper'
 import type { Employee } from '../domain/employee.entity'
+import type { EmployeeFileDamage } from '../domain/employee-file-damage.model'
 import type { EmployeeFileDocument } from '../domain/employee-file-document.model'
 import type { EmployeeFileTab } from '../domain/employee-file-tab.model'
 import type { EmployeeFileDownloadResult } from '../application/employee-file-download-result.model'
@@ -104,6 +105,28 @@ export function useEmployeeFile() {
     [],
   )
 
+  const downloadDamageSheet = useCallback(
+    async (damage: EmployeeFileDamage): Promise<EmployeeFileDownloadResult> => {
+      if (damage.sheetUrl === null) {
+        return { message: 'Esta devolución todavía no tiene una hoja firmada.', succeeded: false }
+      }
+      try {
+        const file = await employeeFileRepository.downloadDocument(
+          damage.sheetUrl,
+          SheetFilenameHelper.filename('devolucion', damage.returnCode),
+        )
+        FileDownloadHelper.save(file)
+        return { message: `Hoja descargada: ${file.filename}`, succeeded: true }
+      } catch (error) {
+        return {
+          message: await EmployeeFileErrorHelper.documentDownloadMessageFrom(error),
+          succeeded: false,
+        }
+      }
+    },
+    [],
+  )
+
   const handleEmployeeSaved = useCallback(
     (employee: Employee) => dispatch({ type: 'EMPLOYEE_UPDATED', employee }),
     [],
@@ -146,6 +169,7 @@ export function useEmployeeFile() {
     clearSelection,
     downloadPdf,
     downloadDocument,
+    downloadDamageSheet,
     tabItems,
     selectionCount,
     allSelected,

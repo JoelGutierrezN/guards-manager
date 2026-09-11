@@ -7,6 +7,7 @@ export interface EmployeesFilters {
   status: EmployeeStatusFilter
   roleIds: string[]
   withTools: boolean
+  withAlerts: boolean
   hiredFrom: string
   hiredTo: string
 }
@@ -15,6 +16,7 @@ export const INITIAL_EMPLOYEES_FILTERS: EmployeesFilters = {
   status: 'todos',
   roleIds: [],
   withTools: false,
+  withAlerts: false,
   hiredFrom: '',
   hiredTo: '',
 }
