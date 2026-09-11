@@ -1,14 +1,15 @@
 export interface AuthenticatedUser {
-  uuid: string
+  id: string
   name: string
   username: string
   email: string
-  phone: string
+  phone: string | null
 }
 
 export interface LoginResponse {
   user: AuthenticatedUser
   token: string
+  expiresAt: string
 }
 
 export interface CreatedBrand {

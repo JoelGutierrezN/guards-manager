@@ -17,11 +17,13 @@ export class ApiClient {
   private readonly context: APIRequestContext
   private readonly authToken: string
   private readonly authenticatedUser: AuthenticatedUser
+  private readonly authTokenExpiresAt: string
 
   private constructor(context: APIRequestContext, session: LoginResponse) {
     this.context = context
     this.authToken = session.token
     this.authenticatedUser = session.user
+    this.authTokenExpiresAt = session.expiresAt
   }
 
   static async login(
@@ -51,6 +53,10 @@ export class ApiClient {
 
   get user(): AuthenticatedUser {
     return this.authenticatedUser
+  }
+
+  get expiresAt(): string {
+    return this.authTokenExpiresAt
   }
 
   async createBrand(name: string = UniqueName.for('Marca')): Promise<CreatedBrand> {
