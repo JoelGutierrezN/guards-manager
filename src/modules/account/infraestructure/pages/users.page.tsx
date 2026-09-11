@@ -75,6 +75,7 @@ export const UsersPage = (): JSX.Element => {
         editUser={editingUser}
         saving={state.saving}
         formError={state.formError}
+        formErrors={state.formErrors}
         onClose={closeModal}
         onSave={(input) => void handleSave(input)}
       />

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from 'react'
+import { useCallback, useEffect, useMemo, useReducer } from 'react'
 import type { User } from '../domain/user.entity'
 import type { CreateUserInput, UpdateUserInput } from '../domain/user-input.model'
 import type { UserFormErrors } from '../application/user-form.model'
@@ -7,19 +7,24 @@ import { UserFormHelper } from '../application/user-form.helper'
 
 interface UseUserFormOptions {
   editUser: User | null
+  apiErrors: UserFormErrors
   onSave: (input: CreateUserInput | UpdateUserInput) => void
 }
 
-export function useUserForm({ editUser, onSave }: UseUserFormOptions) {
+export function useUserForm({ editUser, apiErrors, onSave }: UseUserFormOptions) {
   const isEdit = editUser != null
   const [state, dispatch] = useReducer(userFormReducer, editUser, UserFormHelper.initialStateFrom)
 
-  const errors = useMemo(() => UserFormHelper.validate(state, isEdit), [state, isEdit])
+  useEffect(() => {
+    dispatch({ type: 'SET_API_ERRORS', errors: apiErrors })
+  }, [apiErrors])
+
+  const localErrors = useMemo(() => UserFormHelper.validate(state, isEdit), [state, isEdit])
   const visibleErrors = useMemo<UserFormErrors>(
-    () => (state.touched ? errors : {}),
-    [state.touched, errors],
+    () => UserFormHelper.mergeErrors(state.touched ? localErrors : {}, state.apiErrors),
+    [state.touched, state.apiErrors, localErrors],
   )
-  const canSave = useMemo(() => !UserFormHelper.hasErrors(errors), [errors])
+  const canSave = useMemo(() => !UserFormHelper.hasErrors(localErrors), [localErrors])
 
   const setName = useCallback((name: string) => dispatch({ type: 'SET_NAME', name }), [])
   const setEmail = useCallback((email: string) => dispatch({ type: 'SET_EMAIL', email }), [])

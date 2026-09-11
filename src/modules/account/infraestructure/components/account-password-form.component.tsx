@@ -8,17 +8,10 @@ interface Props {
 }
 
 export function AccountPasswordForm({ onNotify }: Props): JSX.Element {
-  const {
-    state,
-    visibleErrors,
-    canSave,
-    setCurrentPassword,
-    setPassword,
-    setPasswordConfirmation,
-    submit,
-  } = useAccountPasswordForm({
-    onSaved: () => onNotify('Contraseña actualizada.'),
-  })
+  const { state, visibleErrors, setCurrentPassword, setPassword, setPasswordConfirmation, submit } =
+    useAccountPasswordForm({
+      onSaved: () => onNotify('Contraseña actualizada.'),
+    })
 
   return (
     <form
@@ -76,7 +69,7 @@ export function AccountPasswordForm({ onNotify }: Props): JSX.Element {
       )}
 
       <div className="flex justify-end">
-        <Button type="submit" variant="primary" disabled={!canSave}>
+        <Button type="submit" variant="primary" disabled={state.isSaving}>
           {state.isSaving ? 'Guardando...' : 'Cambiar contraseña'}
         </Button>
       </div>

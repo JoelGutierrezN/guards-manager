@@ -6,6 +6,7 @@ import type {
 } from './account-profile-form.model'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PHONE_DIGITS = 10
 
 export class AccountProfileFormHelper {
   static initialStateFrom(profile: AccountProfile | null): AccountProfileFormState {
@@ -30,6 +31,11 @@ export class AccountProfileFormHelper {
     } else if (!EMAIL_PATTERN.test(state.email.trim())) {
       errors.email = 'El correo no es válido.'
     }
+    // Misma regla que el alta de usuarios: `users.phone` es único y el login resuelve por teléfono,
+    // así que sólo se guardan 10 dígitos normalizados.
+    if (state.phone.trim() !== '' && AccountProfileFormHelper.phoneDigits(state) !== PHONE_DIGITS) {
+      errors.phone = 'Usa 10 dígitos.'
+    }
     return errors
   }
 
@@ -45,12 +51,16 @@ export class AccountProfileFormHelper {
   }
 
   static toInput(state: AccountProfileFormState): UpdateAccountProfileInput {
-    const trimmedPhone = state.phone.trim()
+    const phone = state.phone.replace(/\D/g, '')
     return {
       name: state.name.trim(),
       email: state.email.trim(),
       username: state.username.trim(),
-      phone: trimmedPhone === '' ? null : trimmedPhone,
+      phone: phone === '' ? null : phone,
     }
+  }
+
+  private static phoneDigits(state: AccountProfileFormState): number {
+    return state.phone.replace(/\D/g, '').length
   }
 }

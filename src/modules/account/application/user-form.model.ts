@@ -5,6 +5,7 @@ export interface UserFormState {
   phone: string
   password: string
   touched: boolean
+  apiErrors: UserFormErrors
 }
 
 export interface UserFormErrors {
@@ -21,4 +22,5 @@ export type UserFormAction =
   | { type: 'SET_USERNAME'; username: string }
   | { type: 'SET_PHONE'; phone: string }
   | { type: 'SET_PASSWORD'; password: string }
+  | { type: 'SET_API_ERRORS'; errors: UserFormErrors }
   | { type: 'TOUCH' }

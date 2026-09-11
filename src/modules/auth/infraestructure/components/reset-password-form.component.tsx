@@ -15,6 +15,7 @@ export function ResetPasswordForm({ linkParams }: Props): JSX.Element {
   const [mismatchError, setMismatchError] = useState<string | null>(null)
   const isSubmitting = state.status === 'submitting'
   const isDone = state.status === 'done'
+  const passwordError = state.error?.fieldErrors.password
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
@@ -57,17 +58,33 @@ export function ResetPasswordForm({ linkParams }: Props): JSX.Element {
         <TextField isRequired minLength={8} name="password" type="password">
           <Label>Contraseña nueva</Label>
           <Input placeholder="Mínimo 8 caracteres" />
-          <FieldError>{state.error?.fieldErrors.password}</FieldError>
+          <FieldError />
         </TextField>
+
+        {/* `FieldError` sólo pinta la validación nativa del campo; los mensajes del API y los de
+            nuestra validación se muestran aparte para que no se pierdan. */}
+        {passwordError !== undefined && (
+          <p className="text-sm text-danger" role="alert">
+            {passwordError}
+          </p>
+        )}
 
         <TextField isRequired minLength={8} name="password_confirmation" type="password">
           <Label>Confirmar contraseña</Label>
           <Input placeholder="Repite tu contraseña" />
-          <FieldError>{mismatchError}</FieldError>
+          <FieldError />
         </TextField>
 
-        {state.error && !state.error.fieldErrors.password && (
-          <p className="text-sm text-danger">{state.error.message}</p>
+        {mismatchError !== null && (
+          <p className="text-sm text-danger" role="alert">
+            {mismatchError}
+          </p>
+        )}
+
+        {state.error && passwordError === undefined && (
+          <p className="text-sm text-danger" role="alert">
+            {state.error.message}
+          </p>
         )}
 
         <Button type="submit" className="w-full" isDisabled={isSubmitting}>

@@ -102,7 +102,11 @@ export function useUsers() {
           ? `Usuario "${input.name}" actualizado`
           : `Usuario "${input.name}" creado`
       } catch (error) {
-        dispatch({ type: 'SAVE_ERROR', message: UserFormErrorHelper.messageFrom(error) })
+        dispatch({
+          type: 'SAVE_ERROR',
+          message: UserFormErrorHelper.messageFrom(error),
+          errors: UserFormErrorHelper.fieldErrorsFrom(error),
+        })
         return null
       }
     },

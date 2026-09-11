@@ -22,11 +22,11 @@ export function usersReducer(state: UsersState, action: UsersAction): UsersState
     case 'SET_PAGE':
       return { ...state, page: action.page }
     case 'SAVE_START':
-      return { ...state, saving: true, formError: null }
+      return { ...state, saving: true, formError: null, formErrors: {} }
     case 'SAVE_ERROR':
-      return { ...state, saving: false, formError: action.message }
+      return { ...state, saving: false, formError: action.message, formErrors: action.errors }
     case 'SAVE_DONE':
-      return { ...state, saving: false, formError: null }
+      return { ...state, saving: false, formError: null, formErrors: {} }
     case 'ROW_ADDED': {
       const total = state.total + 1
       return {

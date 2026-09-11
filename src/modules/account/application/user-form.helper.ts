@@ -18,6 +18,7 @@ export class UserFormHelper {
       phone: user?.phone ?? '',
       password: '',
       touched: false,
+      apiErrors: {},
     }
   }
 
@@ -49,7 +50,12 @@ export class UserFormHelper {
   }
 
   static hasErrors(errors: UserFormErrors): boolean {
-    return Object.keys(errors).length > 0
+    return Object.values(errors).some((message) => message !== undefined)
+  }
+
+  /** Los errores locales tienen prioridad sobre los del 422 porque describen el valor actual. */
+  static mergeErrors(localErrors: UserFormErrors, apiErrors: UserFormErrors): UserFormErrors {
+    return { ...apiErrors, ...localErrors }
   }
 
   static toCreateInput(state: UserFormState): CreateUserInput {

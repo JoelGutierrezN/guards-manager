@@ -24,7 +24,13 @@ export class AuthSessionStorage {
       const primitives = StorageService.get<UserPrimitives>(AUTH_USER_KEY)
       const expiresAt = StorageService.get<string>(ACCESS_TOKEN_EXPIRES_AT_KEY)
 
-      if (!token || !primitives || !primitives.id || !expiresAt) return null
+      // Una sesión legada (sin `id` o sin `expiresAt`) se descarta y se borra: si el token viejo
+      // siguiera guardado, el interceptor lo adjuntaría incluso en `POST /login` y la ruta `guest`
+      // respondería con una redirección en lugar de la sesión nueva.
+      if (!token || !primitives || !primitives.id || !expiresAt) {
+        AuthSessionStorage.clear()
+        return null
+      }
 
       return { user: User.fromPrimitives(primitives), token, expiresAt }
     } catch {

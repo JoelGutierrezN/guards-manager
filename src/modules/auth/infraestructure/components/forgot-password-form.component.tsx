@@ -7,6 +7,7 @@ export function ForgotPasswordForm(): JSX.Element {
   const { state, submit } = useForgotPassword()
   const isSubmitting = state.status === 'submitting'
   const isDone = state.status === 'done'
+  const emailError = state.error?.fieldErrors.email
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
@@ -45,11 +46,20 @@ export function ForgotPasswordForm(): JSX.Element {
         <TextField isRequired name="email" type="email">
           <Label>Correo</Label>
           <Input placeholder="tucorreo@ejemplo.com" />
-          <FieldError>{state.error?.fieldErrors.email}</FieldError>
+          <FieldError />
         </TextField>
 
-        {state.error && !state.error.fieldErrors.email && (
-          <p className="text-sm text-danger">{state.error.message}</p>
+        {/* `FieldError` sólo pinta la validación nativa del campo; el 422 del API se muestra aparte. */}
+        {emailError !== undefined && (
+          <p className="text-sm text-danger" role="alert">
+            {emailError}
+          </p>
+        )}
+
+        {state.error && emailError === undefined && (
+          <p className="text-sm text-danger" role="alert">
+            {state.error.message}
+          </p>
         )}
 
         <Button type="submit" className="w-full" isDisabled={isSubmitting}>

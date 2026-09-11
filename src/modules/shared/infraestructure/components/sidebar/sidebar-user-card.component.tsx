@@ -2,7 +2,7 @@ import { type JSX } from 'react'
 import { ArrowUp01Icon, Logout01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Avatar } from '../ui'
-import { useAccountMe } from '../../../../account/hooks/use-account-me.hook'
+import { useAccountProfile } from '../../../../account/hooks/use-account-profile.hook'
 import { useAuth } from '../../../../auth/hooks/use-auth.hook'
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function SidebarUserCard({ onLogout }: Props): JSX.Element {
-  const { profile } = useAccountMe()
+  const { profile } = useAccountProfile()
   const { user } = useAuth()
   const name = profile?.name ?? user?.getName() ?? '—'
   const subtitle = profile?.username ?? profile?.email ?? ''

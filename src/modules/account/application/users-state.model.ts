@@ -1,5 +1,6 @@
 import type { User } from '../domain/user.entity'
 import type { UsersListPage } from '../domain/users-list-page.model'
+import type { UserFormErrors } from './user-form.model'
 
 export type UsersStatus = 'loading' | 'ready' | 'error'
 
@@ -14,6 +15,7 @@ export interface UsersState {
   total: number
   saving: boolean
   formError: string | null
+  formErrors: UserFormErrors
 }
 
 export const INITIAL_USERS_STATE: UsersState = {
@@ -27,6 +29,7 @@ export const INITIAL_USERS_STATE: UsersState = {
   total: 0,
   saving: false,
   formError: null,
+  formErrors: {},
 }
 
 export type UsersAction =
@@ -36,7 +39,7 @@ export type UsersAction =
   | { type: 'SET_QUERY'; query: string }
   | { type: 'SET_PAGE'; page: number }
   | { type: 'SAVE_START' }
-  | { type: 'SAVE_ERROR'; message: string }
+  | { type: 'SAVE_ERROR'; message: string; errors: UserFormErrors }
   | { type: 'SAVE_DONE' }
   | { type: 'ROW_ADDED'; user: User }
   | { type: 'ROW_UPDATED'; user: User }

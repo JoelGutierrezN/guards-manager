@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function AccountProfileForm({ profile, onSaved, onNotify }: Props): JSX.Element {
-  const { state, visibleErrors, canSave, setName, setEmail, setUsername, setPhone, submit } =
+  const { state, visibleErrors, setName, setEmail, setUsername, setPhone, submit } =
     useAccountProfileForm({
       profile,
       onSaved: (updatedProfile) => {
@@ -83,7 +83,7 @@ export function AccountProfileForm({ profile, onSaved, onNotify }: Props): JSX.E
       )}
 
       <div className="flex justify-end">
-        <Button type="submit" variant="primary" disabled={!canSave}>
+        <Button type="submit" variant="primary" disabled={state.isSaving}>
           {state.isSaving ? 'Guardando...' : 'Guardar cambios'}
         </Button>
       </div>

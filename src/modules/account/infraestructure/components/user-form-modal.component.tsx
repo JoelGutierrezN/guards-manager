@@ -16,6 +16,7 @@ import {
   Modal,
 } from '../../../shared/infraestructure/components/ui'
 import type { User } from '../../domain/user.entity'
+import type { UserFormErrors } from '../../application/user-form.model'
 import type { CreateUserInput, UpdateUserInput } from '../../domain/user-input.model'
 import { useUserForm } from '../../hooks/use-user-form.hook'
 
@@ -24,6 +25,7 @@ interface Props {
   editUser: User | null
   saving: boolean
   formError: string | null
+  formErrors: UserFormErrors
   onClose: () => void
   onSave: (input: CreateUserInput | UpdateUserInput) => void
 }
@@ -33,21 +35,13 @@ export function UserFormModal({
   editUser,
   saving,
   formError,
+  formErrors,
   onClose,
   onSave,
 }: Props): JSX.Element {
   const isEdit = editUser != null
-  const {
-    state,
-    visibleErrors,
-    canSave,
-    setName,
-    setEmail,
-    setUsername,
-    setPhone,
-    setPassword,
-    submit,
-  } = useUserForm({ editUser, onSave })
+  const { state, visibleErrors, setName, setEmail, setUsername, setPhone, setPassword, submit } =
+    useUserForm({ editUser, apiErrors: formErrors, onSave })
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -153,17 +147,21 @@ export function UserFormModal({
             />
           </div>
 
-          {formError != null && <span className="text-[12px] text-danger">{formError}</span>}
-        </form>
+          {formError != null && (
+            <span className="text-[12px] text-danger" role="alert">
+              {formError}
+            </span>
+          )}
 
-        <div className="mt-[18px] flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button variant="primary" disabled={!canSave || saving} onClick={submit}>
-            {isEdit ? 'Guardar cambios' : 'Crear usuario'}
-          </Button>
-        </div>
+          <div className="mt-[18px] flex justify-end gap-2">
+            <Button type="button" variant="ghost" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button type="submit" variant="primary" disabled={saving}>
+              {isEdit ? 'Guardar cambios' : 'Crear usuario'}
+            </Button>
+          </div>
+        </form>
       </div>
     </Modal>
   )
