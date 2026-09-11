@@ -7,6 +7,7 @@ import {
   SentIcon,
   UserGroupIcon,
   UserIcon,
+  UserMultipleIcon,
   Wrench01Icon,
 } from '@hugeicons/core-free-icons'
 import type { IconSvgElement } from '@hugeicons/react'
@@ -52,6 +53,9 @@ export const SIDEBAR_GROUPS: SidebarGroup[] = [
   },
   {
     title: 'Cuenta',
-    items: [{ id: 'profile', label: 'Mi perfil', icon: UserIcon }],
+    items: [
+      { id: 'profile', label: 'Mi perfil', icon: UserIcon },
+      { id: 'users', label: 'Usuarios', icon: UserMultipleIcon },
+    ],
   },
 ]
