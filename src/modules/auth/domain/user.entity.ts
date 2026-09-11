@@ -1,14 +1,14 @@
 import type { UserPrimitives } from './user.interfaces'
 
 export class User {
-  private readonly uuid: string
+  private readonly id: string
   private email: string
   private name: string
   private username: string
-  private phone: string
+  private phone: string | null
 
-  constructor(uuid: string, email: string, name: string, username: string, phone: string) {
-    this.uuid = uuid
+  constructor(id: string, email: string, name: string, username: string, phone: string | null) {
+    this.id = id
     this.email = email
     this.name = name
     this.username = username
@@ -16,20 +16,36 @@ export class User {
   }
 
   static create(props: UserPrimitives): User {
-    return new User(props.uuid, props.email, props.name, props.username, props.phone)
+    return new User(props.id, props.email, props.name, props.username, props.phone)
   }
 
   static fromPrimitives(props: UserPrimitives): User {
-    return new User(props.uuid, props.email, props.name, props.username, props.phone)
+    return new User(props.id, props.email, props.name, props.username, props.phone)
+  }
+
+  getId(): string {
+    return this.id
   }
 
   getName(): string {
     return this.name
   }
 
+  getUsername(): string {
+    return this.username
+  }
+
+  getEmail(): string {
+    return this.email
+  }
+
+  getPhone(): string | null {
+    return this.phone
+  }
+
   toPrimitives(): UserPrimitives {
     return {
-      uuid: this.uuid,
+      id: this.id,
       email: this.email,
       name: this.name,
       username: this.username,

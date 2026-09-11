@@ -5,7 +5,7 @@ import type { LoginResponseDto } from '../dto/login.response.dto'
 export class AuthMapper {
   static toUserEntity(dto: LoginResponseDto['user']): User {
     return User.create({
-      uuid: dto.uuid,
+      id: dto.id,
       email: dto.email,
       name: dto.name,
       username: dto.username,
@@ -17,6 +17,7 @@ export class AuthMapper {
     return {
       user: AuthMapper.toUserEntity(dto.user),
       token: dto.token,
+      expiresAt: dto.expiresAt,
     }
   }
 }

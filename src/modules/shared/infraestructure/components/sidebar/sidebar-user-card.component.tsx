@@ -1,33 +1,28 @@
 import { type JSX } from 'react'
 import { ArrowUp01Icon, Logout01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { Avatar } from '../ui'
+import { useAccountMe } from '../../../../account/hooks/use-account-me.hook'
+import { useAuth } from '../../../../auth/hooks/use-auth.hook'
 
 interface Props {
-  name: string
-  role: string
   onLogout: () => void
 }
 
-const initials = (name: string): string =>
-  name
-    .split(' ')
-    .filter(Boolean)
-    .map((part) => part[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase() || '·'
+export function SidebarUserCard({ onLogout }: Props): JSX.Element {
+  const { profile } = useAccountMe()
+  const { user } = useAuth()
+  const name = profile?.name ?? user?.getName() ?? '—'
+  const subtitle = profile?.username ?? profile?.email ?? ''
 
-export function SidebarUserCard({ name, role, onLogout }: Props): JSX.Element {
   return (
     <div className="mt-auto border-t border-lavender-line pt-3">
       <div className="flex w-full items-center gap-2.5 rounded-[14px] px-2 py-1.5">
-        <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-medium text-cream">
-          {initials(name)}
-        </span>
+        <Avatar name={name} size="sm" tone="navy" />
         <div className="min-w-0 flex-1 text-left group-data-[collapsed=true]/sidebar:hidden">
           <b className="block truncate text-[12px] font-semibold text-ink">{name}</b>
           <span className="block truncate font-mono text-[10px] tracking-[0.06em] text-muted">
-            {role}
+            {subtitle}
           </span>
         </div>
         <button

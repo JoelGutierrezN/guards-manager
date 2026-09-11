@@ -2,6 +2,7 @@ import { HttpDataSource } from '../../../shared/infraestructure/datasource/http.
 import type { AuthRepository as AuthRepositoryContract } from '../../domain/auth.repository'
 import type { AuthSession } from '../../domain/auth-session.model'
 import type { LoginResponseDto } from '../dto/login.response.dto'
+import type { TrustClientResponseDto } from '../dto/trust-client.response.dto'
 import { AuthMapper } from '../mappers/auth.mapper'
 
 class AuthRepositoryImpl implements AuthRepositoryContract {
@@ -21,6 +22,11 @@ class AuthRepositoryImpl implements AuthRepositoryContract {
 
   async logout(): Promise<void> {
     await this.datasource.post('/logout')
+  }
+
+  async trustClient(): Promise<string> {
+    const response = await this.datasource.post<TrustClientResponseDto>('/trust-client')
+    return response.expiresAt
   }
 }
 
