@@ -64,16 +64,19 @@ export function useEmployeeForm({ enabled, editEmployee, onSave }: UseEmployeeFo
     [],
   )
 
-  const createRole = useCallback(async (name: string) => {
+  /** Devuelve si el puesto se creó: el formulario inline sólo se cierra en ese caso. */
+  const createRole = useCallback(async (name: string): Promise<boolean> => {
     const trimmedName = name.trim()
-    if (trimmedName === '') return
+    if (trimmedName === '') return false
     dispatch({ type: 'ROLE_CREATE_START' })
     try {
       const role = await rolesRepository.create(trimmedName)
       dispatch({ type: 'ROLE_CREATE_SUCCESS', role })
+      return true
     } catch (error) {
       const message = ApiValidationErrorHelper.messageFrom(error, ROLE_CREATE_GENERIC_MESSAGE)
       dispatch({ type: 'ROLE_CREATE_ERROR', message })
+      return false
     }
   }, [])
 

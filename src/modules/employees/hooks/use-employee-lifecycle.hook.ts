@@ -1,10 +1,9 @@
 import { useCallback, useReducer } from 'react'
 import type { Employee } from '../domain/employee.entity'
-import type { EmployeeStatus } from '../domain/employee-status.model'
 import { EmployeeStatusHelper } from '../application/employee-status.helper'
 import {
   INITIAL_EMPLOYEE_LIFECYCLE_STATE,
-  type EmployeeLifecycleConfirmKind,
+  type EmployeeLifecycleTarget,
 } from '../application/employee-lifecycle-state.model'
 import { employeeLifecycleReducer } from '../application/employee-lifecycle.reducer'
 import { employeesRepository } from '../infraestructure/repositories/employees.repository'
@@ -14,57 +13,54 @@ const STATUS_FALLBACK_MESSAGE = 'No se pudo actualizar el estado del empleado.'
 const DELETE_FALLBACK_MESSAGE = 'No se pudo eliminar al empleado.'
 
 interface UseEmployeeLifecycleOptions {
-  employeeId: string
-  status: EmployeeStatus
   onStatusChanged: (employee: Employee) => void
-  onDeleted: () => void
+  onDeleted: (target: EmployeeLifecycleTarget) => void
 }
 
-export function useEmployeeLifecycle({
-  employeeId,
-  status,
-  onStatusChanged,
-  onDeleted,
-}: UseEmployeeLifecycleOptions) {
+export function useEmployeeLifecycle({ onStatusChanged, onDeleted }: UseEmployeeLifecycleOptions) {
   const [state, dispatch] = useReducer(employeeLifecycleReducer, INITIAL_EMPLOYEE_LIFECYCLE_STATE)
+  const { target, confirmKind } = state
 
   const openStatusConfirm = useCallback(
-    () => dispatch({ type: 'OPEN_CONFIRM', kind: 'status' }),
+    (employee: EmployeeLifecycleTarget) =>
+      dispatch({ type: 'OPEN_CONFIRM', kind: 'status', target: employee }),
     [],
   )
   const openDeleteConfirm = useCallback(
-    () => dispatch({ type: 'OPEN_CONFIRM', kind: 'delete' }),
+    (employee: EmployeeLifecycleTarget) =>
+      dispatch({ type: 'OPEN_CONFIRM', kind: 'delete', target: employee }),
     [],
   )
   const closeConfirm = useCallback(() => dispatch({ type: 'CLOSE_CONFIRM' }), [])
 
   const confirm = useCallback(async () => {
-    const kind: EmployeeLifecycleConfirmKind | null = state.confirmKind
+    if (target === null || confirmKind === null) return
     dispatch({ type: 'ACTION_START' })
     try {
-      if (kind === 'delete') {
-        await employeesRepository.remove(employeeId)
+      if (confirmKind === 'delete') {
+        await employeesRepository.remove(target.id)
         dispatch({ type: 'ACTION_SUCCESS' })
-        onDeleted()
+        onDeleted(target)
         return
       }
       const updated = await employeesRepository.updateStatus(
-        employeeId,
-        EmployeeStatusHelper.opposite(status),
+        target.id,
+        EmployeeStatusHelper.opposite(target.status),
       )
       dispatch({ type: 'ACTION_SUCCESS' })
       onStatusChanged(updated)
     } catch (error) {
-      const fallback = kind === 'delete' ? DELETE_FALLBACK_MESSAGE : STATUS_FALLBACK_MESSAGE
+      const fallback = confirmKind === 'delete' ? DELETE_FALLBACK_MESSAGE : STATUS_FALLBACK_MESSAGE
       const message = ApiConflictErrorHelper.isConflict(error)
         ? ApiConflictErrorHelper.messageFrom(error, fallback)
         : fallback
       dispatch({ type: 'ACTION_ERROR', message })
     }
-  }, [employeeId, status, state.confirmKind, onStatusChanged, onDeleted])
+  }, [target, confirmKind, onStatusChanged, onDeleted])
 
   return {
-    confirmKind: state.confirmKind,
+    target,
+    confirmKind,
     loading: state.loading,
     errorMessage: state.errorMessage,
     openStatusConfirm,

@@ -127,9 +127,14 @@ export function useEmployeeFile() {
     [],
   )
 
+  // El PUT sólo devuelve al empleado: se repinta al instante y se recarga el expediente
+  // para que alertas, resumen e historial queden coherentes con el nuevo estado.
   const handleEmployeeSaved = useCallback(
-    (employee: Employee) => dispatch({ type: 'EMPLOYEE_UPDATED', employee }),
-    [],
+    (employee: Employee) => {
+      dispatch({ type: 'EMPLOYEE_UPDATED', employee })
+      reload()
+    },
+    [reload],
   )
 
   const { modalOpen, modalKey, editingEmployee, saving, formError, openEdit, closeModal, save } =

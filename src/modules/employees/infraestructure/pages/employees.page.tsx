@@ -11,15 +11,20 @@ import {
 import { KpiCard } from '../../../shared/infraestructure/components/ui/kpi-card.tsx'
 import type { Employee } from '../../domain/employee.entity'
 import type { CreateEmployeeInput } from '../../domain/employee-input.model'
+import { EmployeeLifecycleTextsHelper } from '../../application/employee-lifecycle-texts.helper'
 import { EmployeesTable } from '../components/employees-table.component'
 import { EmployeeFormModal } from '../components/employee-form-modal.component'
+import { EmployeeLifecycleDialog } from '../components/employee-lifecycle-dialog.component'
+import { useNavigationToast } from '../../../shared/hooks/use-navigation-toast.hook'
 import { useEmployees } from '../../hooks/use-employees.hook'
+import { useEmployeeLifecycle } from '../../hooks/use-employee-lifecycle.hook'
 
 export const EmployeesPage = (): JSX.Element => {
   const {
     state,
     kpis,
     reloadList,
+    applyRowUpdate,
     setPage,
     setQuery,
     clearQuery,
@@ -36,6 +41,20 @@ export const EmployeesPage = (): JSX.Element => {
   } = useEmployees()
   const [addToast, ToastHost] = useToasts()
   const navigate = useNavigate()
+
+  useNavigationToast(addToast)
+
+  const lifecycle = useEmployeeLifecycle({
+    onStatusChanged: (updated) => {
+      applyRowUpdate(updated)
+      reloadList()
+      addToast(EmployeeLifecycleTextsHelper.statusChangedToast(updated.status), 'success')
+    },
+    onDeleted: (target) => {
+      reloadList()
+      addToast(EmployeeLifecycleTextsHelper.deletedToast(target.name), 'success')
+    },
+  })
 
   const handleSave = async (input: CreateEmployeeInput): Promise<void> => {
     const message = await saveEmployee(input)
@@ -110,6 +129,8 @@ export const EmployeesPage = (): JSX.Element => {
         onClearQuery={clearQuery}
         onEdit={openEdit}
         onOpen={handleOpenFile}
+        onChangeStatus={lifecycle.openStatusConfirm}
+        onDelete={lifecycle.openDeleteConfirm}
       />
 
       <EmployeeFormModal
@@ -120,6 +141,15 @@ export const EmployeesPage = (): JSX.Element => {
         formError={state.formError}
         onClose={closeModal}
         onSave={(input) => void handleSave(input)}
+      />
+
+      <EmployeeLifecycleDialog
+        target={lifecycle.target}
+        confirmKind={lifecycle.confirmKind}
+        loading={lifecycle.loading}
+        errorMessage={lifecycle.errorMessage}
+        onConfirm={() => void lifecycle.confirm()}
+        onClose={lifecycle.closeConfirm}
       />
 
       {ToastHost}

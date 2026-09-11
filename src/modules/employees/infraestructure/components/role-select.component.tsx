@@ -12,6 +12,9 @@ import type { RolesStatus } from '../../application/employee-form.model'
 import { IconButton } from '../../../shared/infraestructure/components/ui'
 import { RoleOption } from './role-option.component'
 
+/** Tope del `name` en `RoleRequest` del API: evita el 422 por longitud. */
+const ROLE_NAME_MAX_LENGTH = 60
+
 interface Props {
   label: string
   value: string
@@ -21,7 +24,7 @@ interface Props {
   creating: boolean
   createError: string | null
   onChange: (roleId: string) => void
-  onCreate: (name: string) => void
+  onCreate: (name: string) => Promise<boolean>
 }
 
 export function RoleSelect({
@@ -80,9 +83,12 @@ export function RoleSelect({
     setIsOpen(false)
   }
 
-  const handleCreateRole = (): void => {
-    if (newRoleName.trim() === '') return
-    onCreate(newRoleName)
+  // El formulario inline sigue abierto con lo tecleado hasta que el API confirma:
+  // un 422 (nombre repetido o demasiado largo) debe poder corregirse sin reescribirlo.
+  const handleCreateRole = async (): Promise<void> => {
+    if (creating || newRoleName.trim() === '') return
+    const created = await onCreate(newRoleName)
+    if (!created) return
     setNewRoleName('')
     setIsCreating(false)
   }
@@ -148,10 +154,11 @@ export function RoleSelect({
                       autoFocus
                       value={newRoleName}
                       disabled={creating}
+                      maxLength={ROLE_NAME_MAX_LENGTH}
                       placeholder="Nombre del puesto"
                       onChange={(event) => setNewRoleName(event.target.value)}
                       onKeyDown={(event) => {
-                        if (event.key === 'Enter') handleCreateRole()
+                        if (event.key === 'Enter') void handleCreateRole()
                       }}
                       className="h-8 flex-1 rounded-[10px] border border-hairline-strong bg-white px-2.5 text-[12px] text-ink outline-none focus:border-brand"
                     />
@@ -160,7 +167,7 @@ export function RoleSelect({
                       size="sm"
                       tip="Crear puesto"
                       disabled={creating || newRoleName.trim() === ''}
-                      onClick={handleCreateRole}
+                      onClick={() => void handleCreateRole()}
                     />
                   </div>
                 ) : (

@@ -1,5 +1,5 @@
 import { type JSX } from 'react'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate } from 'react-router'
 import {
   ArrowLeft01Icon,
   Delete02Icon,
@@ -10,18 +10,17 @@ import {
   UserCheck01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import {
-  Button,
-  ConfirmDialog,
-  PageHero,
-  useToasts,
-} from '../../../shared/infraestructure/components/ui'
+import { Button, PageHero, useToasts } from '../../../shared/infraestructure/components/ui'
+import { NavigationToastHelper } from '../../../shared/application/navigation-toast.helper'
 import type { EmployeeFileDamage } from '../../domain/employee-file-damage.model'
 import type { EmployeeFileDocument } from '../../domain/employee-file-document.model'
 import type { UpdateEmployeeInput } from '../../domain/employee-input.model'
+import { EmployeeStatusHelper } from '../../application/employee-status.helper'
+import { EmployeeLifecycleTextsHelper } from '../../application/employee-lifecycle-texts.helper'
 import { useEmployeeFile } from '../../hooks/use-employee-file.hook'
 import { useEmployeeLifecycle } from '../../hooks/use-employee-lifecycle.hook'
 import { EmployeeFormModal } from '../components/employee-form-modal.component'
+import { EmployeeLifecycleDialog } from '../components/employee-lifecycle-dialog.component'
 import { EmployeeFileError } from '../components/employee-file-error.component'
 import { EmployeeFileIdentityCard } from '../components/employee-file-identity-card.component'
 import { EmployeeFilePanel } from '../components/employee-file-panel.component'
@@ -62,17 +61,24 @@ export function EmployeeFilePage(): JSX.Element {
   } = useEmployeeFile()
   const [addToast, ToastHost] = useToasts()
   const navigate = useNavigate()
-  const { employeeId: routeEmployeeId } = useParams<{ employeeId: string }>()
 
   const goToEmployees = (): void => {
     void navigate(EMPLOYEES_PATH)
   }
 
   const lifecycle = useEmployeeLifecycle({
-    employeeId: routeEmployeeId ?? '',
-    status: state.file?.employee.status ?? 'activo',
-    onStatusChanged: () => reload(),
-    onDeleted: goToEmployees,
+    onStatusChanged: (updated) => {
+      reload()
+      addToast(EmployeeLifecycleTextsHelper.statusChangedToast(updated.status), 'success')
+    },
+    // El expediente deja de existir: el aviso se muestra ya en el listado.
+    onDeleted: (target) => {
+      void navigate(EMPLOYEES_PATH, {
+        state: NavigationToastHelper.stateFor(
+          EmployeeLifecycleTextsHelper.deletedToast(target.name),
+        ),
+      })
+    },
   })
 
   const handleDownloadPdf = async (): Promise<void> => {
@@ -95,14 +101,29 @@ export function EmployeeFilePage(): JSX.Element {
     if (message != null) addToast(message)
   }
 
-  if (state.status === 'loading') return <EmployeeFileSkeleton />
-
-  if (state.status === 'error' || state.file === null) {
-    return <EmployeeFileError message={state.error} onRetry={reload} onBack={goToEmployees} />
+  // El anfitrión de avisos se mantiene montado también mientras el expediente recarga:
+  // si no, el toast de "dado de baja" moriría con el esqueleto que dispara `reload()`.
+  if (state.status === 'loading') {
+    return (
+      <>
+        <EmployeeFileSkeleton />
+        {ToastHost}
+      </>
+    )
   }
 
-  const employeeId = state.file.employee.id
-  const isActiveEmployee = state.file.employee.status === 'activo'
+  if (state.status === 'error' || state.file === null) {
+    return (
+      <>
+        <EmployeeFileError message={state.error} onRetry={reload} onBack={goToEmployees} />
+        {ToastHost}
+      </>
+    )
+  }
+
+  const profile = state.file.employee
+  const employeeId = profile.id
+  const isActiveEmployee = EmployeeStatusHelper.isActive(profile.status)
 
   const goToNewAssignment = (): void => {
     void navigate(`${NEW_ASSIGNMENT_PATH}?employeeId=${employeeId}`)
@@ -139,11 +160,15 @@ export function EmployeeFilePage(): JSX.Element {
             <Button
               icon={isActiveEmployee ? UserBlock01Icon : UserCheck01Icon}
               size="md"
-              onClick={lifecycle.openStatusConfirm}
+              onClick={() => lifecycle.openStatusConfirm(profile)}
             >
               {isActiveEmployee ? 'Dar de baja' : 'Reactivar'}
             </Button>
-            <Button icon={Delete02Icon} size="md" onClick={lifecycle.openDeleteConfirm}>
+            <Button
+              icon={Delete02Icon}
+              size="md"
+              onClick={() => lifecycle.openDeleteConfirm(profile)}
+            >
               Eliminar
             </Button>
             <Button
@@ -162,7 +187,7 @@ export function EmployeeFilePage(): JSX.Element {
 
       <div className="reveal-d2 mt-4 grid grid-cols-[280px_1fr] gap-4 max-[1100px]:grid-cols-1">
         <div className="flex flex-col gap-3">
-          <EmployeeFileIdentityCard employee={state.file.employee} alerts={state.file.alerts} />
+          <EmployeeFileIdentityCard employee={profile} alerts={state.file.alerts} />
           <EmployeeFileSummaryCard summary={state.file.summary} />
         </div>
 
@@ -193,31 +218,11 @@ export function EmployeeFilePage(): JSX.Element {
         onSave={(input) => void handleSave(input)}
       />
 
-      <ConfirmDialog
-        open={lifecycle.confirmKind != null}
-        title={
-          lifecycle.confirmKind === 'delete'
-            ? `¿Eliminar a ${state.file.employee.name}?`
-            : `¿${isActiveEmployee ? 'Dar de baja' : 'Reactivar'} a ${state.file.employee.name}?`
-        }
-        eyebrow={lifecycle.confirmKind === 'delete' ? 'Eliminar empleado' : 'Cambiar estado'}
-        body={
-          lifecycle.errorMessage ??
-          (lifecycle.confirmKind === 'delete'
-            ? 'Esta acción no se puede deshacer.'
-            : isActiveEmployee
-              ? 'El empleado dejará de poder recibir nuevas asignaciones.'
-              : 'El empleado volverá a estar disponible para nuevas asignaciones.')
-        }
-        confirmLabel={
-          lifecycle.confirmKind === 'delete'
-            ? 'Eliminar'
-            : isActiveEmployee
-              ? 'Dar de baja'
-              : 'Reactivar'
-        }
-        destructive={lifecycle.confirmKind === 'delete'}
+      <EmployeeLifecycleDialog
+        target={lifecycle.target}
+        confirmKind={lifecycle.confirmKind}
         loading={lifecycle.loading}
+        errorMessage={lifecycle.errorMessage}
         onConfirm={() => void lifecycle.confirm()}
         onClose={lifecycle.closeConfirm}
       />

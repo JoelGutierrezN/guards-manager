@@ -10,7 +10,12 @@ export function employeeLifecycleReducer(
 ): EmployeeLifecycleState {
   switch (action.type) {
     case 'OPEN_CONFIRM':
-      return { confirmKind: action.kind, loading: false, errorMessage: null }
+      return {
+        target: action.target,
+        confirmKind: action.kind,
+        loading: false,
+        errorMessage: null,
+      }
     case 'CLOSE_CONFIRM':
       return INITIAL_EMPLOYEE_LIFECYCLE_STATE
     case 'ACTION_START':

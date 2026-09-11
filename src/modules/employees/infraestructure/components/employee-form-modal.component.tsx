@@ -110,7 +110,7 @@ export function EmployeeFormModal({
             creating={state.roleCreating}
             createError={state.roleCreateError}
             onChange={setRole}
-            onCreate={(name) => void createRole(name)}
+            onCreate={createRole}
           />
 
           <div className="grid grid-cols-2 gap-3">
