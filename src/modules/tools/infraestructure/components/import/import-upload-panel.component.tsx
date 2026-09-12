@@ -8,6 +8,7 @@ const DROPZONE_HINT = 'Formatos aceptados: .xlsx, .xls, .csv (máx. 20 MB)'
 interface Props {
   selectedFileName: string | null
   isDownloadingTemplate: boolean
+  templateError: string | null
   isUploading: boolean
   uploadError: string | null
   onDownloadTemplate: () => void
@@ -19,6 +20,7 @@ interface Props {
 export function ImportUploadPanel({
   selectedFileName,
   isDownloadingTemplate,
+  templateError,
   isUploading,
   uploadError,
   onDownloadTemplate,
@@ -41,6 +43,9 @@ export function ImportUploadPanel({
         >
           {isDownloadingTemplate ? 'Descargando…' : 'Descargar plantilla'}
         </Button>
+        {templateError !== null && (
+          <p className="mt-2 text-[12px] font-medium text-danger">{templateError}</p>
+        )}
       </div>
 
       <FileDropzone

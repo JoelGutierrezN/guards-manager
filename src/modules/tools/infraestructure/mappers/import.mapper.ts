@@ -1,11 +1,16 @@
 import { PaginationMapper } from '../../../shared/infraestructure/mappers/pagination.mapper'
-import type { ImportBatch, ImportBatchStatus } from '../../domain/import-batch.entity'
+import type {
+  ImportBatch,
+  ImportBatchError,
+  ImportBatchStatus,
+} from '../../domain/import-batch.entity'
 import type { ImportAuditEntry, ImportEntityType } from '../../domain/import-audit-entry.entity'
 import type { ImportBatchesPage } from '../../domain/import-batches-page.model'
 import type {
   ImportAuditEntryDto,
   ImportBatchCollectionDto,
   ImportBatchDto,
+  ImportBatchErrorDto,
 } from '../dto/import-batch.dto'
 
 const BATCH_STATUSES: ImportBatchStatus[] = ['pending', 'processing', 'completed', 'failed']
@@ -30,10 +35,16 @@ export class ImportMapper {
       rowNumber: dto.rowNumber,
       entityType: ImportMapper.toEntityType(dto.entityType),
       createdId: dto.createdId,
+      createdName: dto.createdName,
       candidateId: dto.candidateId,
+      candidateName: dto.candidateName,
       similarity: dto.similarity,
       resolved: dto.resolved,
     }
+  }
+
+  static toBatchError(dto: ImportBatchErrorDto): ImportBatchError {
+    return { row: dto.row, message: dto.message }
   }
 
   static toBatch(dto: ImportBatchDto): ImportBatch {
@@ -47,7 +58,7 @@ export class ImportMapper {
       reusedCount: dto.reusedCount,
       fuzzyCount: dto.fuzzyCount,
       errorCount: dto.errorCount,
-      errors: dto.errors ?? [],
+      errors: (dto.errors ?? []).map((error) => ImportMapper.toBatchError(error)),
       auditEntries: (dto.auditEntries ?? []).map((entry) => ImportMapper.toAuditEntry(entry)),
       createdAt: dto.createdAt,
     }

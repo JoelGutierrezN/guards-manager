@@ -6,7 +6,7 @@ import { useNotificationsTray } from './use-notifications-tray.hook'
 
 export function TopbarNotifications(): JSX.Element {
   const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const { status, notifications, unreadCount, markAsRead } = useNotificationsTray()
+  const { status, notifications, unreadCount, markAsRead, reload } = useNotificationsTray()
 
   return (
     <div className="relative">
@@ -20,8 +20,9 @@ export function TopbarNotifications(): JSX.Element {
       {isPanelOpen && (
         <TopbarNotificationsPanel
           notifications={notifications}
-          isLoading={status === 'loading'}
+          status={status}
           onClose={() => setIsPanelOpen(false)}
+          onRetry={reload}
           onMarkAsRead={markAsRead}
         />
       )}

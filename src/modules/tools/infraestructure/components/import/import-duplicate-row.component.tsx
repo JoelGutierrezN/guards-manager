@@ -1,6 +1,7 @@
-import { type JSX } from 'react'
+import { type JSX, useMemo } from 'react'
 import { Button, Chip } from '../../../../shared/infraestructure/components/ui'
 import { ImportEntityTypeHelper } from '../../helpers/import-entity-type.helper'
+import { ImportDuplicateSummaryHelper } from '../../helpers/import-duplicate-summary.helper'
 import type { ImportAuditEntry } from '../../../domain/import-audit-entry.entity'
 
 interface Props {
@@ -11,15 +12,15 @@ interface Props {
 }
 
 export function ImportDuplicateRow({ entry, isResolving, onKeep, onDiscard }: Props): JSX.Element {
+  const summary = useMemo(() => ImportDuplicateSummaryHelper.describe(entry), [entry])
+
   return (
     <li className="flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-hairline bg-white px-3 py-2.5">
       <div className="flex items-center gap-2">
         <Chip size="sm" tone="warn">
           {ImportEntityTypeHelper.label(entry.entityType)}
         </Chip>
-        <span className="text-[12px] text-ink-2">
-          Fila {entry.rowNumber} · {entry.similarity}% de similitud con un registro existente
-        </span>
+        <span className="text-[12px] text-ink-2">{summary}</span>
       </div>
       <div className="flex gap-2">
         <Button size="sm" disabled={isResolving} onClick={onKeep}>

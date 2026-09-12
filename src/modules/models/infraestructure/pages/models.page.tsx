@@ -243,7 +243,9 @@ export function ModelsPage(): JSX.Element {
         onConfirm={() => void handleConfirmDelete()}
       />
 
+      {/* `modalKey` remonta el modal en cada apertura: el destino elegido antes no sobrevive. */}
       <MergeModelModal
+        key={modalKey}
         open={mergeModalOpen}
         model={mergingModel}
         merging={state.merging}

@@ -106,7 +106,10 @@ export function useTools({ onMutated, maxStock }: UseToolsOptions = {}) {
     (range: [number, number]) => dispatch({ type: 'SET_STOCK_RANGE', range }),
     [],
   )
-  const clearFilters = useCallback(() => dispatch({ type: 'CLEAR_FILTERS' }), [])
+  const clearFilters = useCallback(
+    () => dispatch({ type: 'CLEAR_FILTERS', maxStock: maxStockRef.current }),
+    [],
+  )
   const setSearch = useCallback((search: string) => dispatch({ type: 'SET_SEARCH', search }), [])
   const toggleSort = useCallback((key: ToolsSortKey) => dispatch({ type: 'TOGGLE_SORT', key }), [])
   const setTab = useCallback((tab: ToolsTabKey) => dispatch({ type: 'SET_TAB', tab }), [])

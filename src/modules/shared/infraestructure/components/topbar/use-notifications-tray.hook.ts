@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { notificationsRepository } from '../../repositories/notifications.repository'
 import { INITIAL_NOTIFICATIONS_TRAY_STATE } from './notifications-tray.model'
 import { notificationsTrayReducer } from './notifications-tray.reducer'
@@ -7,7 +7,7 @@ export function useNotificationsTray() {
   const [state, dispatch] = useReducer(notificationsTrayReducer, INITIAL_NOTIFICATIONS_TRAY_STATE)
   const sequenceRef = useRef(0)
 
-  useEffect(() => {
+  const reload = useCallback((): void => {
     const sequence = ++sequenceRef.current
     dispatch({ type: 'FETCH_START' })
     notificationsRepository
@@ -21,6 +21,10 @@ export function useNotificationsTray() {
         if (sequence === sequenceRef.current) dispatch({ type: 'FETCH_ERROR' })
       })
   }, [])
+
+  useEffect(() => {
+    reload()
+  }, [reload])
 
   const unreadCount = useMemo(
     () => state.notifications.filter((notification) => notification.readAt === null).length,
@@ -38,5 +42,11 @@ export function useNotificationsTray() {
     })
   }
 
-  return { status: state.status, notifications: state.notifications, unreadCount, markAsRead }
+  return {
+    status: state.status,
+    notifications: state.notifications,
+    unreadCount,
+    markAsRead,
+    reload,
+  }
 }

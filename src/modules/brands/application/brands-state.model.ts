@@ -39,6 +39,7 @@ export type BrandsAction =
   | { type: 'DELETE_START' }
   | { type: 'DELETE_ERROR'; message: string }
   | { type: 'DELETE_DONE' }
+  | { type: 'MERGE_RESET' }
   | { type: 'MERGE_START' }
   | { type: 'MERGE_ERROR'; message: string }
   | { type: 'MERGE_DONE' }

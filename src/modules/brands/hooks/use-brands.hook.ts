@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import { useOverlayState } from '@heroui/react'
 import type { Brand } from '../domain/brand.entity'
 import type { BrandsWindowManager } from '../application/brands-window.model'
+import type { BrandMutationResult } from '../application/brand-mutation-result.model'
 import { brandsReducer } from '../application/brands.reducer'
 import { brandRepository } from '../infraestructure/repositories/brand.repository'
 import { BrandsQueryParamsHelper } from '../infraestructure/helpers/brands-query-params.helper'
@@ -134,7 +135,7 @@ export function useBrands() {
     [modal],
   )
 
-  const confirmDelete = useCallback(async (): Promise<string | null> => {
+  const confirmDelete = useCallback(async (): Promise<BrandMutationResult | null> => {
     const { window, payload } = windowManager
     if (window !== 'delete' || payload == null) return null
     dispatch({ type: 'DELETE_START' })
@@ -143,18 +144,19 @@ export function useBrands() {
       dispatch({ type: 'DELETE_DONE' })
       modal.close()
       await load(requestRef.current.page, requestRef.current.query)
-      return `Marca "${payload.name}" eliminada`
+      return { message: `Marca "${payload.name}" eliminada`, succeeded: true }
     } catch (error) {
       const message = ApiConflictErrorHelper.isConflict(error)
         ? ApiConflictErrorHelper.messageFrom(error, DELETE_FALLBACK_MESSAGE)
         : DELETE_FALLBACK_MESSAGE
       dispatch({ type: 'DELETE_ERROR', message })
-      return message
+      return { message, succeeded: false }
     }
   }, [windowManager, modal, load])
 
   const openMerge = useCallback(
     (brand: Brand) => {
+      dispatch({ type: 'MERGE_RESET' })
       setWindowManager({ window: 'merge', payload: brand })
       modal.open()
     },
@@ -162,7 +164,7 @@ export function useBrands() {
   )
 
   const mergeBrand = useCallback(
-    async (targetId: string): Promise<string | null> => {
+    async (targetId: string): Promise<BrandMutationResult | null> => {
       const { window, payload } = windowManager
       if (window !== 'merge' || payload == null) return null
       dispatch({ type: 'MERGE_START' })
@@ -171,7 +173,7 @@ export function useBrands() {
         dispatch({ type: 'MERGE_DONE' })
         modal.close()
         await load(requestRef.current.page, requestRef.current.query)
-        return `Marca "${payload.name}" fusionada`
+        return { message: `Marca "${payload.name}" fusionada`, succeeded: true }
       } catch (error) {
         dispatch({
           type: 'MERGE_ERROR',

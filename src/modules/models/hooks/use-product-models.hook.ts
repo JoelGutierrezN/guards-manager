@@ -203,6 +203,7 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
 
   const openMerge = useCallback(
     (model: ProductModel) => {
+      dispatch({ type: 'MERGE_RESET' })
       setWindowManager({ window: 'merge', payload: model })
       modal.open()
     },

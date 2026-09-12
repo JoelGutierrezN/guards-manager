@@ -19,8 +19,16 @@ const TAB_ITEMS: TabItem<ImportTab>[] = [
 ]
 
 export function ImportDrawer({ open, onClose, onImported }: Props): JSX.Element {
-  const { state, setTab, selectFile, downloadTemplate, upload, resolveEntry, loadHistory } =
-    useImport({ open, onImported })
+  const {
+    state,
+    setTab,
+    selectFile,
+    downloadTemplate,
+    upload,
+    resolveEntry,
+    retryPoll,
+    loadHistory,
+  } = useImport({ open, onImported })
 
   const shouldShowUploadPanel = useMemo(
     () => state.tab === 'upload' && state.batch === null,
@@ -36,6 +44,7 @@ export function ImportDrawer({ open, onClose, onImported }: Props): JSX.Element 
           <ImportUploadPanel
             selectedFileName={state.selectedFile?.name ?? null}
             isDownloadingTemplate={state.isDownloadingTemplate}
+            templateError={state.templateError}
             isUploading={state.isUploading}
             uploadError={state.uploadError}
             onDownloadTemplate={() => void downloadTemplate()}
@@ -48,8 +57,11 @@ export function ImportDrawer({ open, onClose, onImported }: Props): JSX.Element 
         {state.tab === 'upload' && state.batch !== null && (
           <ImportBatchPanel
             batch={state.batch}
+            pollError={state.pollError}
+            resolveError={state.resolveError}
             resolvingEntryId={state.resolvingEntryId}
             onResolve={(entryId, action) => void resolveEntry(entryId, action)}
+            onRetryPoll={retryPoll}
           />
         )}
 

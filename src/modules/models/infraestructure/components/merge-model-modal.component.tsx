@@ -33,9 +33,7 @@ export function MergeModelModal({
   const loadTargetOptions = useCallback(
     (query: string): Promise<ComboboxItem[]> => {
       if (model == null) return Promise.resolve([])
-      return ModelMergeOptionsHelper.loadTargets(model.brandId, model.id).then((items) =>
-        items.filter((item) => item.label.toLowerCase().includes(query.trim().toLowerCase())),
-      )
+      return ModelMergeOptionsHelper.loadTargets(model.brandId, model.id, query)
     },
     [model],
   )

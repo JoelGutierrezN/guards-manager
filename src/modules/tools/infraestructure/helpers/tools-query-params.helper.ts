@@ -7,6 +7,7 @@ import type { ToolsState } from '../../application/tools-state.model'
 import {
   DEFAULT_STOCK_RANGE,
   DEFAULT_TOOLS_SORT,
+  effectiveStockMax,
   INITIAL_TOOLS_STATE,
 } from '../../application/tools-state.model'
 
@@ -62,17 +63,6 @@ export class ToolsQueryParamsHelper {
     }
   }
 
-  /**
-   * Techo efectivo del rango de existencias. `undefined` (catálogo sin cargar) y `0` (catálogo
-   * vacío) significan «todavía no se conoce el máximo real», y caen al valor por defecto; es la
-   * misma normalización que aplica `ToolFiltersPanel` para el slider.
-   */
-  private static effectiveMaxStock(maxStock?: number): number {
-    return maxStock !== undefined && maxStock > DEFAULT_STOCK_RANGE[0]
-      ? maxStock
-      : DEFAULT_STOCK_RANGE[1]
-  }
-
   static toParams(
     state: Pick<ToolsState, 'page' | 'tab' | 'search' | 'sort' | 'filters'>,
     maxStock?: number,
@@ -90,8 +80,7 @@ export class ToolsQueryParamsHelper {
       brands: filters.brands.length > 0 ? filters.brands : undefined,
       models: filters.models.length > 0 ? filters.models : undefined,
       stockMin: stockMin > DEFAULT_STOCK_RANGE[0] ? stockMin : undefined,
-      stockMax:
-        stockMax < ToolsQueryParamsHelper.effectiveMaxStock(maxStock) ? stockMax : undefined,
+      stockMax: stockMax < effectiveStockMax(maxStock) ? stockMax : undefined,
     } satisfies QueryParams
   }
 
@@ -114,7 +103,7 @@ export class ToolsQueryParamsHelper {
     if (stockMin > DEFAULT_STOCK_RANGE[0]) {
       params.set('stockMin', String(stockMin))
     }
-    if (stockMax < ToolsQueryParamsHelper.effectiveMaxStock(maxStock)) {
+    if (stockMax < effectiveStockMax(maxStock)) {
       params.set('stockMax', String(stockMax))
     }
     return params
@@ -124,8 +113,7 @@ export class ToolsQueryParamsHelper {
   static countActiveFilters(filters: ToolFilters, maxStock?: number): number {
     const [stockMin, stockMax] = filters.stockRange
     const isRangeActive =
-      stockMin > DEFAULT_STOCK_RANGE[0] ||
-      stockMax < ToolsQueryParamsHelper.effectiveMaxStock(maxStock)
+      stockMin > DEFAULT_STOCK_RANGE[0] || stockMax < effectiveStockMax(maxStock)
     return filters.brands.length + filters.models.length + (isRangeActive ? 1 : 0)
   }
 }

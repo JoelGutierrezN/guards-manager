@@ -5,9 +5,17 @@ export interface ImportAuditEntryDto {
   rowNumber: number
   entityType: string
   createdId: string
+  createdName: string | null
   candidateId: string | null
+  candidateName: string | null
   similarity: number
   resolved: boolean
+}
+
+/** `errors` del API es una lista de objetos `{ row, message }`, nunca de cadenas (5.14). */
+export interface ImportBatchErrorDto {
+  row: number
+  message: string
 }
 
 export interface ImportBatchDto {
@@ -20,7 +28,7 @@ export interface ImportBatchDto {
   reusedCount: number
   fuzzyCount: number
   errorCount: number
-  errors?: string[]
+  errors?: ImportBatchErrorDto[]
   auditEntries?: ImportAuditEntryDto[]
   createdAt: string
 }

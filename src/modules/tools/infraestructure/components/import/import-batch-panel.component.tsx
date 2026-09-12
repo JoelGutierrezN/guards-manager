@@ -1,5 +1,5 @@
 import { type JSX, useMemo } from 'react'
-import { Chip, Progress } from '../../../../shared/infraestructure/components/ui'
+import { Button, Chip, Progress } from '../../../../shared/infraestructure/components/ui'
 import { ImportStatusHelper } from '../../helpers/import-status.helper'
 import { ImportSummaryStats } from './import-summary-stats.component'
 import { ImportDuplicatesList } from './import-duplicates-list.component'
@@ -8,11 +8,21 @@ import type { ImportAuditEntryAction } from '../../../domain/import-audit-entry.
 
 interface Props {
   batch: ImportBatch
+  pollError: string | null
+  resolveError: string | null
   resolvingEntryId: string | null
   onResolve: (entryId: string, action: ImportAuditEntryAction) => void
+  onRetryPoll: () => void
 }
 
-export function ImportBatchPanel({ batch, resolvingEntryId, onResolve }: Props): JSX.Element {
+export function ImportBatchPanel({
+  batch,
+  pollError,
+  resolveError,
+  resolvingEntryId,
+  onResolve,
+  onRetryPoll,
+}: Props): JSX.Element {
   const isFinished = ImportStatusHelper.isFinished(batch.status)
 
   const isTotalKnown = batch.totalRows > 0
@@ -36,7 +46,7 @@ export function ImportBatchPanel({ batch, resolvingEntryId, onResolve }: Props):
         </Chip>
       </div>
 
-      {!isFinished && (
+      {!isFinished && pollError === null && (
         <Progress
           value={progressPercent}
           indeterminate={!isTotalKnown}
@@ -48,13 +58,22 @@ export function ImportBatchPanel({ batch, resolvingEntryId, onResolve }: Props):
         />
       )}
 
+      {!isFinished && pollError !== null && (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-[14px] border border-danger-soft bg-danger-soft px-3 py-2.5">
+          <span className="text-[12px] text-danger">{pollError}</span>
+          <Button size="sm" onClick={onRetryPoll}>
+            Reintentar
+          </Button>
+        </div>
+      )}
+
       {isFinished && <ImportSummaryStats batch={batch} />}
 
       {isFinished && batch.errors.length > 0 && (
         <ul className="flex flex-col gap-1 rounded-[14px] border border-danger-soft bg-danger-soft px-3 py-2.5">
           {batch.errors.map((error) => (
-            <li key={error} className="text-[12px] text-danger">
-              {error}
+            <li key={`${error.row}-${error.message}`} className="text-[12px] text-danger">
+              Fila {error.row}: {error.message}
             </li>
           ))}
         </ul>
@@ -66,6 +85,10 @@ export function ImportBatchPanel({ batch, resolvingEntryId, onResolve }: Props):
           resolvingEntryId={resolvingEntryId}
           onResolve={onResolve}
         />
+      )}
+
+      {resolveError !== null && (
+        <p className="text-[12px] font-medium text-danger">{resolveError}</p>
       )}
     </div>
   )

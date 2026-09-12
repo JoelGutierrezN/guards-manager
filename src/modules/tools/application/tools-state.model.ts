@@ -12,6 +12,16 @@ import type { ToolsTabKey } from '../domain/tools-tab.model'
  */
 export const DEFAULT_STOCK_RANGE: [number, number] = [0, 50]
 
+/**
+ * Techo efectivo del rango de existencias. `undefined` (catálogo sin cargar) y `0` (catálogo
+ * vacío) significan «todavía no se conoce el máximo real» y caen al valor por defecto.
+ */
+export function effectiveStockMax(maxStock?: number): number {
+  return maxStock !== undefined && maxStock > DEFAULT_STOCK_RANGE[0]
+    ? maxStock
+    : DEFAULT_STOCK_RANGE[1]
+}
+
 export const DEFAULT_TOOLS_SORT: ToolsSort = { key: 'name', direction: 'asc' }
 
 export type ToolsStatus = 'loading' | 'ready' | 'error'
@@ -66,7 +76,7 @@ export type ToolsAction =
   | { type: 'TOGGLE_MODEL'; model: string }
   | { type: 'SET_STOCK_RANGE'; range: [number, number] }
   | { type: 'SET_MAX_STOCK'; maxStock: number }
-  | { type: 'CLEAR_FILTERS' }
+  | { type: 'CLEAR_FILTERS'; maxStock?: number }
   | { type: 'SET_SEARCH'; search: string }
   | { type: 'TOGGLE_SORT'; key: ToolsSortKey }
   | { type: 'SET_TAB'; tab: ToolsTabKey }

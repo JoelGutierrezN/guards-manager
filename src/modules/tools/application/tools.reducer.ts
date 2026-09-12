@@ -1,5 +1,5 @@
 import type { ToolsState, ToolsAction } from './tools-state.model'
-import { DEFAULT_STOCK_RANGE } from './tools-state.model'
+import { DEFAULT_STOCK_RANGE, effectiveStockMax } from './tools-state.model'
 
 export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState {
   switch (action.type) {
@@ -42,9 +42,15 @@ export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState
       }
     }
     case 'CLEAR_FILTERS':
+      // El techo vuelve al máximo real del catálogo: con `DEFAULT_STOCK_RANGE` se seguiría
+      // enviando `stockMax=50` y «Limpiar filtros» ocultaría el inventario por encima de 50.
       return {
         ...state,
-        filters: { brands: [], models: [], stockRange: DEFAULT_STOCK_RANGE },
+        filters: {
+          brands: [],
+          models: [],
+          stockRange: [DEFAULT_STOCK_RANGE[0], effectiveStockMax(action.maxStock)],
+        },
         search: '',
         page: 1,
       }

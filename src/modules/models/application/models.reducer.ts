@@ -76,6 +76,8 @@ export function modelsReducer(state: ModelsState, action: ModelsAction): ModelsS
       return { ...state, deletionPreviewStatus: 'ready', deletionPreview: action.preview }
     case 'DELETION_PREVIEW_ERROR':
       return { ...state, deletionPreviewStatus: 'error', deletionPreview: null }
+    case 'MERGE_RESET':
+      return { ...state, merging: false, mergeError: null }
     case 'MERGE_START':
       return { ...state, merging: true, mergeError: null }
     case 'MERGE_ERROR':

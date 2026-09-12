@@ -32,7 +32,13 @@ export function brandsReducer(state: BrandsState, action: BrandsAction): BrandsS
     case 'SAVE_DONE':
       return { ...state, saving: false }
     case 'DELETION_PREVIEW_START':
-      return { ...state, deletionPreviewStatus: 'loading', deletionPreview: null }
+      // El conflicto 409 de la marca anterior no puede sobrevivir a la apertura del modal.
+      return {
+        ...state,
+        deletionPreviewStatus: 'loading',
+        deletionPreview: null,
+        deleteError: null,
+      }
     case 'DELETION_PREVIEW_SUCCESS':
       return { ...state, deletionPreviewStatus: 'ready', deletionPreview: action.preview }
     case 'DELETION_PREVIEW_ERROR':
@@ -43,6 +49,8 @@ export function brandsReducer(state: BrandsState, action: BrandsAction): BrandsS
       return { ...state, deleting: false, deleteError: action.message }
     case 'DELETE_DONE':
       return { ...state, deleting: false, deleteError: null }
+    case 'MERGE_RESET':
+      return { ...state, merging: false, mergeError: null }
     case 'MERGE_START':
       return { ...state, merging: true, mergeError: null }
     case 'MERGE_ERROR':

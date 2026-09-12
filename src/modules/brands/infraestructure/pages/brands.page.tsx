@@ -48,13 +48,13 @@ export function BrandsPage(): JSX.Element {
   }
 
   const handleConfirmDelete = async (): Promise<void> => {
-    const message = await confirmDelete()
-    if (message != null) addToast(message)
+    const result = await confirmDelete()
+    if (result != null) addToast(result.message, result.succeeded ? 'success' : 'error')
   }
 
   const handleMerge = async (targetId: string): Promise<void> => {
-    const message = await mergeBrand(targetId)
-    if (message != null) addToast(message)
+    const result = await mergeBrand(targetId)
+    if (result != null) addToast(result.message, result.succeeded ? 'success' : 'error')
   }
 
   return (
@@ -140,7 +140,9 @@ export function BrandsPage(): JSX.Element {
         onConfirm={() => void handleConfirmDelete()}
       />
 
+      {/* `modalKey` remonta el modal en cada apertura: el destino elegido antes no sobrevive. */}
       <MergeBrandModal
+        key={modalKey}
         open={mergeModalOpen}
         brand={mergingBrand}
         merging={state.merging}

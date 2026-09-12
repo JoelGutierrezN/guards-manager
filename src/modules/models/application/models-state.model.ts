@@ -48,6 +48,7 @@ export type ModelsAction =
   | { type: 'DELETION_PREVIEW_START' }
   | { type: 'DELETION_PREVIEW_SUCCESS'; preview: ProductModelDeletionPreview }
   | { type: 'DELETION_PREVIEW_ERROR' }
+  | { type: 'MERGE_RESET' }
   | { type: 'MERGE_START' }
   | { type: 'MERGE_ERROR'; message: string }
   | { type: 'MERGE_DONE' }
