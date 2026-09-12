@@ -2,6 +2,7 @@ import type { ProductModel } from '../domain/product-model.entity'
 import type { ProductModelPage } from '../domain/product-model-page.model'
 import type { ModelsFilters } from '../domain/models-filters.model'
 import { INITIAL_MODELS_FILTERS } from '../domain/models-filters.model'
+import type { ProductModelDeletionPreview } from '../domain/product-model-deletion-preview.model'
 
 export type ModelsStatus = 'loading' | 'reloading' | 'ready' | 'error'
 
@@ -22,6 +23,11 @@ export interface ModelsState {
   query: string
   brandId: string | null
   filters: ModelsFilters
+  deletionPreview: ProductModelDeletionPreview | null
+  deletionPreviewStatus: 'idle' | 'loading' | 'ready' | 'error'
+  merging: boolean
+  mergeError: string | null
+  exporting: boolean
 }
 
 export type ModelsAction =
@@ -39,6 +45,14 @@ export type ModelsAction =
   | { type: 'ROW_UPDATED'; model: ProductModel }
   | { type: 'ROW_REMOVED'; id: string }
   | { type: 'ROW_DONE' }
+  | { type: 'DELETION_PREVIEW_START' }
+  | { type: 'DELETION_PREVIEW_SUCCESS'; preview: ProductModelDeletionPreview }
+  | { type: 'DELETION_PREVIEW_ERROR' }
+  | { type: 'MERGE_START' }
+  | { type: 'MERGE_ERROR'; message: string }
+  | { type: 'MERGE_DONE' }
+  | { type: 'EXPORT_START' }
+  | { type: 'EXPORT_DONE' }
 
 const DEFAULT_PAGE_SIZE = 10
 
@@ -59,4 +73,9 @@ export const INITIAL_MODELS_STATE: ModelsState = {
   query: '',
   brandId: null,
   filters: INITIAL_MODELS_FILTERS,
+  deletionPreview: null,
+  deletionPreviewStatus: 'idle',
+  merging: false,
+  mergeError: null,
+  exporting: false,
 }

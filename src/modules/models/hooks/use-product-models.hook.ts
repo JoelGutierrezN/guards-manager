@@ -11,9 +11,15 @@ import { ModelFormErrorHelper } from '../infraestructure/helpers/model-form-erro
 import { DeactivateWarningStorage } from '../infraestructure/storage/deactivate-warning.storage'
 import { useQueryParams } from '../../shared/hooks/use-query-params.hook'
 import { ApiConflictErrorHelper } from '../../shared/infraestructure/errors/api-conflict-error.helper'
+import { ApiValidationErrorHelper } from '../../shared/infraestructure/errors/api-validation-error.helper'
+import { BlobErrorHelper } from '../../shared/infraestructure/errors/blob-error.helper'
+import { FileDownloadHelper } from '../../shared/infraestructure/helpers/file-download.helper'
+import type { ModelExportResult } from '../application/model-export-result.model'
 
 const SEARCH_DEBOUNCE_MS = 250
 const DELETE_FALLBACK_MESSAGE = 'No se pudo eliminar el modelo.'
+const MERGE_FALLBACK_MESSAGE = 'No se pudo fusionar el modelo.'
+const EXPORT_FALLBACK_MESSAGE = 'No se pudieron exportar los modelos.'
 
 export function useProductModels(brandId: string | null, onMutated?: () => void) {
   const { params, setQueryParams } = useQueryParams()
@@ -186,9 +192,63 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
     (model: ProductModel) => {
       setWindowManager({ window: 'delete', payload: model })
       modal.open()
+      dispatch({ type: 'DELETION_PREVIEW_START' })
+      productModelRepository
+        .deletionPreview(model.id)
+        .then((preview) => dispatch({ type: 'DELETION_PREVIEW_SUCCESS', preview }))
+        .catch(() => dispatch({ type: 'DELETION_PREVIEW_ERROR' }))
     },
     [modal],
   )
+
+  const openMerge = useCallback(
+    (model: ProductModel) => {
+      setWindowManager({ window: 'merge', payload: model })
+      modal.open()
+    },
+    [modal],
+  )
+
+  const mergeModel = useCallback(
+    async (targetId: string): Promise<string | null> => {
+      const { window, payload } = windowManager
+      if (window !== 'merge' || payload == null) return null
+      dispatch({ type: 'MERGE_START' })
+      try {
+        await productModelRepository.merge(payload.id, targetId)
+        dispatch({ type: 'MERGE_DONE' })
+        modal.close()
+        void load(requestRef.current, true)
+        onMutated?.()
+        return `Modelo "${payload.name}" fusionado`
+      } catch (error) {
+        dispatch({
+          type: 'MERGE_ERROR',
+          message: ApiValidationErrorHelper.messageFrom(error, MERGE_FALLBACK_MESSAGE),
+        })
+        return null
+      }
+    },
+    [windowManager, modal, load, onMutated],
+  )
+
+  const exportModels = useCallback(async (): Promise<ModelExportResult> => {
+    dispatch({ type: 'EXPORT_START' })
+    try {
+      const file = await productModelRepository.export(
+        ModelsQueryParamsHelper.toApiParams(requestRef.current),
+      )
+      FileDownloadHelper.save(file)
+      return { message: `Exportación descargada: ${file.filename}`, succeeded: true }
+    } catch (error) {
+      return {
+        message: await BlobErrorHelper.messageFrom(error, EXPORT_FALLBACK_MESSAGE),
+        succeeded: false,
+      }
+    } finally {
+      dispatch({ type: 'EXPORT_DONE' })
+    }
+  }, [])
 
   const confirmDelete = useCallback(async (): Promise<string | null> => {
     const { window, payload } = windowManager
@@ -218,11 +278,13 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
   const editingModel = windowManager.window === 'edit' ? windowManager.payload : null
   const deactivatingModel = windowManager.window === 'deactivate' ? windowManager.payload : null
   const deletingModel = windowManager.window === 'delete' ? windowManager.payload : null
+  const mergingModel = windowManager.window === 'merge' ? windowManager.payload : null
   const modalKey = modal.isOpen ? `${windowManager.window}-${editingModel?.id ?? 'new'}` : 'closed'
   const formModalOpen =
     modal.isOpen && (windowManager.window === 'create' || windowManager.window === 'edit')
   const deactivateModalOpen = modal.isOpen && windowManager.window === 'deactivate'
   const deleteModalOpen = modal.isOpen && windowManager.window === 'delete'
+  const mergeModalOpen = modal.isOpen && windowManager.window === 'merge'
 
   const showSkeletons = state.status === 'loading' || state.status === 'reloading'
   const skeletonSlots = useMemo(() => [...Array(state.perPage).keys()], [state.perPage])
@@ -243,13 +305,18 @@ export function useProductModels(brandId: string | null, onMutated?: () => void)
     reactivateModel,
     openDelete,
     confirmDelete,
+    openMerge,
+    mergeModel,
+    exportModels,
     editingModel,
     deactivatingModel,
     deletingModel,
+    mergingModel,
     modalKey,
     modalOpen: formModalOpen,
     deactivateModalOpen,
     deleteModalOpen,
+    mergeModalOpen,
     closeModal: modal.close,
   }
 }

@@ -31,6 +31,24 @@ export function brandsReducer(state: BrandsState, action: BrandsAction): BrandsS
       return { ...state, saving: false }
     case 'SAVE_DONE':
       return { ...state, saving: false }
+    case 'DELETION_PREVIEW_START':
+      return { ...state, deletionPreviewStatus: 'loading', deletionPreview: null }
+    case 'DELETION_PREVIEW_SUCCESS':
+      return { ...state, deletionPreviewStatus: 'ready', deletionPreview: action.preview }
+    case 'DELETION_PREVIEW_ERROR':
+      return { ...state, deletionPreviewStatus: 'error', deletionPreview: null }
+    case 'DELETE_START':
+      return { ...state, deleting: true, deleteError: null }
+    case 'DELETE_ERROR':
+      return { ...state, deleting: false, deleteError: action.message }
+    case 'DELETE_DONE':
+      return { ...state, deleting: false, deleteError: null }
+    case 'MERGE_START':
+      return { ...state, merging: true, mergeError: null }
+    case 'MERGE_ERROR':
+      return { ...state, merging: false, mergeError: action.message }
+    case 'MERGE_DONE':
+      return { ...state, merging: false, mergeError: null }
     default:
       return state
   }
