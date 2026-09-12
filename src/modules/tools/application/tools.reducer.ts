@@ -34,6 +34,13 @@ export function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState
     }
     case 'SET_STOCK_RANGE':
       return { ...state, filters: { ...state.filters, stockRange: action.range }, page: 1 }
+    case 'SET_MAX_STOCK': {
+      const [stockMin] = state.filters.stockRange
+      return {
+        ...state,
+        filters: { ...state.filters, stockRange: [stockMin, action.maxStock] },
+      }
+    }
     case 'CLEAR_FILTERS':
       return {
         ...state,

@@ -62,9 +62,20 @@ export class ToolsQueryParamsHelper {
     }
   }
 
+  /**
+   * Techo efectivo del rango de existencias. `undefined` (catálogo sin cargar) y `0` (catálogo
+   * vacío) significan «todavía no se conoce el máximo real», y caen al valor por defecto; es la
+   * misma normalización que aplica `ToolFiltersPanel` para el slider.
+   */
+  private static effectiveMaxStock(maxStock?: number): number {
+    return maxStock !== undefined && maxStock > DEFAULT_STOCK_RANGE[0]
+      ? maxStock
+      : DEFAULT_STOCK_RANGE[1]
+  }
+
   static toParams(
     state: Pick<ToolsState, 'page' | 'tab' | 'search' | 'sort' | 'filters'>,
-    maxStock: number = DEFAULT_STOCK_RANGE[1],
+    maxStock?: number,
   ) {
     const { page, tab, search, sort, filters } = state
     const [stockMin, stockMax] = filters.stockRange
@@ -79,14 +90,12 @@ export class ToolsQueryParamsHelper {
       brands: filters.brands.length > 0 ? filters.brands : undefined,
       models: filters.models.length > 0 ? filters.models : undefined,
       stockMin: stockMin > DEFAULT_STOCK_RANGE[0] ? stockMin : undefined,
-      stockMax: stockMax < maxStock ? stockMax : undefined,
+      stockMax:
+        stockMax < ToolsQueryParamsHelper.effectiveMaxStock(maxStock) ? stockMax : undefined,
     } satisfies QueryParams
   }
 
-  static toApiParams(
-    request: ToolsListRequest,
-    maxStock: number = DEFAULT_STOCK_RANGE[1],
-  ): URLSearchParams {
+  static toApiParams(request: ToolsListRequest, maxStock?: number): URLSearchParams {
     const { page, tab, search, sort, filters } = request
     const params = new URLSearchParams({ page: String(page) })
     const statusParam = TAB_STATUS_PARAM[tab]
@@ -105,19 +114,18 @@ export class ToolsQueryParamsHelper {
     if (stockMin > DEFAULT_STOCK_RANGE[0]) {
       params.set('stockMin', String(stockMin))
     }
-    if (stockMax < maxStock) {
+    if (stockMax < ToolsQueryParamsHelper.effectiveMaxStock(maxStock)) {
       params.set('stockMax', String(stockMax))
     }
     return params
   }
 
   /** Cuántos filtros están activos, usando el `maxStock` real del catálogo cuando se conoce. */
-  static countActiveFilters(
-    filters: ToolFilters,
-    maxStock: number = DEFAULT_STOCK_RANGE[1],
-  ): number {
+  static countActiveFilters(filters: ToolFilters, maxStock?: number): number {
     const [stockMin, stockMax] = filters.stockRange
-    const isRangeActive = stockMin > DEFAULT_STOCK_RANGE[0] || stockMax < maxStock
+    const isRangeActive =
+      stockMin > DEFAULT_STOCK_RANGE[0] ||
+      stockMax < ToolsQueryParamsHelper.effectiveMaxStock(maxStock)
     return filters.brands.length + filters.models.length + (isRangeActive ? 1 : 0)
   }
 }

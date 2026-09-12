@@ -14,11 +14,11 @@ export function useToolsExport() {
   const [isExporting, setIsExporting] = useState(false)
 
   const exportProducts = useCallback(
-    async (request: ToolsListRequest): Promise<ToolsExportResult> => {
+    async (request: ToolsListRequest, maxStock?: number): Promise<ToolsExportResult> => {
       setIsExporting(true)
       try {
         const file = await toolsRepository.exportProducts(
-          ToolsQueryParamsHelper.toApiParams(request),
+          ToolsQueryParamsHelper.toApiParams(request, maxStock),
         )
         FileDownloadHelper.save(file)
         return { message: `Exportación descargada: ${file.filename}`, succeeded: true }

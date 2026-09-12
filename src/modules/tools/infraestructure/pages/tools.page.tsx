@@ -21,7 +21,7 @@ import { ImportDrawer } from '../components/import/import-drawer.component'
 import type { Tool } from '../../domain/tool.entity'
 import type { ToolInput } from '../../domain/tool-input.model'
 import type { ToolsTabKey } from '../../domain/tools-tab.model'
-import { DEFAULT_STOCK_RANGE } from '../../application/tools-state.model'
+import { ToolsQueryParamsHelper } from '../helpers/tools-query-params.helper'
 import { ToolsEntryParamsHelper } from '../helpers/tools-entry-params.helper'
 import '../../tools.css'
 
@@ -52,7 +52,7 @@ export function ToolsPage(): JSX.Element {
     openDelete,
     closeDelete,
     confirmDelete,
-  } = useTools({ onMutated: reload })
+  } = useTools({ onMutated: reload, maxStock: catalog?.maxStock })
 
   const { returnTo } = useToolsEntryParams({ onOpenCreate: openCreateTool })
   const { isExporting, exportProducts } = useToolsExport()
@@ -73,11 +73,10 @@ export function ToolsPage(): JSX.Element {
     return `${totalFormatted} herramientas en inventario. Filtra por marca, modelo o estado y gestiona existencias, ingresos y asignaciones.`
   }, [stats])
 
-  const activeFilterCount = useMemo(() => {
-    const [minStock, maxStock] = state.filters.stockRange
-    const isRangeActive = minStock > DEFAULT_STOCK_RANGE[0] || maxStock < DEFAULT_STOCK_RANGE[1]
-    return state.filters.brands.length + state.filters.models.length + (isRangeActive ? 1 : 0)
-  }, [state.filters])
+  const activeFilterCount = useMemo(
+    () => ToolsQueryParamsHelper.countActiveFilters(state.filters, catalog?.maxStock),
+    [state.filters, catalog?.maxStock],
+  )
 
   const formKey = useMemo(
     () => (state.isFormOpen ? (editingTool?.id ?? 'new') : 'closed'),
@@ -121,15 +120,26 @@ export function ToolsPage(): JSX.Element {
   )
 
   const handleExport = useCallback(async () => {
-    const { message, succeeded } = await exportProducts({
-      page: 1,
-      tab: state.tab,
-      search: state.search,
-      sort: state.sort,
-      filters: state.filters,
-    })
+    const { message, succeeded } = await exportProducts(
+      {
+        page: 1,
+        tab: state.tab,
+        search: state.search,
+        sort: state.sort,
+        filters: state.filters,
+      },
+      catalog?.maxStock,
+    )
     addToast(message, succeeded ? 'success' : 'error')
-  }, [exportProducts, state.tab, state.search, state.sort, state.filters, addToast])
+  }, [
+    exportProducts,
+    state.tab,
+    state.search,
+    state.sort,
+    state.filters,
+    catalog?.maxStock,
+    addToast,
+  ])
 
   const openImportDrawer = useCallback(() => setIsImportOpen(true), [])
   const closeImportDrawer = useCallback(() => setIsImportOpen(false), [])

@@ -65,6 +65,7 @@ export type ToolsAction =
   | { type: 'TOGGLE_BRAND'; brand: string }
   | { type: 'TOGGLE_MODEL'; model: string }
   | { type: 'SET_STOCK_RANGE'; range: [number, number] }
+  | { type: 'SET_MAX_STOCK'; maxStock: number }
   | { type: 'CLEAR_FILTERS' }
   | { type: 'SET_SEARCH'; search: string }
   | { type: 'TOGGLE_SORT'; key: ToolsSortKey }

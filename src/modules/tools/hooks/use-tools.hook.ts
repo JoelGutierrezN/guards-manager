@@ -5,6 +5,7 @@ import type { ToolsSortKey } from '../domain/tools-sort.model'
 import type { ToolsTabKey } from '../domain/tools-tab.model'
 import type { ToolMutationResult } from '../application/tool-mutation-result.model'
 import { toolsReducer } from '../application/tools.reducer'
+import { DEFAULT_STOCK_RANGE } from '../application/tools-state.model'
 import { toolsRepository } from '../infraestructure/repositories/tools.repository'
 import type { ToolsListRequest } from '../infraestructure/helpers/tools-query-params.helper'
 import { ToolsQueryParamsHelper } from '../infraestructure/helpers/tools-query-params.helper'
@@ -17,9 +18,11 @@ const DELETE_FALLBACK_MESSAGE = 'No se pudo eliminar la herramienta.'
 
 interface UseToolsOptions {
   onMutated?: () => void
+  /** `maxStock` real del catálogo (`GET /brands/catalog/tree`); `undefined` mientras carga. */
+  maxStock?: number
 }
 
-export function useTools({ onMutated }: UseToolsOptions = {}) {
+export function useTools({ onMutated, maxStock }: UseToolsOptions = {}) {
   const { params, setQueryParams } = useQueryParams()
   const [state, dispatch] = useReducer(
     toolsReducer,
@@ -33,6 +36,27 @@ export function useTools({ onMutated }: UseToolsOptions = {}) {
     sort: state.sort,
     filters: state.filters,
   })
+  const maxStockRef = useRef(maxStock)
+  const hasExplicitStockMaxRef = useRef(typeof params.stockMax === 'number')
+  const hasSyncedMaxStockRef = useRef(false)
+
+  useEffect(() => {
+    maxStockRef.current = maxStock
+  }, [maxStock])
+
+  /**
+   * El techo por defecto del slider es `DEFAULT_STOCK_RANGE[1]`, pero el máximo real del catálogo
+   * solo se conoce al cargar. Si el usuario no fijó `stockMax` en la URL, se estira el techo al
+   * máximo real en cuanto llega: así un rango intacto sigue significando «sin filtro» y no se
+   * envía un `stockMax` que recortaría el listado.
+   */
+  useEffect(() => {
+    if (hasSyncedMaxStockRef.current) return
+    if (maxStock === undefined || maxStock <= DEFAULT_STOCK_RANGE[1]) return
+    hasSyncedMaxStockRef.current = true
+    if (hasExplicitStockMaxRef.current) return
+    dispatch({ type: 'SET_MAX_STOCK', maxStock })
+  }, [maxStock])
 
   const listRequest = useMemo<ToolsListRequest>(
     () => ({
@@ -50,13 +74,15 @@ export function useTools({ onMutated }: UseToolsOptions = {}) {
   }, [listRequest])
 
   useEffect(() => {
-    setQueryParams(ToolsQueryParamsHelper.toParams(listRequest))
-  }, [listRequest, setQueryParams])
+    setQueryParams(ToolsQueryParamsHelper.toParams(listRequest, maxStock))
+  }, [listRequest, maxStock, setQueryParams])
 
   const load = useCallback(async (request: ToolsListRequest) => {
     dispatch({ type: 'LOAD_START' })
     try {
-      const result = await toolsRepository.listProducts(ToolsQueryParamsHelper.toApiParams(request))
+      const result = await toolsRepository.listProducts(
+        ToolsQueryParamsHelper.toApiParams(request, maxStockRef.current),
+      )
       dispatch({ type: 'LOAD_SUCCESS', result })
     } catch {
       dispatch({ type: 'LOAD_ERROR', error: LIST_ERROR_MESSAGE })
@@ -68,7 +94,7 @@ export function useTools({ onMutated }: UseToolsOptions = {}) {
       void load(listRequest)
     }, FILTERS_DEBOUNCE_MS)
     return () => clearTimeout(handle)
-  }, [listRequest, load])
+  }, [listRequest, maxStock, load])
 
   const reloadList = useCallback(() => {
     void load(requestRef.current)
