@@ -4,6 +4,12 @@ import type { ToolsPage } from '../domain/tools-page.model'
 import type { ToolsSort, ToolsSortKey } from '../domain/tools-sort.model'
 import type { ToolsTabKey } from '../domain/tools-tab.model'
 
+/**
+ * Techo del slider de existencias hasta que se conozca el `maxStock` real del catálogo
+ * (`GET /brands/catalog/tree`, `meta.maxStock`). `ToolsQueryParamsHelper` acepta ese valor
+ * como parámetro opcional para que la serialización y el contador de filtros activos usen
+ * el máximo real en vez de este valor por defecto.
+ */
 export const DEFAULT_STOCK_RANGE: [number, number] = [0, 50]
 
 export const DEFAULT_TOOLS_SORT: ToolsSort = { key: 'name', direction: 'asc' }

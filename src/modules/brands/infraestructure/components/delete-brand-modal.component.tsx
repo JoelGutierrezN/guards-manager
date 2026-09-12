@@ -2,29 +2,31 @@ import { type JSX } from 'react'
 import { Spinner } from '@heroui/react'
 import { Cancel01Icon } from '@hugeicons/core-free-icons'
 import { Button, IconButton, Modal } from '../../../shared/infraestructure/components/ui'
-import type { ProductModel } from '../../domain/product-model.entity'
-import type { ProductModelDeletionPreview } from '../../domain/product-model-deletion-preview.model'
-import { ModelDeletionPreviewHelper } from '../helpers/model-deletion-preview.helper'
+import type { Brand } from '../../domain/brand.entity'
+import type { BrandDeletionPreview } from '../../domain/brand-deletion-preview.model'
 
 interface Props {
   open: boolean
-  model: ProductModel | null
-  preview: ProductModelDeletionPreview | null
+  brand: Brand | null
+  preview: BrandDeletionPreview | null
   previewStatus: 'idle' | 'loading' | 'ready' | 'error'
+  deleting: boolean
+  error: string | null
   onClose: () => void
   onConfirm: () => void
 }
 
-export function DeleteModelModal({
+export function DeleteBrandModal({
   open,
-  model,
+  brand,
   preview,
   previewStatus,
+  deleting,
+  error,
   onClose,
   onConfirm,
 }: Props): JSX.Element {
   const canBeDeleted = preview?.canBeDeleted ?? false
-  const reasons = preview != null ? ModelDeletionPreviewHelper.blockingReasons(preview) : []
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -35,7 +37,7 @@ export function DeleteModelModal({
               Eliminar registro
             </div>
             <div className="text-[20px] font-semibold tracking-[-0.015em] text-ink">
-              Eliminar {model != null ? `"${model.name}"` : 'el modelo'}
+              Eliminar {brand != null ? `"${brand.name}"` : 'la marca'}
             </div>
           </div>
           <IconButton icon={Cancel01Icon} onClick={onClose} bordered size="sm" />
@@ -43,13 +45,13 @@ export function DeleteModelModal({
 
         {previewStatus === 'loading' && (
           <div className="flex items-center gap-2 text-[13px] text-muted">
-            <Spinner size="sm" /> Revisando existencias y resguardos…
+            <Spinner size="sm" /> Revisando modelos y resguardos…
           </div>
         )}
 
         {previewStatus === 'error' && (
           <p className="text-[13px] leading-relaxed text-danger">
-            No se pudo verificar si el modelo puede eliminarse. Inténtalo de nuevo.
+            No se pudo verificar si la marca puede eliminarse. Inténtalo de nuevo.
           </p>
         )}
 
@@ -57,31 +59,32 @@ export function DeleteModelModal({
           <div className="space-y-3">
             {!canBeDeleted && (
               <ul className="list-disc space-y-1 rounded-[12px] bg-danger-soft px-4 py-3 pl-8 text-[12px] text-danger">
-                {reasons.map((reason) => (
+                {preview.reasons.map((reason) => (
                   <li key={reason}>{reason}</li>
                 ))}
               </ul>
             )}
-            {preview.affectedProducts.length > 0 && (
+            {preview.models.length > 0 && (
               <p className="text-[13px] leading-relaxed text-ink-2">
-                Recuerda: las {ModelDeletionPreviewHelper.totalAffectedStocks(preview)} unidades de{' '}
-                {preview.affectedProducts.length} producto(s) de este modelo quedarán registradas
-                como <b className="text-ink">BAJA</b>.
+                Se eliminarán también sus {preview.models.length} modelo(s) y las unidades asociadas
+                quedarán registradas como <b className="text-ink">BAJA</b>.
               </p>
             )}
             <p className="text-[13px] leading-relaxed text-ink-2">
-              Esta acción es <b className="text-ink">permanente</b>: el modelo se eliminará del
+              Esta acción es <b className="text-ink">permanente</b>: la marca se eliminará del
               catálogo y no se podrá recuperar.
             </p>
           </div>
         )}
 
+        {error != null && <p className="mt-2 text-[12px] text-danger">{error}</p>}
+
         <div className="mt-[18px] flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose} disabled={deleting}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={onConfirm}>
-            Eliminar modelo
+          <Button variant="primary" onClick={onConfirm} disabled={deleting}>
+            Eliminar marca
           </Button>
         </div>
       </div>

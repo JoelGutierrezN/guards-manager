@@ -62,7 +62,10 @@ export class ToolsQueryParamsHelper {
     }
   }
 
-  static toParams(state: Pick<ToolsState, 'page' | 'tab' | 'search' | 'sort' | 'filters'>) {
+  static toParams(
+    state: Pick<ToolsState, 'page' | 'tab' | 'search' | 'sort' | 'filters'>,
+    maxStock: number = DEFAULT_STOCK_RANGE[1],
+  ) {
     const { page, tab, search, sort, filters } = state
     const [stockMin, stockMax] = filters.stockRange
     const isDefaultSort =
@@ -76,11 +79,14 @@ export class ToolsQueryParamsHelper {
       brands: filters.brands.length > 0 ? filters.brands : undefined,
       models: filters.models.length > 0 ? filters.models : undefined,
       stockMin: stockMin > DEFAULT_STOCK_RANGE[0] ? stockMin : undefined,
-      stockMax: stockMax < DEFAULT_STOCK_RANGE[1] ? stockMax : undefined,
+      stockMax: stockMax < maxStock ? stockMax : undefined,
     } satisfies QueryParams
   }
 
-  static toApiParams(request: ToolsListRequest): URLSearchParams {
+  static toApiParams(
+    request: ToolsListRequest,
+    maxStock: number = DEFAULT_STOCK_RANGE[1],
+  ): URLSearchParams {
     const { page, tab, search, sort, filters } = request
     const params = new URLSearchParams({ page: String(page) })
     const statusParam = TAB_STATUS_PARAM[tab]
@@ -99,9 +105,19 @@ export class ToolsQueryParamsHelper {
     if (stockMin > DEFAULT_STOCK_RANGE[0]) {
       params.set('stockMin', String(stockMin))
     }
-    if (stockMax < DEFAULT_STOCK_RANGE[1]) {
+    if (stockMax < maxStock) {
       params.set('stockMax', String(stockMax))
     }
     return params
+  }
+
+  /** Cuántos filtros están activos, usando el `maxStock` real del catálogo cuando se conoce. */
+  static countActiveFilters(
+    filters: ToolFilters,
+    maxStock: number = DEFAULT_STOCK_RANGE[1],
+  ): number {
+    const [stockMin, stockMax] = filters.stockRange
+    const isRangeActive = stockMin > DEFAULT_STOCK_RANGE[0] || stockMax < maxStock
+    return filters.brands.length + filters.models.length + (isRangeActive ? 1 : 0)
   }
 }
