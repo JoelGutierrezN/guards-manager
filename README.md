@@ -86,7 +86,13 @@ docker build \
 docker run --rm -p 8080:80 guards-manager:prod   # http://localhost:8080
 ```
 
-Si el dominio del API cambia, hay que reconstruir la imagen con el nuevo `--build-arg`
-(no basta con reiniciar el contenedor). El servicio de orquestación completo
-(`app` + `nginx` del API + `mysql` + este front) vive en `docker-compose.prod.yml` de
-`guards-api`, que construye esta imagen apuntando a este directorio como contexto.
+El `--build-arg` es obligatorio: el `Dockerfile` aborta antes de compilar si `VITE_API_URL`
+llega vacío, porque el bundle resultante mandaría todas las peticiones al propio `nginx` del
+front. Si el dominio del API cambia, hay que reconstruir la imagen con el nuevo valor (no
+basta con reiniciar el contenedor).
+
+`docker-compose.prod.yml` de `guards-api` orquesta solo el backend (`app`, `nginx`, `queue`,
+`scheduler`, `mysql`) y no declara ningún servicio de este front: la imagen del front se
+construye y se corre aparte con los dos comandos de arriba, apuntando `VITE_API_URL` al host
+y puerto que publica el `nginx` del API (con el `APP_PORT` por defecto,
+`http://localhost:8080/api/v1`).

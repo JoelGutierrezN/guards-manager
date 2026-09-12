@@ -16,6 +16,11 @@ COPY . .
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
 
+# Sin `--build-arg`, `ENV` deja la variable como cadena vacía y Vite hornearía un
+# `API_BASE_URL` vacío: la imagen se publicaría rota (toda petición caería en el
+# propio nginx del front). Mejor fallar aquí que en el navegador.
+RUN test -n "$VITE_API_URL" || { echo 'Falta --build-arg VITE_API_URL' >&2; exit 1; }
+
 RUN pnpm build
 
 FROM nginx:${NGINX_VERSION} AS prod
