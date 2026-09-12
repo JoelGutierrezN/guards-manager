@@ -1,16 +1,23 @@
-import { type JSX, useCallback, useMemo } from 'react'
+import { type JSX, useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { ArrowDown01Icon, Download01Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
+import {
+  ArrowDown01Icon,
+  Download01Icon,
+  PlusSignIcon,
+  Upload01Icon,
+} from '@hugeicons/core-free-icons'
 import { PageHero, Tabs, Button, useToasts } from '../../../shared/infraestructure/components/ui'
 import type { TabItem } from '../../../shared/infraestructure/components/ui'
 import { useTools } from '../../hooks/use-tools.hook'
 import { useToolsOverview } from '../../hooks/use-tools-overview.hook'
 import { useToolsEntryParams } from '../../hooks/use-tools-entry-params.hook'
+import { useToolsExport } from '../../hooks/use-tools-export.hook'
 import { ToolFiltersPanel } from '../components/tool-filters.component'
 import { ToolTable } from '../components/tool-table.component'
 import { NewToolModal } from '../components/new-tool-modal.component'
 import { ToolStockModal } from '../components/tool-stock-modal.component'
 import { ToolDeleteModal } from '../components/tool-delete-modal.component'
+import { ImportDrawer } from '../components/import/import-drawer.component'
 import type { Tool } from '../../domain/tool.entity'
 import type { ToolInput } from '../../domain/tool-input.model'
 import type { ToolsTabKey } from '../../domain/tools-tab.model'
@@ -48,6 +55,8 @@ export function ToolsPage(): JSX.Element {
   } = useTools({ onMutated: reload })
 
   const { returnTo } = useToolsEntryParams({ onOpenCreate: openCreateTool })
+  const { isExporting, exportProducts } = useToolsExport()
+  const [isImportOpen, setIsImportOpen] = useState(false)
 
   const tabItems = useMemo<TabItem<ToolsTabKey>[]>(
     () => [
@@ -111,6 +120,25 @@ export function ToolsPage(): JSX.Element {
     [navigate],
   )
 
+  const handleExport = useCallback(async () => {
+    const { message, succeeded } = await exportProducts({
+      page: 1,
+      tab: state.tab,
+      search: state.search,
+      sort: state.sort,
+      filters: state.filters,
+    })
+    addToast(message, succeeded ? 'success' : 'error')
+  }, [exportProducts, state.tab, state.search, state.sort, state.filters, addToast])
+
+  const openImportDrawer = useCallback(() => setIsImportOpen(true), [])
+  const closeImportDrawer = useCallback(() => setIsImportOpen(false), [])
+
+  const handleImported = useCallback(() => {
+    reloadList()
+    void reload()
+  }, [reloadList, reload])
+
   return (
     <>
       <div className="reveal-d1">
@@ -128,8 +156,16 @@ export function ToolsPage(): JSX.Element {
           <Button icon={ArrowDown01Icon} size="md" onClick={() => void navigate('/stockIn')}>
             Ingresar inventario
           </Button>
-          <Button icon={Download01Icon} size="md">
-            Exportar
+          <Button icon={Upload01Icon} size="md" onClick={openImportDrawer}>
+            Importar
+          </Button>
+          <Button
+            icon={Download01Icon}
+            size="md"
+            disabled={isExporting}
+            onClick={() => void handleExport()}
+          >
+            {isExporting ? 'Exportando…' : 'Exportar'}
           </Button>
           <Button variant="primary" icon={PlusSignIcon} size="md" onClick={openCreateTool}>
             Nueva herramienta
@@ -199,6 +235,8 @@ export function ToolsPage(): JSX.Element {
         onClose={closeDelete}
         onConfirm={() => void handleConfirmDelete()}
       />
+
+      <ImportDrawer open={isImportOpen} onClose={closeImportDrawer} onImported={handleImported} />
 
       {toastHost}
     </>
