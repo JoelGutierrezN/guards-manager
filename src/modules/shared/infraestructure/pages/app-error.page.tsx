@@ -3,10 +3,12 @@ import { useNavigate, useRouteError } from 'react-router'
 import { Alert02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Button } from '../components/ui'
+import { AppErrorDetailHelper } from '../helpers/app-error-detail.helper'
 
 export function AppErrorPage(): JSX.Element {
   const navigate = useNavigate()
-  useRouteError()
+  const error = useRouteError()
+  const detail = AppErrorDetailHelper.messageFrom(error)
 
   return (
     <div className="flex min-h-dvh items-center justify-center bg-cream px-6 py-16">
@@ -23,9 +25,15 @@ export function AppErrorPage(): JSX.Element {
           Ocurrió un error inesperado
         </h1>
 
-        <p className="mx-auto mb-8 max-w-[42ch] text-[13px] leading-[1.6] text-ink-3">
+        <p className="mx-auto mb-3 max-w-[42ch] text-[13px] leading-[1.6] text-ink-3">
           Algo falló al cargar esta página. Puedes volver al panel e intentarlo de nuevo.
         </p>
+
+        {detail && (
+          <p className="mx-auto mb-8 max-w-[48ch] rounded-[14px] bg-cream-2 px-4 py-2.5 font-mono text-[11px] leading-[1.6] break-words text-ink-3">
+            {detail}
+          </p>
+        )}
 
         <Button variant="primary" size="lg" onClick={() => navigate('/dashboard')}>
           Volver al panel

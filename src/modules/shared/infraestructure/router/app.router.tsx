@@ -7,6 +7,7 @@ import { AppLayout } from '../layouts/app.layout'
 import { SessionExpiredPage } from '../pages/session-expired.page'
 import { AppErrorPage } from '../pages/app-error.page'
 import { NotFoundPage } from '../pages/not-found.page'
+import { ForbiddenPage } from '../pages/forbidden.page'
 import type { CrumbHandle } from '../components/topbar/topbar.crumbs'
 import type { CustodyDetailLoaderData } from '../../../custodies/domain/custody-detail-loader.model'
 
@@ -172,6 +173,11 @@ export default createBrowserRouter([
                 lazy: async () => ({
                   Component: (await import('../../../account')).UsersPage,
                 }),
+              },
+              {
+                path: '403',
+                handle: { crumb: 'Acceso denegado' },
+                element: <ForbiddenPage />,
               },
               {
                 path: '*',
