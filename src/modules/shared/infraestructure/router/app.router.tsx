@@ -52,7 +52,7 @@ export default createBrowserRouter([
                 path: 'dashboard',
                 handle: { crumb: 'Panel general' },
                 lazy: async () => ({
-                  Component: (await import('../pages/dashboard-panel.page')).DashboardPanelPage,
+                  Component: (await import('../../../dashboard')).DashboardPage,
                 }),
               },
               {
