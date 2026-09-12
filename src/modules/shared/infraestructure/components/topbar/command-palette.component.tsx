@@ -1,4 +1,4 @@
-import { type JSX, useMemo } from 'react'
+import { type JSX, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router'
 import { Search01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -16,6 +16,12 @@ interface Props {
 
 export function CommandPalette({ isOpen, query, onQueryChange, onClose }: Props): JSX.Element {
   const navigate = useNavigate()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  /** El Modal del kit nunca se desmonta, así que `autoFocus` solo correría al montar la topbar. */
+  useEffect(() => {
+    if (isOpen) inputRef.current?.focus()
+  }, [isOpen])
 
   const navigationItems = useMemo(() => {
     const allItems = CommandPaletteHelper.buildNavigationItems(SIDEBAR_GROUPS)
@@ -35,7 +41,7 @@ export function CommandPalette({ isOpen, query, onQueryChange, onClose }: Props)
         <div className="flex items-center gap-2.5 border-b border-hairline px-4 py-3">
           <HugeiconsIcon icon={Search01Icon} size={16} strokeWidth={1.8} className="text-muted" />
           <input
-            autoFocus
+            ref={inputRef}
             type="text"
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
