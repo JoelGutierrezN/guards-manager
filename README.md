@@ -65,3 +65,28 @@ Detalle de la infraestructura, helpers y convenciones de las pruebas: [`e2e/READ
 Arquitectura modular inspirada en DDD (`domain`, `application`, `hooks`, `infraestructure`).
 Convenciones obligatorias en [`CLAUDE.md`](CLAUDE.md) y
 `.claude/skills/react-ts-standards/SKILL.md`.
+
+## Despliegue en producción (Docker)
+
+`docker/prod/Dockerfile` es multi-stage: compila el bundle con `pnpm build` y lo sirve
+con `nginx` (fallback de rutas para el SPA de react-router en `docker/prod/nginx.conf`).
+
+`VITE_API_URL` se hornea en el bundle en **tiempo de build** (Vite solo lee `import.meta.env`
+al compilar, no en runtime), así que se pasa como `ARG` de build, no como variable de entorno
+del contenedor ni con un `env.js` generado al arrancar:
+
+```bash
+docker build \
+  --build-arg VITE_API_URL=https://api.tu-dominio.com/api/v1 \
+  -f docker/prod/Dockerfile \
+  -t guards-manager:prod .
+```
+
+```bash
+docker run --rm -p 8080:80 guards-manager:prod   # http://localhost:8080
+```
+
+Si el dominio del API cambia, hay que reconstruir la imagen con el nuevo `--build-arg`
+(no basta con reiniciar el contenedor). El servicio de orquestación completo
+(`app` + `nginx` del API + `mysql` + este front) vive en `docker-compose.prod.yml` de
+`guards-api`, que construye esta imagen apuntando a este directorio como contexto.
