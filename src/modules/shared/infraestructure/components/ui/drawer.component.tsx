@@ -39,7 +39,8 @@ export function Drawer({
   )
 
   return (
-    <div className={overlayClassName}>
+    // Cerrado sigue montado por la transición: `inert`/`aria-hidden` lo sacan del foco y del árbol accesible.
+    <div className={overlayClassName} aria-hidden={!open} inert={!open}>
       <div
         className="absolute inset-0 bg-[rgba(5,10,26,0.45)] backdrop-blur-[6px]"
         onClick={onClose}

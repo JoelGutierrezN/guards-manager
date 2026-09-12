@@ -36,10 +36,16 @@ test('@fase-7 eliminar una marca muestra el preview y el 409 si no puede borrars
 
   await expect(page.getByText(/existencias asignadas a empleados/)).toBeVisible()
 
-  await page.getByRole('button', { name: 'Eliminar marca' }).click()
+  // `exact`: sin él, el nombre también casa con el botón de fila «Eliminar {marca}».
+  await page.getByRole('button', { name: 'Eliminar marca', exact: true }).click()
   await expect(page.getByText('La marca no puede eliminarse.').first()).toBeVisible()
 
-  expect(consoleWatcher.errors).toEqual([])
+  // Chromium registra en consola cualquier recurso con estado >= 400: el 409 es la respuesta que
+  // este test provoca a propósito, no un fallo de la aplicación.
+  const unexpectedErrors = consoleWatcher.errors.filter(
+    (entry) => !entry.includes('status of 409 (Conflict)'),
+  )
+  expect(unexpectedErrors).toEqual([])
 })
 
 test('@fase-7 clic en una marca navega al catálogo de modelos filtrado', async ({ page }) => {

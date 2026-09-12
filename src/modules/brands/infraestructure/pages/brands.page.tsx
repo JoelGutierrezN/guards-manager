@@ -122,7 +122,7 @@ export function BrandsPage(): JSX.Element {
       )}
 
       <NewBrandModal
-        key={modalKey}
+        key={`form-${modalKey}`}
         open={modalOpen}
         editName={editingBrand?.name ?? null}
         onClose={closeModal}
@@ -142,7 +142,7 @@ export function BrandsPage(): JSX.Element {
 
       {/* `modalKey` remonta el modal en cada apertura: el destino elegido antes no sobrevive. */}
       <MergeBrandModal
-        key={modalKey}
+        key={`merge-${modalKey}`}
         open={mergeModalOpen}
         brand={mergingBrand}
         merging={state.merging}

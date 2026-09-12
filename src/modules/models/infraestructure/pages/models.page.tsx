@@ -216,7 +216,7 @@ export function ModelsPage(): JSX.Element {
       </div>
 
       <NewModelModal
-        key={modalKey}
+        key={`form-${modalKey}`}
         open={modalOpen}
         brands={brands}
         initialBrandId={brandId}
@@ -245,7 +245,7 @@ export function ModelsPage(): JSX.Element {
 
       {/* `modalKey` remonta el modal en cada apertura: el destino elegido antes no sobrevive. */}
       <MergeModelModal
-        key={modalKey}
+        key={`merge-${modalKey}`}
         open={mergeModalOpen}
         model={mergingModel}
         merging={state.merging}
