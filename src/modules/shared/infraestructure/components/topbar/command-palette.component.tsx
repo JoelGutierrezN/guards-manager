@@ -18,7 +18,6 @@ export function CommandPalette({ isOpen, query, onQueryChange, onClose }: Props)
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
 
-  /** El Modal del kit nunca se desmonta, así que `autoFocus` solo correría al montar la topbar. */
   useEffect(() => {
     if (isOpen) inputRef.current?.focus()
   }, [isOpen])
