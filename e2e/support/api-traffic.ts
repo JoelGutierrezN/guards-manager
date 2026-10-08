@@ -27,10 +27,11 @@ export class ApiTraffic {
 
   /** Espera a que no quede ninguna petición al API viva durante una ventana de calma. */
   async settle(): Promise<void> {
-    const deadline = Date.now() + SETTLE_TIMEOUT_MS
+    const startedAt = Date.now()
+    const deadline = startedAt + SETTLE_TIMEOUT_MS
 
     while (Date.now() < deadline) {
-      if (this.isQuiet()) return
+      if (this.isQuiet(startedAt)) return
       await ApiTraffic.pause()
     }
 
@@ -39,8 +40,15 @@ export class ApiTraffic {
     )
   }
 
-  private isQuiet(): boolean {
-    return this.inFlight === 0 && Date.now() - this.lastActivityAt >= QUIET_WINDOW_MS
+  /**
+   * La ventana de calma se mide desde la llamada además de desde la última petición: los listados
+   * con buscador retrasan su primera carga (debounce) y esa petición todavía no existe cuando la
+   * navegación termina, así que sin este margen `settle()` daría por buena una pantalla que aún va
+   * a llamar al API.
+   */
+  private isQuiet(startedAt: number): boolean {
+    const lastEvent = Math.max(this.lastActivityAt, startedAt)
+    return this.inFlight === 0 && Date.now() - lastEvent >= QUIET_WINDOW_MS
   }
 
   private onStart(request: Request): void {

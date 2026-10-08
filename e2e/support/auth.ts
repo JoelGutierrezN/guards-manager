@@ -7,7 +7,7 @@ import type { StorageStateFile } from './auth.model'
 export class AuthStorageState {
   static readonly filePath = E2eConfig.storageStatePath
 
-  static build(token: string, user: AuthenticatedUser): StorageStateFile {
+  static build(token: string, user: AuthenticatedUser, expiresAt: string): StorageStateFile {
     return {
       cookies: [],
       origins: [
@@ -15,6 +15,7 @@ export class AuthStorageState {
           origin: E2eConfig.webBaseUrl,
           localStorage: [
             { name: 'access_token', value: JSON.stringify(token) },
+            { name: 'access_token_expires_at', value: JSON.stringify(expiresAt) },
             { name: 'auth_user', value: JSON.stringify(user) },
           ],
         },
@@ -22,11 +23,11 @@ export class AuthStorageState {
     }
   }
 
-  static save(token: string, user: AuthenticatedUser): void {
+  static save(token: string, user: AuthenticatedUser, expiresAt: string): void {
     fs.mkdirSync(path.dirname(AuthStorageState.filePath), { recursive: true })
     fs.writeFileSync(
       AuthStorageState.filePath,
-      `${JSON.stringify(AuthStorageState.build(token, user), null, 2)}\n`,
+      `${JSON.stringify(AuthStorageState.build(token, user, expiresAt), null, 2)}\n`,
       'utf8',
     )
   }

@@ -31,10 +31,14 @@ export function AuthProvider() {
     return () => datasource.setUnauthorizedHandler(null)
   }, [])
 
-  async function login(identifier: string, password: string): Promise<boolean> {
+  async function login(
+    identifier: string,
+    password: string,
+    keepSession: boolean = false,
+  ): Promise<boolean> {
     dispatch({ type: 'AUTH_START' })
     try {
-      const session = await authUseCase.login(identifier, password)
+      const session = await authUseCase.login(identifier, password, keepSession)
       dispatch({ type: 'AUTH_SUCCESS', payload: session })
       return true
     } catch (error) {

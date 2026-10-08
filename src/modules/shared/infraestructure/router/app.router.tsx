@@ -7,6 +7,7 @@ import { AppLayout } from '../layouts/app.layout'
 import { SessionExpiredPage } from '../pages/session-expired.page'
 import { AppErrorPage } from '../pages/app-error.page'
 import { NotFoundPage } from '../pages/not-found.page'
+import { ForbiddenPage } from '../pages/forbidden.page'
 import type { CrumbHandle } from '../components/topbar/topbar.crumbs'
 import type { CustodyDetailLoaderData } from '../../../custodies/domain/custody-detail-loader.model'
 
@@ -26,6 +27,20 @@ export default createBrowserRouter([
             path: '/',
             element: <AuthPage />,
           },
+          {
+            path: 'forgot-password',
+            lazy: async () => ({
+              Component: (await import('../../../auth/infraestructure/pages/forgot-password.page'))
+                .default,
+            }),
+          },
+          {
+            path: 'reset-password',
+            lazy: async () => ({
+              Component: (await import('../../../auth/infraestructure/pages/reset-password.page'))
+                .default,
+            }),
+          },
         ],
       },
       {
@@ -38,7 +53,7 @@ export default createBrowserRouter([
                 path: 'dashboard',
                 handle: { crumb: 'Panel general' },
                 lazy: async () => ({
-                  Component: (await import('../pages/dashboard-panel.page')).DashboardPanelPage,
+                  Component: (await import('../../../dashboard')).DashboardPage,
                 }),
               },
               {
@@ -149,8 +164,20 @@ export default createBrowserRouter([
                 path: 'profile',
                 handle: { crumb: ['Cuenta', 'Mi perfil'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (await import('../../../account')).ProfilePage,
                 }),
+              },
+              {
+                path: 'users',
+                handle: { crumb: ['Cuenta', 'Usuarios'] },
+                lazy: async () => ({
+                  Component: (await import('../../../account')).UsersPage,
+                }),
+              },
+              {
+                path: '403',
+                handle: { crumb: 'Acceso denegado' },
+                element: <ForbiddenPage />,
               },
               {
                 path: '*',
