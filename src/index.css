@@ -1,2 +1,116 @@
-@import "tailwindcss";
-@import "@heroui/styles";
+@import '@fontsource/instrument-serif/latin-400.css';
+@import '@fontsource/instrument-serif/latin-400-italic.css';
+@import 'tailwindcss';
+@import '@heroui/styles';
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url('@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2')
+    format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url('@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2')
+    format('woff2');
+}
+
+@theme {
+  --color-brand: #272871;
+  --color-brand-mid: #4244a3;
+  --color-brand-active: #15164a;
+  --color-brand-hover: #1c1d5a;
+  --color-brand-deep: #0e0f3c;
+  --color-brand-soft: rgba(39, 40, 113, 0.08);
+  --color-brand-soft-2: rgba(39, 40, 113, 0.16);
+
+  --color-lavender-bg: #ecedf9;
+  --color-lavender-bg-2: #dcdcf3;
+  --color-lavender-line: #d7d7ee;
+
+  --color-hairline: rgba(26, 19, 38, 0.07);
+  --color-hairline-strong: rgba(26, 19, 38, 0.13);
+
+  --color-ink: #1a1326;
+  --color-ink-2: #2f2540;
+  --color-ink-3: #524563;
+  --color-muted: #7b7388;
+  --color-muted-soft: #aea7bb;
+  --color-cream: #fbf8f3;
+  --color-cream-2: #f1ecdf;
+
+  --color-ok: #1e9e57;
+  --color-ok-soft: rgba(30, 158, 87, 0.1);
+  --color-warn: #b88600;
+  --color-warn-soft: rgba(184, 134, 0, 0.1);
+  --color-danger: #c0392b;
+  --color-danger-soft: rgba(192, 57, 43, 0.1);
+
+  --color-paper-tint: #fbf9fc;
+  --color-bg-app: #f7f3ec;
+
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Instrument Serif', serif;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.reveal,
+.reveal-d1,
+.reveal-d2,
+.reveal-d3,
+.reveal-d4 {
+  animation: reveal 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.reveal-d1 {
+  animation-delay: 30ms;
+}
+
+.reveal-d2 {
+  animation-delay: 80ms;
+}
+
+.reveal-d3 {
+  animation-delay: 130ms;
+}
+
+.reveal-d4 {
+  animation-delay: 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-d1,
+  .reveal-d2,
+  .reveal-d3,
+  .reveal-d4 {
+    animation: none;
+  }
+}

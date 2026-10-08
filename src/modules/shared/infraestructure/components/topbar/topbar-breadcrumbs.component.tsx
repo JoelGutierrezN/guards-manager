@@ -1,0 +1,25 @@
+import { useMemo, type JSX } from 'react'
+import { useMatches } from 'react-router'
+import { Home09Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { TopbarCrumbsResolver } from './topbar.crumbs'
+import { TopbarBreadcrumbSegment } from './topbar-breadcrumb-segment.component'
+
+export function TopbarBreadcrumbs(): JSX.Element {
+  const matches = useMatches()
+  const segments = useMemo(() => TopbarCrumbsResolver.resolve(matches), [matches])
+
+  return (
+    <div className="flex items-center gap-1.5 text-[12px] text-muted">
+      <HugeiconsIcon icon={Home09Icon} size={13} strokeWidth={1.8} className="text-muted" />
+      <span className="text-muted-soft">/</span>
+      {segments.map((segment, index) => (
+        <TopbarBreadcrumbSegment
+          key={`${segment}-${index}`}
+          segment={segment}
+          isLast={index === segments.length - 1}
+        />
+      ))}
+    </div>
+  )
+}

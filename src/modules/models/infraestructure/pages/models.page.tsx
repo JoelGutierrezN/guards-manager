@@ -1,0 +1,260 @@
+import { type JSX, useMemo } from 'react'
+import { Download04Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
+import {
+  Button,
+  Pager,
+  PageHero,
+  SearchInput,
+  Tabs,
+  useToasts,
+} from '../../../shared/infraestructure/components/ui'
+import type { CreateProductModelInput } from '../../domain/product-model-input.model'
+import type { ProductModel } from '../../domain/product-model.entity'
+import { useModelBrandTabs } from '../../hooks/use-model-brand-tabs.hook'
+import { useProductModels } from '../../hooks/use-product-models.hook'
+import { ALL_BRANDS_TAB } from '../../domain/brand-tabs.model'
+import { BrandTabPicker } from '../components/brand-tab-picker.component'
+import { NewModelModal } from '../components/new-model-modal.component'
+import { DeactivateModelModal } from '../components/deactivate-model-modal.component'
+import { DeleteModelModal } from '../components/delete-model-modal.component'
+import { MergeModelModal } from '../components/merge-model-modal.component'
+import { ModelRow } from '../components/model-row.component'
+import { ModelsFiltersMenu } from '../components/models-filters-menu.component'
+import { ModelRowSkeleton } from '../components/model-row-skeleton.component'
+import {
+  MODELS_TABLE_HEADER_HEIGHT_PX,
+  MODELS_TABLE_ROW_HEIGHT_PX,
+  MODELS_TABLE_TH,
+} from '../components/models-table.model'
+
+const TABLE_MAX_HEIGHT_PX = 450
+
+export function ModelsPage(): JSX.Element {
+  const { brands, tabItems, hiddenBrands, hasOverflow, selectedBrandId, selectBrand, refresh } =
+    useModelBrandTabs()
+  const brandId = selectedBrandId === ALL_BRANDS_TAB ? null : selectedBrandId
+  const {
+    state,
+    showSkeletons,
+    skeletonSlots,
+    reload,
+    setPage,
+    setQuery,
+    setFilters,
+    openCreate,
+    openEdit,
+    saveModel,
+    deactivateModel,
+    confirmDeactivate,
+    reactivateModel,
+    openDelete,
+    confirmDelete,
+    openMerge,
+    mergeModel,
+    exportModels,
+    editingModel,
+    deactivatingModel,
+    deletingModel,
+    mergingModel,
+    modalKey,
+    modalOpen,
+    deactivateModalOpen,
+    deleteModalOpen,
+    mergeModalOpen,
+    closeModal,
+  } = useProductModels(brandId, refresh)
+  const [addToast, ToastHost] = useToasts()
+
+  const handleSave = async (input: CreateProductModelInput): Promise<void> => {
+    const message = await saveModel(input)
+    if (message != null) addToast(message)
+  }
+
+  const handleDeactivate = async (model: ProductModel): Promise<void> => {
+    const message = await deactivateModel(model)
+    if (message != null) addToast(message)
+  }
+
+  const handleConfirmDeactivate = async (): Promise<void> => {
+    const message = await confirmDeactivate()
+    if (message != null) addToast(message)
+  }
+
+  const handleReactivate = async (model: ProductModel): Promise<void> => {
+    addToast(await reactivateModel(model))
+  }
+
+  const handleConfirmDelete = async (): Promise<void> => {
+    const message = await confirmDelete()
+    if (message != null) addToast(message)
+  }
+
+  const handleMerge = async (targetId: string): Promise<void> => {
+    const message = await mergeModel(targetId)
+    if (message != null) addToast(message)
+  }
+
+  const handleExport = async (): Promise<void> => {
+    const { message } = await exportModels()
+    addToast(message)
+  }
+
+  const { modelsTotal, brandsTotal, stocksTotal } = state
+  const isEmpty = !showSkeletons && state.status === 'ready' && state.models.length === 0
+  const hasActiveFilters =
+    state.filters.state !== 'todos' || state.filters.withExistences || state.filters.assigned
+  const emptyMessage =
+    state.query !== ''
+      ? `Sin resultados para «${state.query}».`
+      : hasActiveFilters
+        ? 'Sin resultados para los filtros seleccionados.'
+        : 'Aún no hay modelos registrados.'
+
+  const tableAreaStyle = useMemo(
+    () => ({
+      minHeight: Math.min(
+        TABLE_MAX_HEIGHT_PX,
+        MODELS_TABLE_HEADER_HEIGHT_PX + state.perPage * MODELS_TABLE_ROW_HEIGHT_PX,
+      ),
+    }),
+    [state.perPage],
+  )
+
+  return (
+    <div className="mx-auto w-full max-w-370">
+      <PageHero
+        eyebrow="Catálogos · modelos"
+        title="Modelos de herramientas"
+        italic="de herramientas"
+        lede={`${modelsTotal} modelos en ${brandsTotal} marcas · ${stocksTotal} herramientas activas.`}
+        actions={
+          <>
+            <Button
+              icon={Download04Icon}
+              disabled={state.exporting}
+              onClick={() => void handleExport()}
+            >
+              {state.exporting ? 'Exportando…' : 'Exportar'}
+            </Button>
+            <Button variant="primary" icon={PlusSignIcon} onClick={openCreate}>
+              Nuevo modelo
+            </Button>
+          </>
+        }
+      />
+
+      <div className="reveal-d2 mb-3 flex items-end border-b border-hairline">
+        <Tabs value={selectedBrandId} onChange={selectBrand} items={tabItems} />
+        {hasOverflow && <BrandTabPicker brands={hiddenBrands} onSelect={selectBrand} />}
+      </div>
+
+      <div className="reveal-d3 overflow-hidden rounded-[20px] max-h-164 border border-hairline bg-white shadow-[0_1px_2px_rgba(14,15,60,0.04)]">
+        <div className="flex items-center justify-between gap-2 border-b border-hairline px-3 py-3">
+          <ModelsFiltersMenu filters={state.filters} onChange={setFilters} />
+          <SearchInput
+            value={state.query}
+            onChange={setQuery}
+            placeholder="Buscar por nombre de modelo…"
+            ariaLabel="Buscar modelo"
+            className="h-8 max-w-[320px] flex-1"
+          />
+        </div>
+
+        <div className="overflow-y-hidden overflow-x-hidden" style={tableAreaStyle}>
+          {state.status === 'error' ? (
+            <div className="flex h-full min-h-[inherit] flex-col items-center justify-center gap-3">
+              <span className="text-[13px] text-muted">{state.error}</span>
+              <Button onClick={reload}>Reintentar</Button>
+            </div>
+          ) : (
+            <table className="w-full border-collapse text-[12px] relative">
+              <thead className="sticky w-full top-0">
+                <tr>
+                  <th className={MODELS_TABLE_TH}>Marca</th>
+                  <th className={MODELS_TABLE_TH}>Nombre del modelo</th>
+                  <th className={MODELS_TABLE_TH}>Existencias</th>
+                  <th className={MODELS_TABLE_TH}>Capacidad de uso</th>
+                  <th className={`${MODELS_TABLE_TH} w-37.5`} />
+                </tr>
+              </thead>
+              <tbody>
+                {showSkeletons && skeletonSlots.map((slot) => <ModelRowSkeleton key={slot} />)}
+                {!showSkeletons &&
+                  state.models.map((model) => (
+                    <ModelRow
+                      key={model.id}
+                      model={model}
+                      pending={state.pendingId === model.id}
+                      onEdit={() => openEdit(model)}
+                      onDeactivate={() => void handleDeactivate(model)}
+                      onReactivate={() => void handleReactivate(model)}
+                      onDelete={() => openDelete(model)}
+                      onMerge={() => openMerge(model)}
+                    />
+                  ))}
+                {isEmpty && (
+                  <tr>
+                    <td colSpan={5} className="px-3 py-16 text-center text-[13px] text-muted">
+                      {emptyMessage}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        <div className="h-fit border-t border-hairline px-4 pb-3 text-[13px] text-muted">
+          <Pager
+            page={state.page}
+            lastPage={state.lastPage}
+            total={state.total}
+            onChange={setPage}
+            itemsLabel="modelos"
+          />
+        </div>
+      </div>
+
+      <NewModelModal
+        key={`form-${modalKey}`}
+        open={modalOpen}
+        brands={brands}
+        initialBrandId={brandId}
+        editModel={editingModel}
+        saving={state.saving}
+        formError={state.formError}
+        onClose={closeModal}
+        onSave={(input) => void handleSave(input)}
+      />
+
+      <DeactivateModelModal
+        open={deactivateModalOpen}
+        model={deactivatingModel}
+        onClose={closeModal}
+        onConfirm={() => void handleConfirmDeactivate()}
+      />
+
+      <DeleteModelModal
+        open={deleteModalOpen}
+        model={deletingModel}
+        preview={state.deletionPreview}
+        previewStatus={state.deletionPreviewStatus}
+        onClose={closeModal}
+        onConfirm={() => void handleConfirmDelete()}
+      />
+
+      {/* `modalKey` remonta el modal en cada apertura: el destino elegido antes no sobrevive. */}
+      <MergeModelModal
+        key={`merge-${modalKey}`}
+        open={mergeModalOpen}
+        model={mergingModel}
+        merging={state.merging}
+        error={state.mergeError}
+        onClose={closeModal}
+        onConfirm={(targetId) => void handleMerge(targetId)}
+      />
+
+      {ToastHost}
+    </div>
+  )
+}

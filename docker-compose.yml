@@ -1,10 +1,10 @@
 services:
   dev:
-    build: 
+    build:
       context: .
       dockerfile: docker/dev/Dockerfile
     ports:
-      - "5173:5173"
+      - '5173:5173'
     environment:
       - NODE_ENV=development
     develop:

@@ -1,0 +1,66 @@
+export interface AuthenticatedUser {
+  id: string
+  name: string
+  username: string
+  email: string
+  phone: string | null
+}
+
+export interface LoginResponse {
+  user: AuthenticatedUser
+  token: string
+  expiresAt: string
+}
+
+export interface CreatedBrand {
+  id: string
+  name: string
+}
+
+export interface CreatedProductModel {
+  id: string
+  name: string
+}
+
+export interface CreatedProduct {
+  id: string
+  name: string
+}
+
+export interface CreatedUser {
+  id: string
+  name: string
+  username: string
+  email: string
+}
+
+export interface CreatedEmployee {
+  id: string
+  identifier: string
+  name: string
+}
+
+export interface RoleOption {
+  id: string
+  name: string
+}
+
+export interface CreateProductInput {
+  brandId: string
+  productModelId: string
+  name?: string
+}
+
+export interface CreateUserInput {
+  password: string
+  name?: string
+  username?: string
+  email?: string
+}
+
+export interface CreateEmployeeInput {
+  roleId: string
+  name?: string
+  email?: string
+  phone?: string
+}
