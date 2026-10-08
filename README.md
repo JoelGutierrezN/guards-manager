@@ -1,5 +1,7 @@
 # Guards Manager
 
+Rama de integración: `development`. Consulta [el estado de las specs](specs/README.md) y [la auditoría conjunta](https://github.com/JoelGutierrezN/guards-planning/blob/trunk/reportes/2026-10-08-consolidacion-development.md).
+
 Interfaz web de Guards: catálogo de herramientas, marcas, modelos, personal y resguardos.
 React 19 + Vite + TypeScript + Tailwind CSS v4 + HeroUI. Gestor de paquetes: **pnpm**.
 
