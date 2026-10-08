@@ -1,4 +1,4 @@
-import { type JSX, useEffect, useMemo } from 'react'
+import { type JSX, useCallback, useEffect, useMemo } from 'react'
 import { Cancel01Icon, Delete02Icon } from '@hugeicons/core-free-icons'
 import {
   Modal,
@@ -59,10 +59,10 @@ export function ToolStockModal({ open, tool, onClose }: Props): JSX.Element {
     [state.tabs, tool],
   )
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setQuery('')
     onClose()
-  }
+  }, [setQuery, onClose])
 
   const handleConfirmDelete = async () => {
     const succeeded = await confirmDelete()
