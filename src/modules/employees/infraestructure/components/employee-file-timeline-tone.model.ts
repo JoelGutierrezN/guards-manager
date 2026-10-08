@@ -1,15 +1,26 @@
-import { SentIcon, Tick02Icon, UserIcon } from '@hugeicons/core-free-icons'
+import {
+  Alert02Icon,
+  Cancel01Icon,
+  SentIcon,
+  Tick02Icon,
+  UserIcon,
+} from '@hugeicons/core-free-icons'
 import type { IconSvgElement } from '@hugeicons/react'
-import type { EmployeeFileEventType } from '../../domain/employee-file-event.model'
+import type {
+  EmployeeFileEventTone,
+  EmployeeFileEventType,
+} from '../../domain/employee-file-event.model'
 
-export interface EmployeeFileTimelineTone {
-  icon: IconSvgElement
-  className: string
+export const EMPLOYEE_FILE_TIMELINE_ICONS: Record<EmployeeFileEventType, IconSvgElement> = {
+  asignacion: SentIcon,
+  devolucion: Tick02Icon,
+  alta: UserIcon,
+  daño: Alert02Icon,
+  cancelacion: Cancel01Icon,
 }
 
-export const EMPLOYEE_FILE_TIMELINE_TONES: Record<EmployeeFileEventType, EmployeeFileTimelineTone> =
-  {
-    asignacion: { icon: SentIcon, className: 'border-brand bg-brand text-cream' },
-    devolucion: { icon: Tick02Icon, className: 'border-ok bg-ok text-cream' },
-    alta: { icon: UserIcon, className: 'border-hairline-strong bg-white text-ink-2' },
-  }
+export const EMPLOYEE_FILE_TIMELINE_TONE_CLASS_NAMES: Record<EmployeeFileEventTone, string> = {
+  neutral: 'border-hairline-strong bg-white text-ink-2',
+  ok: 'border-ok bg-ok text-cream',
+  warn: 'border-warn bg-warn text-cream',
+}

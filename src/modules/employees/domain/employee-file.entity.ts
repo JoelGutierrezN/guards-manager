@@ -1,4 +1,6 @@
 import type { EmployeeStatus } from './employee-status.model'
+import type { EmployeeFileAlert } from './employee-file-alert.model'
+import type { EmployeeFileDamage } from './employee-file-damage.model'
 import type { EmployeeFileDocument } from './employee-file-document.model'
 import type { EmployeeFileEvent } from './employee-file-event.model'
 import type { EmployeeFileItem } from './employee-file-item.model'
@@ -14,6 +16,7 @@ export interface EmployeeFileProfile {
   phone: string | null
   status: EmployeeStatus
   hireDate: string
+  hiredAt: string | null
 }
 
 export interface EmployeeFile {
@@ -22,4 +25,7 @@ export interface EmployeeFile {
   activeItems: EmployeeFileItem[]
   history: EmployeeFileEvent[]
   documents: EmployeeFileDocument[]
+  damages: EmployeeFileDamage[]
+  alerts: EmployeeFileAlert[]
+  alertsCount: number
 }

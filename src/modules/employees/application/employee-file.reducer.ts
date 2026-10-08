@@ -74,6 +74,8 @@ export function employeeFileReducer(
             email: employee.email,
             phone: employee.phone,
             status: employee.status,
+            hireDate: employee.hireDate,
+            hiredAt: employee.hiredAt ?? null,
           },
         },
       }

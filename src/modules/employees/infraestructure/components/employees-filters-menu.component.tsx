@@ -127,6 +127,16 @@ export function EmployeesFiltersMenu({ filters, onChange, onClear }: Props): JSX
           </div>
 
           <div className="my-2 border-t border-hairline" />
+          <p className={SECTION_TITLE_CLASS}>Alertas</p>
+          <div className="px-2.5 py-1.5">
+            <Checkbox
+              label="Requieren atención"
+              checked={filters.withAlerts}
+              onChange={(event) => onChange({ withAlerts: event.target.checked })}
+            />
+          </div>
+
+          <div className="my-2 border-t border-hairline" />
           <p className={SECTION_TITLE_CLASS}>Fecha de alta</p>
           <div className="grid grid-cols-2 gap-2 px-2.5 py-1.5">
             <label className="flex flex-col gap-1 text-[11px] text-muted">

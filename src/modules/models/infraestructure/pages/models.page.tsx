@@ -2,7 +2,6 @@ import { type JSX, useMemo } from 'react'
 import { Download04Icon, PlusSignIcon } from '@hugeicons/core-free-icons'
 import {
   Button,
-  Chip,
   Pager,
   PageHero,
   SearchInput,
@@ -18,6 +17,7 @@ import { BrandTabPicker } from '../components/brand-tab-picker.component'
 import { NewModelModal } from '../components/new-model-modal.component'
 import { DeactivateModelModal } from '../components/deactivate-model-modal.component'
 import { DeleteModelModal } from '../components/delete-model-modal.component'
+import { MergeModelModal } from '../components/merge-model-modal.component'
 import { ModelRow } from '../components/model-row.component'
 import { ModelsFiltersMenu } from '../components/models-filters-menu.component'
 import { ModelRowSkeleton } from '../components/model-row-skeleton.component'
@@ -49,13 +49,18 @@ export function ModelsPage(): JSX.Element {
     reactivateModel,
     openDelete,
     confirmDelete,
+    openMerge,
+    mergeModel,
+    exportModels,
     editingModel,
     deactivatingModel,
     deletingModel,
+    mergingModel,
     modalKey,
     modalOpen,
     deactivateModalOpen,
     deleteModalOpen,
+    mergeModalOpen,
     closeModal,
   } = useProductModels(brandId, refresh)
   const [addToast, ToastHost] = useToasts()
@@ -82,6 +87,16 @@ export function ModelsPage(): JSX.Element {
   const handleConfirmDelete = async (): Promise<void> => {
     const message = await confirmDelete()
     if (message != null) addToast(message)
+  }
+
+  const handleMerge = async (targetId: string): Promise<void> => {
+    const message = await mergeModel(targetId)
+    if (message != null) addToast(message)
+  }
+
+  const handleExport = async (): Promise<void> => {
+    const { message } = await exportModels()
+    addToast(message)
   }
 
   const { modelsTotal, brandsTotal, stocksTotal } = state
@@ -114,16 +129,13 @@ export function ModelsPage(): JSX.Element {
         lede={`${modelsTotal} modelos en ${brandsTotal} marcas · ${stocksTotal} herramientas activas.`}
         actions={
           <>
-            <span className="relative inline-flex">
-              <Button icon={Download04Icon} disabled>
-                Exportar
-              </Button>
-              <span className="absolute -top-2 -right-2">
-                <Chip tone="navy" size="sm">
-                  En desarrollo
-                </Chip>
-              </span>
-            </span>
+            <Button
+              icon={Download04Icon}
+              disabled={state.exporting}
+              onClick={() => void handleExport()}
+            >
+              {state.exporting ? 'Exportando…' : 'Exportar'}
+            </Button>
             <Button variant="primary" icon={PlusSignIcon} onClick={openCreate}>
               Nuevo modelo
             </Button>
@@ -177,6 +189,7 @@ export function ModelsPage(): JSX.Element {
                       onDeactivate={() => void handleDeactivate(model)}
                       onReactivate={() => void handleReactivate(model)}
                       onDelete={() => openDelete(model)}
+                      onMerge={() => openMerge(model)}
                     />
                   ))}
                 {isEmpty && (
@@ -203,7 +216,7 @@ export function ModelsPage(): JSX.Element {
       </div>
 
       <NewModelModal
-        key={modalKey}
+        key={`form-${modalKey}`}
         open={modalOpen}
         brands={brands}
         initialBrandId={brandId}
@@ -224,8 +237,21 @@ export function ModelsPage(): JSX.Element {
       <DeleteModelModal
         open={deleteModalOpen}
         model={deletingModel}
+        preview={state.deletionPreview}
+        previewStatus={state.deletionPreviewStatus}
         onClose={closeModal}
         onConfirm={() => void handleConfirmDelete()}
+      />
+
+      {/* `modalKey` remonta el modal en cada apertura: el destino elegido antes no sobrevive. */}
+      <MergeModelModal
+        key={`merge-${modalKey}`}
+        open={mergeModalOpen}
+        model={mergingModel}
+        merging={state.merging}
+        error={state.mergeError}
+        onClose={closeModal}
+        onConfirm={(targetId) => void handleMerge(targetId)}
       />
 
       {ToastHost}

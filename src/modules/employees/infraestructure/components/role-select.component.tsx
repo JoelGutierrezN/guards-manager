@@ -1,10 +1,19 @@
 import { type JSX, useMemo, useState } from 'react'
-import { ArrowDown01Icon, UserAccountIcon } from '@hugeicons/core-free-icons'
+import {
+  ArrowDown01Icon,
+  PlusSignIcon,
+  Tick01Icon,
+  UserAccountIcon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { cn } from '../../../shared/infraestructure/utils/cn'
 import type { RoleOption as RoleOptionModel } from '../../domain/role-option.model'
 import type { RolesStatus } from '../../application/employee-form.model'
+import { IconButton } from '../../../shared/infraestructure/components/ui'
 import { RoleOption } from './role-option.component'
+
+/** Tope del `name` en `RoleRequest` del API: evita el 422 por longitud. */
+const ROLE_NAME_MAX_LENGTH = 60
 
 interface Props {
   label: string
@@ -12,11 +21,26 @@ interface Props {
   options: RoleOptionModel[]
   status: RolesStatus
   error?: string
+  creating: boolean
+  createError: string | null
   onChange: (roleId: string) => void
+  onCreate: (name: string) => Promise<boolean>
 }
 
-export function RoleSelect({ label, value, options, status, error, onChange }: Props): JSX.Element {
+export function RoleSelect({
+  label,
+  value,
+  options,
+  status,
+  error,
+  creating,
+  createError,
+  onChange,
+  onCreate,
+}: Props): JSX.Element {
   const [isOpen, setIsOpen] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
+  const [newRoleName, setNewRoleName] = useState('')
 
   const isLoading = status === 'loading' || status === 'idle'
   const hasLoadError = status === 'error'
@@ -57,6 +81,16 @@ export function RoleSelect({ label, value, options, status, error, onChange }: P
   const handleSelect = (roleId: string) => {
     onChange(roleId)
     setIsOpen(false)
+  }
+
+  // El formulario inline sigue abierto con lo tecleado hasta que el API confirma:
+  // un 422 (nombre repetido o demasiado largo) debe poder corregirse sin reescribirlo.
+  const handleCreateRole = async (): Promise<void> => {
+    if (creating || newRoleName.trim() === '') return
+    const created = await onCreate(newRoleName)
+    if (!created) return
+    setNewRoleName('')
+    setIsCreating(false)
   }
 
   return (
@@ -112,6 +146,44 @@ export function RoleSelect({ label, value, options, status, error, onChange }: P
               {options.length === 0 && (
                 <div className="py-4 text-center text-[13px] text-muted">Sin roles registrados</div>
               )}
+
+              <div className="mt-1 border-t border-hairline pt-1.5">
+                {isCreating ? (
+                  <div className="flex items-center gap-1.5 px-1">
+                    <input
+                      autoFocus
+                      value={newRoleName}
+                      disabled={creating}
+                      maxLength={ROLE_NAME_MAX_LENGTH}
+                      placeholder="Nombre del puesto"
+                      onChange={(event) => setNewRoleName(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') void handleCreateRole()
+                      }}
+                      className="h-8 flex-1 rounded-[10px] border border-hairline-strong bg-white px-2.5 text-[12px] text-ink outline-none focus:border-brand"
+                    />
+                    <IconButton
+                      icon={Tick01Icon}
+                      size="sm"
+                      tip="Crear puesto"
+                      disabled={creating || newRoleName.trim() === ''}
+                      onClick={() => void handleCreateRole()}
+                    />
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-[12px] px-3 py-2 text-left text-[13px] font-medium text-brand hover:bg-brand-soft"
+                    onClick={() => setIsCreating(true)}
+                  >
+                    <HugeiconsIcon icon={PlusSignIcon} size={14} strokeWidth={1.8} />
+                    Nuevo puesto
+                  </button>
+                )}
+                {createError && (
+                  <div className="px-3 pt-1 text-[11px] text-danger">{createError}</div>
+                )}
+              </div>
             </div>
           </>
         )}
