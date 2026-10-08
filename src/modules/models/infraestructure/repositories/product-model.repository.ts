@@ -7,10 +7,15 @@ import type {
   UpdateProductModelInput,
 } from '../../domain/product-model-input.model'
 import type { ProductModelNameCheck } from '../../domain/product-model-name-check.model'
+import type { ProductModelDeletionPreview } from '../../domain/product-model-deletion-preview.model'
+import type { DownloadedFile } from '../../../shared/domain/downloaded-file.model'
 import type { ProductModelCollectionDto } from '../dto/product-model-collection.dto'
 import type { ProductModelNameCheckDto } from '../dto/product-model-name-check.dto'
+import type { ProductModelDeletionPreviewDto } from '../dto/product-model-deletion-preview.dto'
 import type { ProductModelDto } from '../dto/product-model.dto'
 import { ProductModelMapper } from '../mappers/product-model.mapper'
+
+const EXPORT_FALLBACK_FILENAME = 'modelos.xlsx'
 
 class ProductModelRepositoryImpl implements ProductModelRepositoryContract {
   private readonly datasource: HttpDataSource
@@ -59,8 +64,29 @@ class ProductModelRepositoryImpl implements ProductModelRepositoryContract {
     return ProductModelMapper.toProductModel(response)
   }
 
+  async deletionPreview(id: string): Promise<ProductModelDeletionPreview> {
+    const response = await this.datasource.get<ProductModelDeletionPreviewDto>(
+      `/product-models/${id}/deletion-preview`,
+    )
+    return ProductModelMapper.toProductModelDeletionPreview(response)
+  }
+
+  async merge(id: string, targetId: string): Promise<ProductModel> {
+    const response = await this.datasource.post<ProductModelDto>(`/product-models/${id}/merge`, {
+      target_id: targetId,
+    })
+    return ProductModelMapper.toProductModel(response)
+  }
+
   async remove(id: string): Promise<void> {
     await this.datasource.delete(`/product-models/${id}`)
+  }
+
+  async export(params: URLSearchParams): Promise<DownloadedFile> {
+    return this.datasource.getFile(
+      `/product-models/export?${params.toString()}`,
+      EXPORT_FALLBACK_FILENAME,
+    )
   }
 }
 

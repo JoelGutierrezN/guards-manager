@@ -92,6 +92,9 @@ export function Combobox({
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
+      // Con el desplegable abierto, `Escape` cierra solo esta capa: sin detener el evento
+      // seguiría subiendo hasta el Modal que contiene el Combobox y cerraría el formulario.
+      if (uiState.isOpen) event.stopPropagation()
       dispatchUi({ type: 'CLOSED' })
       return
     }

@@ -44,7 +44,7 @@ class NewAssignmentRepositoryImpl implements NewAssignmentRepositoryContract {
 
   async getEmployee(employeeId: string): Promise<EmployeeOption> {
     const response = await this.datasource.get<EmployeeOptionDto>(`/employees/${employeeId}`)
-    return EmployeeOptionMapper.toEmployeeOptionWithoutToolsCount(response)
+    return EmployeeOptionMapper.toEmployeeOption(response)
   }
 
   async searchProducts(query: string): Promise<AssignmentProductOption[]> {
