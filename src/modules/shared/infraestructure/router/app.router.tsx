@@ -7,7 +7,9 @@ import { AppLayout } from '../layouts/app.layout'
 import { SessionExpiredPage } from '../pages/session-expired.page'
 import { AppErrorPage } from '../pages/app-error.page'
 import { NotFoundPage } from '../pages/not-found.page'
+import { ForbiddenPage } from '../pages/forbidden.page'
 import type { CrumbHandle } from '../components/topbar/topbar.crumbs'
+import type { CustodyDetailLoaderData } from '../../../custodies/domain/custody-detail-loader.model'
 
 export default createBrowserRouter([
   {
@@ -25,6 +27,20 @@ export default createBrowserRouter([
             path: '/',
             element: <AuthPage />,
           },
+          {
+            path: 'forgot-password',
+            lazy: async () => ({
+              Component: (await import('../../../auth/infraestructure/pages/forgot-password.page'))
+                .default,
+            }),
+          },
+          {
+            path: 'reset-password',
+            lazy: async () => ({
+              Component: (await import('../../../auth/infraestructure/pages/reset-password.page'))
+                .default,
+            }),
+          },
         ],
       },
       {
@@ -37,7 +53,7 @@ export default createBrowserRouter([
                 path: 'dashboard',
                 handle: { crumb: 'Panel general' },
                 lazy: async () => ({
-                  Component: (await import('../pages/dashboard-panel.page')).DashboardPanelPage,
+                  Component: (await import('../../../dashboard')).DashboardPage,
                 }),
               },
               {
@@ -51,14 +67,16 @@ export default createBrowserRouter([
                 path: 'newAssignment',
                 handle: { crumb: ['Operación', 'Nueva asignación'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (
+                    await import('../../../custodies/infraestructure/pages/new-assignment.page')
+                  ).NewAssignmentPage,
                 }),
               },
               {
                 path: 'assignments',
                 handle: { crumb: ['Operación', 'Resguardo'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (await import('../../../custodies')).CustodiesPage,
                 }),
               },
               {
@@ -67,11 +85,42 @@ export default createBrowserRouter([
                   crumb: (match: UIMatch) => [
                     'Operación',
                     'Resguardo',
-                    match.params.custodyId ?? '',
+                    (match.data as CustodyDetailLoaderData | undefined)?.custody?.code ?? 'Detalle',
                   ],
                 } satisfies CrumbHandle,
+                lazy: async () => {
+                  const custodiesModule = await import('../../../custodies')
+                  return {
+                    Component: custodiesModule.CustodyDetailPage,
+                    loader: custodiesModule.custodyDetailLoader,
+                  }
+                },
+              },
+              {
+                path: 'assignments/:custodyId/return',
+                handle: { crumb: ['Operación', 'Resguardo', 'Devolución'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (
+                    await import('../../../custodies/infraestructure/pages/custody-return.page')
+                  ).CustodyReturnPage,
+                }),
+              },
+              {
+                path: 'assignments/:custodyId/sign',
+                handle: { crumb: ['Operación', 'Resguardo', 'Firma'] },
+                lazy: async () => ({
+                  Component: (
+                    await import('../../../custodies/infraestructure/pages/sign-sheet.page')
+                  ).SignSheetPage,
+                }),
+              },
+              {
+                path: 'assignments/:custodyId/returns/:returnId/sign',
+                handle: { crumb: ['Operación', 'Resguardo', 'Firma de la devolución'] },
+                lazy: async () => ({
+                  Component: (
+                    await import('../../../custodies/infraestructure/pages/sign-sheet.page')
+                  ).SignSheetPage,
                 }),
               },
               {
@@ -115,8 +164,20 @@ export default createBrowserRouter([
                 path: 'profile',
                 handle: { crumb: ['Cuenta', 'Mi perfil'] },
                 lazy: async () => ({
-                  Component: (await import('../pages/coming-soon.page')).ComingSoonPage,
+                  Component: (await import('../../../account')).ProfilePage,
                 }),
+              },
+              {
+                path: 'users',
+                handle: { crumb: ['Cuenta', 'Usuarios'] },
+                lazy: async () => ({
+                  Component: (await import('../../../account')).UsersPage,
+                }),
+              },
+              {
+                path: '403',
+                handle: { crumb: 'Acceso denegado' },
+                element: <ForbiddenPage />,
               },
               {
                 path: '*',

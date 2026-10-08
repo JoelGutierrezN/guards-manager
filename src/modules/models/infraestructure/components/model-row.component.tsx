@@ -1,6 +1,7 @@
 import { type JSX, useMemo } from 'react'
 import {
   Delete02Icon,
+  GitMergeIcon,
   PencilEdit02Icon,
   ThumbsDownIcon,
   ThumbsUpIcon,
@@ -17,6 +18,7 @@ interface Props {
   onDeactivate: () => void
   onReactivate: () => void
   onDelete: () => void
+  onMerge: () => void
 }
 
 const DISABLED_ACTION = 'pointer-events-none opacity-35'
@@ -28,6 +30,7 @@ export function ModelRow({
   onDeactivate,
   onReactivate,
   onDelete,
+  onMerge,
 }: Props): JSX.Element {
   const {
     brandName,
@@ -138,6 +141,14 @@ export function ModelRow({
               onClick={onReactivate}
             />
           )}
+          <IconButton
+            icon={GitMergeIcon}
+            tip="Fusionar con otro modelo"
+            size="sm"
+            disabled={pending}
+            className={pendingClassName}
+            onClick={onMerge}
+          />
           {!active && (
             <IconButton
               icon={Delete02Icon}

@@ -6,8 +6,8 @@ export function authReducer(state: AuthState, action: AuthAction): AuthState {
       return { ...state, status: 'authenticating', error: null, sessionExpired: false }
 
     case 'AUTH_SUCCESS': {
-      const { user, token } = action.payload
-      return { user, token, status: 'authenticated', error: null, sessionExpired: false }
+      const { user, token, expiresAt } = action.payload
+      return { user, token, expiresAt, status: 'authenticated', error: null, sessionExpired: false }
     }
 
     case 'AUTH_ERROR': {
@@ -16,9 +16,23 @@ export function authReducer(state: AuthState, action: AuthAction): AuthState {
     }
 
     case 'AUTH_LOGOUT':
-      return { user: null, token: null, status: 'idle', error: null, sessionExpired: false }
+      return {
+        user: null,
+        token: null,
+        expiresAt: null,
+        status: 'idle',
+        error: null,
+        sessionExpired: false,
+      }
 
     case 'AUTH_SESSION_EXPIRED':
-      return { user: null, token: null, status: 'idle', error: null, sessionExpired: true }
+      return {
+        user: null,
+        token: null,
+        expiresAt: null,
+        status: 'idle',
+        error: null,
+        sessionExpired: true,
+      }
   }
 }

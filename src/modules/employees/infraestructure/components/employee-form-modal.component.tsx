@@ -1,5 +1,6 @@
 import { type JSX } from 'react'
 import {
+  Calendar01Icon,
   Cancel01Icon,
   InformationCircleIcon,
   Mail01Icon,
@@ -14,11 +15,18 @@ import {
   IconButton,
   Input,
   Modal,
+  Select,
+  type SelectOption,
 } from '../../../shared/infraestructure/components/ui'
 import type { Employee } from '../../domain/employee.entity'
 import type { CreateEmployeeInput } from '../../domain/employee-input.model'
 import { useEmployeeForm } from '../../hooks/use-employee-form.hook'
 import { RoleSelect } from './role-select.component'
+
+const STATUS_OPTIONS: SelectOption[] = [
+  { value: 'activo', label: 'Activo' },
+  { value: 'inactivo', label: 'Inactivo' },
+]
 
 interface Props {
   open: boolean
@@ -38,8 +46,19 @@ export function EmployeeFormModal({
   onSave,
 }: Props): JSX.Element {
   const isEdit = editEmployee != null
-  const { state, visibleErrors, canSave, setName, setRole, setEmail, setPhone, submit } =
-    useEmployeeForm({ enabled: open, editEmployee, onSave })
+  const {
+    state,
+    visibleErrors,
+    canSave,
+    setName,
+    setRole,
+    setEmail,
+    setPhone,
+    setHiredAt,
+    setStatus,
+    createRole,
+    submit,
+  } = useEmployeeForm({ enabled: open, editEmployee, onSave })
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -88,8 +107,33 @@ export function EmployeeFormModal({
             options={state.roles}
             status={state.rolesStatus}
             error={visibleErrors.roleId}
+            creating={state.roleCreating}
+            createError={state.roleCreateError}
             onChange={setRole}
+            onCreate={createRole}
           />
+
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              label="Fecha de ingreso"
+              hint="opcional"
+              type="date"
+              name="employee-hired-at"
+              leadIcon={Calendar01Icon}
+              value={state.hiredAt}
+              onChange={(event) => setHiredAt(event.target.value)}
+            />
+
+            <div className="flex flex-col gap-1.5">
+              <label className="flex items-center text-[12px] font-medium text-ink-2">Estado</label>
+              <Select
+                ariaLabel="Estado del empleado"
+                value={state.status}
+                options={STATUS_OPTIONS}
+                onChange={(value) => setStatus(value === 'inactivo' ? 'inactivo' : 'activo')}
+              />
+            </div>
+          </div>
 
           <Input
             label="Correo electrónico"

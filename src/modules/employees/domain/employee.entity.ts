@@ -12,5 +12,6 @@ export interface Employee {
   activeToolsCount: number
   historicalToolsCount: number
   hireDate: string
+  hiredAt?: string | null
   alertsCount: number
 }

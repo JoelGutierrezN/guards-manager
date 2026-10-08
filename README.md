@@ -1,5 +1,7 @@
 # Guards Manager
 
+Rama de integración: `development`. Consulta [el estado de las specs](specs/README.md) y [la auditoría conjunta](https://github.com/JoelGutierrezN/guards-planning/blob/trunk/reportes/2026-10-08-consolidacion-development.md).
+
 Interfaz web de Guards: catálogo de herramientas, marcas, modelos, personal y resguardos.
 React 19 + Vite + TypeScript + Tailwind CSS v4 + HeroUI. Gestor de paquetes: **pnpm**.
 
@@ -65,3 +67,34 @@ Detalle de la infraestructura, helpers y convenciones de las pruebas: [`e2e/READ
 Arquitectura modular inspirada en DDD (`domain`, `application`, `hooks`, `infraestructure`).
 Convenciones obligatorias en [`CLAUDE.md`](CLAUDE.md) y
 `.claude/skills/react-ts-standards/SKILL.md`.
+
+## Despliegue en producción (Docker)
+
+`docker/prod/Dockerfile` es multi-stage: compila el bundle con `pnpm build` y lo sirve
+con `nginx` (fallback de rutas para el SPA de react-router en `docker/prod/nginx.conf`).
+
+`VITE_API_URL` se hornea en el bundle en **tiempo de build** (Vite solo lee `import.meta.env`
+al compilar, no en runtime), así que se pasa como `ARG` de build, no como variable de entorno
+del contenedor ni con un `env.js` generado al arrancar:
+
+```bash
+docker build \
+  --build-arg VITE_API_URL=https://api.tu-dominio.com/api/v1 \
+  -f docker/prod/Dockerfile \
+  -t guards-manager:prod .
+```
+
+```bash
+docker run --rm -p 8080:80 guards-manager:prod   # http://localhost:8080
+```
+
+El `--build-arg` es obligatorio: el `Dockerfile` aborta antes de compilar si `VITE_API_URL`
+llega vacío, porque el bundle resultante mandaría todas las peticiones al propio `nginx` del
+front. Si el dominio del API cambia, hay que reconstruir la imagen con el nuevo valor (no
+basta con reiniciar el contenedor).
+
+`docker-compose.prod.yml` de `guards-api` orquesta solo el backend (`app`, `nginx`, `queue`,
+`scheduler`, `mysql`) y no declara ningún servicio de este front: la imagen del front se
+construye y se corre aparte con los dos comandos de arriba, apuntando `VITE_API_URL` al host
+y puerto que publica el `nginx` del API (con el `APP_PORT` por defecto,
+`http://localhost:8080/api/v1`).

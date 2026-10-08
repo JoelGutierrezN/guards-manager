@@ -1,7 +1,6 @@
 import type { TabItem } from '../../shared/infraestructure/components/ui/tabs.model'
 import type { EmployeeFile } from '../domain/employee-file.entity'
 import {
-  EMPLOYEE_FILE_PENDING_BADGE,
   EMPLOYEE_FILE_TABS,
   type EmployeeFileTab,
   type EmployeeFileTabDescriptor,
@@ -19,14 +18,14 @@ export class EmployeeFileTabsHelper {
     file: EmployeeFile | null,
   ): TabItem<EmployeeFileTab> {
     const base = { value: descriptor.value, label: descriptor.label, icon: descriptor.icon }
-    if (descriptor.pending) {
-      return { ...base, badge: EMPLOYEE_FILE_PENDING_BADGE }
-    }
     return { ...base, count: EmployeeFileTabsHelper.countFor(descriptor.value, file) }
   }
 
   private static countFor(tab: EmployeeFileTab, file: EmployeeFile | null): number {
     if (file === null) return 0
-    return tab === 'history' ? file.history.length : file.activeItems.length
+    if (tab === 'history') return file.history.length
+    if (tab === 'docs') return file.summary.documents
+    if (tab === 'damage') return file.damages.length
+    return file.activeItems.length
   }
 }

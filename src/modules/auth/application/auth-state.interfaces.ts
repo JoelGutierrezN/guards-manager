@@ -6,6 +6,7 @@ export type AuthStatus = 'idle' | 'authenticating' | 'authenticated' | 'error'
 export interface AuthState {
   user: User | null
   token: string | null
+  expiresAt: string | null
   status: AuthStatus
   error: string | null
   sessionExpired: boolean

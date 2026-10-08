@@ -16,13 +16,7 @@ export function EmployeeFileSummaryCard({ summary }: Props): JSX.Element {
         <EmployeeFileSummaryMetric label="Activas" value={summary.activeItems} tone="brand" />
         <EmployeeFileSummaryMetric label="Histórico" value={summary.historicalItems} />
         <EmployeeFileSummaryMetric label="Devueltas" value={summary.returnedItems} />
-        {/* Pendiente Fase 5: los daños llegan con el expediente completo */}
-        <EmployeeFileSummaryMetric
-          label="Daños"
-          value={summary.damagedItems}
-          tone="danger"
-          hint="Pendiente de implementación"
-        />
+        <EmployeeFileSummaryMetric label="Daños" value={summary.damagedItems} tone="danger" />
       </div>
     </div>
   )
