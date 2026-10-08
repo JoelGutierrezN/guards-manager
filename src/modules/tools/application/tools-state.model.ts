@@ -4,7 +4,23 @@ import type { ToolsPage } from '../domain/tools-page.model'
 import type { ToolsSort, ToolsSortKey } from '../domain/tools-sort.model'
 import type { ToolsTabKey } from '../domain/tools-tab.model'
 
+/**
+ * Techo del slider de existencias hasta que se conozca el `maxStock` real del catálogo
+ * (`GET /brands/catalog/tree`, `meta.maxStock`). `ToolsQueryParamsHelper` acepta ese valor
+ * como parámetro opcional para que la serialización y el contador de filtros activos usen
+ * el máximo real en vez de este valor por defecto.
+ */
 export const DEFAULT_STOCK_RANGE: [number, number] = [0, 50]
+
+/**
+ * Techo efectivo del rango de existencias. `undefined` (catálogo sin cargar) y `0` (catálogo
+ * vacío) significan «todavía no se conoce el máximo real» y caen al valor por defecto.
+ */
+export function effectiveStockMax(maxStock?: number): number {
+  return maxStock !== undefined && maxStock > DEFAULT_STOCK_RANGE[0]
+    ? maxStock
+    : DEFAULT_STOCK_RANGE[1]
+}
 
 export const DEFAULT_TOOLS_SORT: ToolsSort = { key: 'name', direction: 'asc' }
 
@@ -59,7 +75,8 @@ export type ToolsAction =
   | { type: 'TOGGLE_BRAND'; brand: string }
   | { type: 'TOGGLE_MODEL'; model: string }
   | { type: 'SET_STOCK_RANGE'; range: [number, number] }
-  | { type: 'CLEAR_FILTERS' }
+  | { type: 'SET_MAX_STOCK'; maxStock: number }
+  | { type: 'CLEAR_FILTERS'; maxStock?: number }
   | { type: 'SET_SEARCH'; search: string }
   | { type: 'TOGGLE_SORT'; key: ToolsSortKey }
   | { type: 'SET_TAB'; tab: ToolsTabKey }

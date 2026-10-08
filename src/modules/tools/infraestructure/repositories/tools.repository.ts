@@ -5,11 +5,14 @@ import type { CatalogTree } from '../../domain/catalog-option.model'
 import type { Tool } from '../../domain/tool.entity'
 import type { ToolInput } from '../../domain/tool-input.model'
 import type { ToolsPage } from '../../domain/tools-page.model'
+import type { DownloadedFile } from '../../../shared/domain/downloaded-file.model'
 import type { ToolsStatsDto } from '../dto/tools-stats.dto'
 import type { CatalogTreeDto } from '../dto/catalog-tree.dto'
 import type { ProductCollectionDto, ProductDto } from '../dto/product.dto'
 import { ToolsMapper } from '../mappers/tools.mapper'
 import { ProductMapper } from '../mappers/product.mapper'
+
+const PRODUCTS_EXPORT_FALLBACK_FILENAME = 'catalogo-herramientas.xlsx'
 
 class ToolsRepositoryImpl implements ToolsRepositoryContract {
   private readonly datasource: HttpDataSource
@@ -53,6 +56,13 @@ class ToolsRepositoryImpl implements ToolsRepositoryContract {
 
   async remove(id: string): Promise<void> {
     await this.datasource.delete(`/products/${id}`)
+  }
+
+  exportProducts(params: URLSearchParams): Promise<DownloadedFile> {
+    return this.datasource.getFile(
+      `/products/export?${params.toString()}`,
+      PRODUCTS_EXPORT_FALLBACK_FILENAME,
+    )
   }
 }
 

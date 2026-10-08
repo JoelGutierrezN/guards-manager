@@ -9,10 +9,23 @@ export class AuthUseCase {
     this.repository = repository
   }
 
-  async login(identifier: string, password: string): Promise<AuthSession> {
+  async login(
+    identifier: string,
+    password: string,
+    keepSession: boolean = false,
+  ): Promise<AuthSession> {
     const session = await this.repository.login(identifier, password)
     AuthSessionStorage.save(session)
-    return session
+
+    if (!keepSession) return session
+
+    try {
+      const trustedExpiresAt = await this.repository.trustClient()
+      AuthSessionStorage.updateExpiresAt(trustedExpiresAt)
+      return { ...session, expiresAt: trustedExpiresAt }
+    } catch {
+      return session
+    }
   }
 
   async logout(): Promise<void> {

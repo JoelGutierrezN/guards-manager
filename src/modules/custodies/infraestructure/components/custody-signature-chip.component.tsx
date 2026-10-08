@@ -6,8 +6,16 @@ interface Props {
   signedAt: string | null
 }
 
+const PENDING_LABEL = 'Pendiente de firma'
+
 export function CustodySignatureChip({ signedAt }: Props): JSX.Element {
-  if (signedAt == null) return <Chip size="sm">Pendiente</Chip>
+  if (signedAt == null) {
+    return (
+      <Chip tone="warn" size="sm">
+        {PENDING_LABEL}
+      </Chip>
+    )
+  }
 
   return (
     <Chip tone="ok" size="sm">

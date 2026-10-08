@@ -3,6 +3,7 @@ import type { CatalogTree } from './catalog-option.model'
 import type { Tool } from './tool.entity'
 import type { ToolInput } from './tool-input.model'
 import type { ToolsPage } from './tools-page.model'
+import type { DownloadedFile } from '../../shared/domain/downloaded-file.model'
 
 export interface ToolsRepository {
   getStats(): Promise<ToolsStats>
@@ -11,4 +12,5 @@ export interface ToolsRepository {
   create(input: ToolInput): Promise<Tool>
   update(id: string, input: ToolInput): Promise<Tool>
   remove(id: string): Promise<void>
+  exportProducts(params: URLSearchParams): Promise<DownloadedFile>
 }

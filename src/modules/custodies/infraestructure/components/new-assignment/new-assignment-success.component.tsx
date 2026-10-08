@@ -2,7 +2,7 @@ import { type JSX, useMemo } from 'react'
 import {
   ArrowRight01Icon,
   CheckmarkCircle02Icon,
-  Task01Icon,
+  SignatureIcon,
   UserAdd01Icon,
 } from '@hugeicons/core-free-icons'
 import { Button, Icon } from '../../../../shared/infraestructure/components/ui'
@@ -11,14 +11,16 @@ import type { CustodyDetail } from '../../../domain/custody.entity'
 
 interface Props {
   custody: CustodyDetail
+  onSign: () => void
   onViewCustody: () => void
   onNewAssignment: () => void
 }
 
-const SIGN_PENDING_TIP = 'La firma del resguardo llega en la siguiente entrega.'
+const SIGN_HINT = 'Firma ahora la hoja del resguardo o hazlo después desde el detalle.'
 
 export function NewAssignmentSuccess({
   custody,
+  onSign,
   onViewCustody,
   onNewAssignment,
 }: Props): JSX.Element {
@@ -43,11 +45,9 @@ export function NewAssignmentSuccess({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span title={SIGN_PENDING_TIP}>
-          <Button variant="primary" icon={Task01Icon} disabled>
-            Firmar ahora
-          </Button>
-        </span>
+        <Button variant="primary" icon={SignatureIcon} onClick={onSign}>
+          Firmar ahora
+        </Button>
         <Button iconRight={ArrowRight01Icon} onClick={onViewCustody}>
           Ver resguardo
         </Button>
@@ -55,7 +55,7 @@ export function NewAssignmentSuccess({
           Nueva asignación
         </Button>
       </div>
-      <p className="m-0 mt-3 text-[11px] text-muted">{SIGN_PENDING_TIP}</p>
+      <p className="m-0 mt-3 text-[11px] text-muted">{SIGN_HINT}</p>
     </section>
   )
 }
