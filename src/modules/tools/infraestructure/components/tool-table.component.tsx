@@ -1,12 +1,14 @@
 import { type JSX, useMemo } from 'react'
-import { ArrowDown01Icon, PackageIcon } from '@hugeicons/core-free-icons'
-import { Empty, Pager, Button, Icon } from '../../../shared/infraestructure/components/ui'
+import { PackageIcon, PlusSignIcon } from '@hugeicons/core-free-icons'
+import { ScrollShadow } from '@heroui/react'
+import { Empty, Pager, Button } from '../../../shared/infraestructure/components/ui'
 import type { Tool } from '../../domain/tool.entity'
+import type { ToolsSort, ToolsSortKey } from '../../domain/tools-sort.model'
 import type { ToolsStatus } from '../../application/tools-state.model'
 import { ToolTableToolbar } from './tool-table-toolbar.component'
+import { ToolTableSortHeader } from './tool-table-sort-header.component'
 import { ToolRow } from './tool-row.component'
 import { ToolRowSkeleton } from './tool-row-skeleton.component'
-import { ScrollShadow } from '@heroui/react'
 
 interface Props {
   rows: Tool[]
@@ -17,16 +19,24 @@ interface Props {
   perPage: number
   showFilters: boolean
   activeFilterCount: number
+  search: string
+  sort: ToolsSort
   page: number
   onToggleFilters: () => void
   onClearFilters: () => void
+  onSearchChange: (search: string) => void
+  onToggleSort: (key: ToolsSortKey) => void
   onSetPage: (page: number) => void
   onReload: () => void
+  onCreate: () => void
   onStock: (tool: Tool) => void
   onIngreso: (tool: Tool) => void
   onEdit: (tool: Tool) => void
   onDelete: (tool: Tool) => void
 }
+
+const HEADER_CELL =
+  'sticky top-0 z-1 border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap'
 
 export function ToolTable({
   rows,
@@ -37,11 +47,16 @@ export function ToolTable({
   perPage,
   showFilters,
   activeFilterCount,
+  search,
+  sort,
   page,
   onToggleFilters,
   onClearFilters,
+  onSearchChange,
+  onToggleSort,
   onSetPage,
   onReload,
+  onCreate,
   onStock,
   onIngreso,
   onEdit,
@@ -49,12 +64,16 @@ export function ToolTable({
 }: Props): JSX.Element {
   const skeletonSlots = useMemo(() => [...Array(perPage).keys()], [perPage])
   const isEmpty = status === 'ready' && rows.length === 0
+  const isFiltered = activeFilterCount > 0 || search.trim() !== ''
+
   return (
     <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-[18px] border border-hairline bg-white shadow-[0_1px_4px_rgba(14,15,60,0.04)]">
       <ToolTableToolbar
         showFilters={showFilters}
         activeFilterCount={activeFilterCount}
+        search={search}
         onToggleFilters={onToggleFilters}
+        onSearchChange={onSearchChange}
       />
 
       <div className="h-135 scrollbar-gutter-stable">
@@ -62,26 +81,26 @@ export function ToolTable({
           <table className="w-full table-fixed border-collapse text-[13px]">
             <thead>
               <tr>
-                <th className="sticky top-0 z-1 cursor-pointer select-none border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap hover:text-ink">
-                  Herramienta
+                <th className={`${HEADER_CELL} min-w-[200px]`}>
+                  <ToolTableSortHeader
+                    label="Herramienta"
+                    sortKey="name"
+                    sort={sort}
+                    onToggle={onToggleSort}
+                  />
                 </th>
-                <th className="sticky top-0 z-1 w-64 border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap">
-                  Marca
+                <th className={`${HEADER_CELL} w-64`}>Marca</th>
+                <th className={`${HEADER_CELL} w-37.5`}>Modelo</th>
+                <th className={`${HEADER_CELL} w-52.5`}>
+                  <ToolTableSortHeader
+                    label="Stock disp. / total"
+                    sortKey="stock"
+                    sort={sort}
+                    onToggle={onToggleSort}
+                  />
                 </th>
-                <th className="sticky top-0 z-1 w-37.5 border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap">
-                  Modelo
-                </th>
-                {/* TODO API: el orden por stock se envía a GET /api/tools (?sort=); aquí solo es indicador visual. */}
-                <th className="sticky top-0 z-1 w-52.5 cursor-pointer select-none border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-brand whitespace-nowrap">
-                  <span className="inline-flex items-center gap-1">
-                    Stock disp. / total
-                    <Icon icon={ArrowDown01Icon} size={11} className="text-brand" />
-                  </span>
-                </th>
-                <th className="sticky top-0 z-1 w-22.5 cursor-pointer select-none border-b border-hairline bg-paper-tint px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-muted whitespace-nowrap hover:text-ink">
-                  Asign.
-                </th>
-                <th className="sticky top-0 z-1 w-37.5 border-b border-hairline bg-paper-tint px-3 py-2.5" />
+                <th className={`${HEADER_CELL} w-22.5`}>Asign.</th>
+                <th className={`${HEADER_CELL} w-37.5`} />
               </tr>
             </thead>
             <tbody>
@@ -98,7 +117,7 @@ export function ToolTable({
                   </td>
                 </tr>
               )}
-              {isEmpty && (
+              {isEmpty && isFiltered && (
                 <tr>
                   <td colSpan={6} className="border-b border-hairline">
                     <Empty
@@ -106,6 +125,22 @@ export function ToolTable({
                       title="Sin resultados"
                       body="Ajusta los filtros o limpia la búsqueda."
                       action={<Button onClick={onClearFilters}>Limpiar filtros</Button>}
+                    />
+                  </td>
+                </tr>
+              )}
+              {isEmpty && !isFiltered && (
+                <tr>
+                  <td colSpan={6} className="border-b border-hairline">
+                    <Empty
+                      icon={PackageIcon}
+                      title="Aún no hay herramientas"
+                      body="Registra la primera herramienta del catálogo para poder ingresar unidades."
+                      action={
+                        <Button variant="primary" icon={PlusSignIcon} onClick={onCreate}>
+                          Nueva herramienta
+                        </Button>
+                      }
                     />
                   </td>
                 </tr>

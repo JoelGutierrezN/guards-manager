@@ -17,6 +17,8 @@ export class EmployeeMapper {
       role_id: input.roleId,
       email: input.email,
       phone: input.phone,
+      hired_at: input.hiredAt,
+      status: input.status,
     }
   }
 
@@ -33,6 +35,7 @@ export class EmployeeMapper {
       activeToolsCount: dto.activeToolsCount,
       historicalToolsCount: dto.historicalToolsCount,
       hireDate: dto.hireDate,
+      hiredAt: dto.hiredAt ?? null,
       alertsCount: dto.alertsCount,
     }
   }

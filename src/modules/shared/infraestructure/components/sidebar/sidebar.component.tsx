@@ -9,14 +9,12 @@ import { useSidebarCollapse } from './use-sidebar-collapse.hook'
 import { AppRouteHelper } from '../../router/app-route.helper'
 import { useAuth } from '../../../../auth/hooks/use-auth.hook'
 
-const STATIC_ROLE = 'Almacén · Admin'
-
 export function Sidebar(): JSX.Element {
   const { collapsed, toggle } = useSidebarCollapse()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const activeId = useMemo(() => AppRouteHelper.navIdFromPath(pathname), [pathname])
-  const { user, logout } = useAuth()
+  const { logout } = useAuth()
 
   /** La sesión local se limpia pase lo que pase, así que un `POST /logout` fallido
    * no puede dejar al usuario dentro ni una promesa rechazada sin manejar. */
@@ -39,7 +37,7 @@ export function Sidebar(): JSX.Element {
       <aside className="sidebar-surface relative flex h-full flex-col overflow-hidden rounded-[32px] border border-lavender-line bg-lavender-bg px-2.5 py-3 text-ink [&>*]:relative [&>*]:z-[1]">
         <SidebarBrand />
         <SidebarNav activeId={activeId} collapsed={collapsed} />
-        <SidebarUserCard name={user?.getName() ?? '—'} role={STATIC_ROLE} onLogout={handleLogout} />
+        <SidebarUserCard onLogout={handleLogout} />
       </aside>
       <SidebarCollapseButton onToggle={toggle} />
     </div>

@@ -22,8 +22,7 @@ src/modules/<feature>/
   infraestructure/ # componentes, servicios, helpers, adaptadores
 ```
 
-Módulos actuales: `auth`, `shared`, `tools`, `brands`, `models`, `employees`.
-Módulos previstos (fases siguientes): `inventory`, `custodies`, `account`, `dashboard`.
+Módulos actuales: `auth`, `shared`, `tools`, `brands`, `models`, `employees`, `inventory`, `custodies`, `account`, `dashboard`.
 
 Componentes UI compartidos: `src/modules/shared/infraestructure/components/ui/` — usa siempre este kit propio primero. De HeroUI solo están permitidas las primitivas ya importadas en el proyecto: `useOverlayState`, `ScrollShadow`, `Spinner`, `Button`, `Chip`, `Form`, `TextField`, `Input`, `Label`, `FieldError`. No introducir otras primitivas de HeroUI.
 

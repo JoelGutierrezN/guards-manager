@@ -9,7 +9,7 @@ import { Button, IconButton, Icon } from '../../../shared/infraestructure/compon
 import { cn } from '../../../shared/infraestructure/utils/cn'
 import type { Tool } from '../../domain/tool.entity'
 import { ToolStatusHelper } from '../../application/tool-status.helper'
-import { ToolsService } from '../../application/tools.service'
+import { ToolMetricsHelper } from '../../application/tool-metrics.helper'
 
 interface Props {
   tool: Tool
@@ -20,12 +20,22 @@ interface Props {
 }
 
 export function ToolRow({ tool, onStock, onIngreso, onEdit, onDelete }: Props): JSX.Element {
-  const usagePercent = useMemo(() => ToolsService.usagePercent(tool), [tool])
+  const usagePercent = useMemo(() => ToolMetricsHelper.usagePercent(tool), [tool])
   const barColorClass = useMemo(() => ToolStatusHelper.barColorClass(tool.status), [tool.status])
 
-  const available = tool.total - tool.assigned
-  const hasStock = available > 0
-  const deleteTip = hasStock ? `No se puede eliminar · ${available} en stock` : 'Eliminar'
+  const stockTip = useMemo(
+    () =>
+      `Ver existencias en detalle · ${tool.available} disponibles, ${tool.assigned} asignadas, ${tool.unusable} inutilizables`,
+    [tool.available, tool.assigned, tool.unusable],
+  )
+
+  const deleteTip = useMemo(
+    () =>
+      tool.assigned > 0
+        ? `Eliminar · ${tool.assigned} unidades asignadas bloquean el borrado`
+        : 'Eliminar',
+    [tool.assigned],
+  )
 
   return (
     <tr className="group transition-colors [&_td]:hover:bg-paper-tint">
@@ -42,11 +52,11 @@ export function ToolRow({ tool, onStock, onIngreso, onEdit, onDelete }: Props): 
         <button
           type="button"
           onClick={onStock}
-          title="Ver existencias en detalle"
+          title={stockTip}
           className="group/stock -mx-1.5 -my-1 flex w-full items-center gap-2 rounded-[8px] border border-transparent px-1.5 py-1 text-left transition-colors hover:border-brand-soft-2 hover:bg-brand-soft"
         >
           <span className="w-14 shrink-0 font-mono text-[13px] font-medium tabular-nums">
-            <span className="text-ink">{available}</span>
+            <span className="text-ink">{tool.available}</span>
             <span className="text-muted"> / {tool.total}</span>
           </span>
           <span className="h-1 max-w-[90px] flex-1 overflow-hidden rounded-full bg-cream-2">
@@ -72,14 +82,20 @@ export function ToolRow({ tool, onStock, onIngreso, onEdit, onDelete }: Props): 
               Declarar ingreso
             </Button>
           </span>
-          <IconButton icon={Edit02Icon} tip="Editar" size="sm" onClick={onEdit} />
+          <IconButton
+            icon={Edit02Icon}
+            tip="Editar"
+            aria-label={`Editar ${tool.name}`}
+            size="sm"
+            onClick={onEdit}
+          />
           <IconButton
             icon={Delete02Icon}
             tip={deleteTip}
+            aria-label={`Eliminar ${tool.name}`}
             size="sm"
-            danger={!hasStock}
-            disabled={hasStock}
-            onClick={hasStock ? undefined : onDelete}
+            danger
+            onClick={onDelete}
           />
         </div>
       </td>

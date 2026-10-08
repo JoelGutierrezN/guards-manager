@@ -11,6 +11,8 @@ import type {
   NameCheckModelDto,
   ProductModelNameCheckDto,
 } from '../dto/product-model-name-check.dto'
+import type { ProductModelDeletionPreviewDto } from '../dto/product-model-deletion-preview.dto'
+import type { ProductModelDeletionPreview } from '../../domain/product-model-deletion-preview.model'
 
 export class ProductModelMapper {
   static toProductModel(dto: ProductModelDto): ProductModel {
@@ -52,6 +54,18 @@ export class ProductModelMapper {
       exactMatch:
         dto.productModel != null ? ProductModelMapper.toNameCheckMatch(dto.productModel) : null,
       similar: dto.similar.map((model) => ProductModelMapper.toNameCheckMatch(model)),
+    }
+  }
+
+  static toProductModelDeletionPreview(
+    dto: ProductModelDeletionPreviewDto,
+  ): ProductModelDeletionPreview {
+    return {
+      canBeDeleted: dto.canBeDeleted,
+      isDiscontinued: dto.isDiscontinued,
+      pendingCustodiesCount: dto.pendingCustodiesCount,
+      pendingCustodies: dto.pendingCustodies,
+      affectedProducts: dto.affectedProducts,
     }
   }
 

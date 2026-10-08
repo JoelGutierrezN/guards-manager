@@ -2,15 +2,18 @@ import { type JSX, useMemo } from 'react'
 import { Avatar, Chip } from '../../../shared/infraestructure/components/ui'
 import { cn } from '../../../shared/infraestructure/utils/cn'
 import type { EmployeeFileProfile } from '../../domain/employee-file.entity'
+import type { EmployeeFileAlert } from '../../domain/employee-file-alert.model'
+import { EmployeeFileIdentityAlerts } from './employee-file-identity-alerts.component'
 import { EmployeeFileIdentityRow } from './employee-file-identity-row.component'
 
 interface Props {
   employee: EmployeeFileProfile
+  alerts: EmployeeFileAlert[]
 }
 
 const EMPTY_VALUE = '—'
 
-export function EmployeeFileIdentityCard({ employee }: Props): JSX.Element {
+export function EmployeeFileIdentityCard({ employee, alerts }: Props): JSX.Element {
   const currentYear = useMemo(() => new Date().getFullYear(), [])
 
   const phoneClassName = useMemo(
@@ -35,7 +38,7 @@ export function EmployeeFileIdentityCard({ employee }: Props): JSX.Element {
         </span>
         <Avatar name={employee.name} size="xl" tone="navy" />
         <div className="mt-3.5 flex flex-wrap items-center gap-2">
-          <span className="text-[16px] font-semibold tracking-[-0.01em]">{employee.name}</span>
+          <h2 className="text-[16px] font-semibold tracking-[-0.01em]">{employee.name}</h2>
           {employee.status === 'inactivo' && <Chip size="sm">Inactivo</Chip>}
         </div>
         <div className="mt-0.5 font-mono text-[11px] tracking-[0.08em] opacity-70">
@@ -56,6 +59,8 @@ export function EmployeeFileIdentityCard({ employee }: Props): JSX.Element {
           </span>
         </EmployeeFileIdentityRow>
       </div>
+
+      <EmployeeFileIdentityAlerts alerts={alerts} />
     </div>
   )
 }

@@ -4,6 +4,6 @@ import { AuthStorageState } from './support/auth'
 
 setup('prepara la sesión compartida', async () => {
   const api = await ApiClient.login()
-  AuthStorageState.save(api.token, api.user)
+  AuthStorageState.save(api.token, api.user, api.expiresAt)
   await api.dispose()
 })

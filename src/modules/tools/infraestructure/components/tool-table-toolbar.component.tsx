@@ -1,18 +1,22 @@
 import { type JSX, useMemo } from 'react'
-import { FilterHorizontalIcon, Search01Icon } from '@hugeicons/core-free-icons'
-import { Icon } from '../../../shared/infraestructure/components/ui'
+import { FilterHorizontalIcon } from '@hugeicons/core-free-icons'
+import { Icon, SearchInput } from '../../../shared/infraestructure/components/ui'
 import { cn } from '../../../shared/infraestructure/utils/cn'
 
 interface Props {
   showFilters: boolean
   activeFilterCount: number
+  search: string
   onToggleFilters: () => void
+  onSearchChange: (search: string) => void
 }
 
 export function ToolTableToolbar({
   showFilters,
   activeFilterCount,
+  search,
   onToggleFilters,
+  onSearchChange,
 }: Props): JSX.Element {
   const toggleClass = useMemo(
     () =>
@@ -47,14 +51,13 @@ export function ToolTableToolbar({
         {activeFilterCount > 0 && <span className={badgeClass}>{activeFilterCount}</span>}
       </button>
 
-      {/* TODO API: la búsqueda se envía como query param a GET /api/tools (?q=). */}
-      <div className="flex h-8 max-w-[320px] flex-1 items-center gap-2 rounded-full border border-hairline-strong bg-white px-3">
-        <Icon icon={Search01Icon} size={13} className="shrink-0 text-muted" />
-        <input
-          className="h-full min-w-0 flex-1 border-none bg-transparent p-0 text-[13px] text-ink outline-none placeholder:text-muted-soft"
-          placeholder="Buscar por nombre, modelo o SKU…"
-        />
-      </div>
+      <SearchInput
+        value={search}
+        onChange={onSearchChange}
+        ariaLabel="Buscar herramienta por nombre"
+        placeholder="Buscar por nombre…"
+        className="flex-1"
+      />
     </div>
   )
 }

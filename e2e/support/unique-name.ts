@@ -1,4 +1,5 @@
 export class UniqueName {
+  private static readonly processToken = process.pid.toString(36).toUpperCase()
   private static sequence = 0
 
   static runId(): string {
@@ -9,12 +10,15 @@ export class UniqueName {
   }
 
   static for(prefix: string): string {
-    UniqueName.sequence += 1
-    return `${prefix} E2E-${UniqueName.runId()}-${UniqueName.sequence}`
+    return `${prefix} E2E-${UniqueName.runId()}-${UniqueName.nextToken()}`
   }
 
   static email(prefix: string): string {
+    return `${prefix}.${UniqueName.runId()}.${UniqueName.nextToken()}@e2e.test`.toLowerCase()
+  }
+
+  private static nextToken(): string {
     UniqueName.sequence += 1
-    return `${prefix}.${UniqueName.runId()}.${UniqueName.sequence}@e2e.test`.toLowerCase()
+    return `${UniqueName.processToken}${UniqueName.sequence}`
   }
 }

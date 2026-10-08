@@ -70,6 +70,24 @@ export function modelsReducer(state: ModelsState, action: ModelsAction): ModelsS
     }
     case 'ROW_DONE':
       return { ...state, pendingId: null }
+    case 'DELETION_PREVIEW_START':
+      return { ...state, deletionPreviewStatus: 'loading', deletionPreview: null }
+    case 'DELETION_PREVIEW_SUCCESS':
+      return { ...state, deletionPreviewStatus: 'ready', deletionPreview: action.preview }
+    case 'DELETION_PREVIEW_ERROR':
+      return { ...state, deletionPreviewStatus: 'error', deletionPreview: null }
+    case 'MERGE_RESET':
+      return { ...state, merging: false, mergeError: null }
+    case 'MERGE_START':
+      return { ...state, merging: true, mergeError: null }
+    case 'MERGE_ERROR':
+      return { ...state, merging: false, mergeError: action.message }
+    case 'MERGE_DONE':
+      return { ...state, merging: false, mergeError: null }
+    case 'EXPORT_START':
+      return { ...state, exporting: true }
+    case 'EXPORT_DONE':
+      return { ...state, exporting: false }
     default:
       return state
   }

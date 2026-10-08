@@ -14,8 +14,12 @@ export class EmployeeFormHelper {
       roleId: employee?.roleId ?? '',
       email: employee?.email ?? '',
       phone: employee?.phone ?? '',
+      hiredAt: employee?.hiredAt ?? '',
+      status: employee?.status ?? 'activo',
       roles: [],
       rolesStatus: 'idle',
+      roleCreating: false,
+      roleCreateError: null,
       touched: false,
     }
   }
@@ -52,6 +56,8 @@ export class EmployeeFormHelper {
       roleId: state.roleId,
       email: email === '' ? null : email,
       phone: phone === '' ? null : phone,
+      hiredAt: state.hiredAt === '' ? null : state.hiredAt,
+      status: state.status,
     }
   }
 }

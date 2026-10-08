@@ -1,17 +1,19 @@
-import { type JSX } from 'react'
+import { useState, type JSX } from 'react'
 import { Button, FieldError, Form, Input, Label, TextField } from '@heroui/react'
 import { PackageIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { useNavigate, useLocation } from 'react-router'
+import { Link, useNavigate, useLocation } from 'react-router'
 import { useAuth } from '../../hooks/use-auth.hook'
 import { FromLocationHelper } from '../from-location.helper'
 import type { FromLocationState } from '../from-location-state.interfaces'
+import { Checkbox } from '../../../shared/infraestructure/components/ui'
 
 export const AuthForm = (): JSX.Element => {
   const { login, status, error } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const state = location.state as FromLocationState | null
+  const [keepSession, setKeepSession] = useState(false)
 
   const isLoading = status === 'authenticating'
 
@@ -21,7 +23,7 @@ export const AuthForm = (): JSX.Element => {
     const identifier = data.get('identifier') as string
     const password = data.get('password') as string
 
-    const isAuthenticated = await login(identifier, password)
+    const isAuthenticated = await login(identifier, password, keepSession)
 
     if (isAuthenticated) {
       navigate(FromLocationHelper.resolvePath(state), { replace: true })
@@ -59,7 +61,17 @@ export const AuthForm = (): JSX.Element => {
               <FieldError />
             </TextField>
 
+            <Link to="/forgot-password" className="text-sm text-muted hover:underline">
+              ¿Olvidaste tu contraseña?
+            </Link>
+
             {error && <p className="text-sm text-danger">{error}</p>}
+
+            <Checkbox
+              label="Mantener sesión iniciada"
+              checked={keepSession}
+              onChange={(event) => setKeepSession(event.target.checked)}
+            />
 
             <div className="flex gap-2">
               <Button type="submit" className="w-full" isDisabled={isLoading}>

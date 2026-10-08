@@ -22,6 +22,11 @@ class EmployeeFileRepositoryImpl implements EmployeeFileRepositoryContract {
   async downloadPdf(employeeId: string): Promise<DownloadedFile> {
     return this.datasource.getFile(`/employees/${employeeId}/file/pdf`, PDF_FALLBACK_FILENAME)
   }
+
+  /** `url` llega del expediente (5.10) y ya es relativa a la base del API, como `sheet.url`. */
+  async downloadDocument(url: string, filename: string): Promise<DownloadedFile> {
+    return this.datasource.getFile(url, filename)
+  }
 }
 
 export const employeeFileRepository = new EmployeeFileRepositoryImpl()

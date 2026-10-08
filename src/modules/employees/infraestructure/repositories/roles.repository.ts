@@ -15,6 +15,11 @@ class RolesRepositoryImpl implements RolesRepositoryContract {
     const response = await this.datasource.get<RoleSelectDto[]>('/roles/select')
     return response.map((role) => RoleMapper.toRoleOption(role))
   }
+
+  async create(name: string): Promise<RoleOption> {
+    const response = await this.datasource.post<RoleSelectDto>('/roles', { name })
+    return RoleMapper.toRoleOption(response)
+  }
 }
 
 export const rolesRepository = new RolesRepositoryImpl()

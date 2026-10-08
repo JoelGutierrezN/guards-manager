@@ -3,7 +3,10 @@ import { Icon } from '../../../shared/infraestructure/components/ui'
 import { cn } from '../../../shared/infraestructure/utils/cn'
 import { EmployeeFilePresenter } from '../../application/employee-file-presenter.helper'
 import type { EmployeeFileEvent } from '../../domain/employee-file-event.model'
-import { EMPLOYEE_FILE_TIMELINE_TONES } from './employee-file-timeline-tone.model'
+import {
+  EMPLOYEE_FILE_TIMELINE_ICONS,
+  EMPLOYEE_FILE_TIMELINE_TONE_CLASS_NAMES,
+} from './employee-file-timeline-tone.model'
 
 interface Props {
   event: EmployeeFileEvent
@@ -14,7 +17,8 @@ const BASE_DOT_CLASS_NAME =
   'z-[2] row-start-1 grid h-6 w-6 shrink-0 place-items-center rounded-full border-[1.5px]'
 
 export function EmployeeFileTimelineItem({ event, last }: Props): JSX.Element {
-  const { icon, className: toneClassName } = EMPLOYEE_FILE_TIMELINE_TONES[event.type]
+  const icon = EMPLOYEE_FILE_TIMELINE_ICONS[event.type]
+  const toneClassName = EMPLOYEE_FILE_TIMELINE_TONE_CLASS_NAMES[event.tone]
 
   const rowClassName = useMemo(
     () => cn('relative grid grid-cols-[28px_1fr] gap-x-3', last ? 'pb-0' : 'pb-4'),

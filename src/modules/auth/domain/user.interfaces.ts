@@ -1,7 +1,7 @@
 export interface UserPrimitives {
-  uuid: string
+  id: string
   email: string
   name: string
   username: string
-  phone: string
+  phone: string | null
 }

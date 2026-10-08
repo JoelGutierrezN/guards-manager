@@ -6,6 +6,7 @@ export class EmployeesFiltersHelper {
       (filters.status !== 'todos' ? 1 : 0) +
       (filters.roleIds.length > 0 ? 1 : 0) +
       (filters.withTools ? 1 : 0) +
+      (filters.withAlerts ? 1 : 0) +
       (filters.hiredFrom !== '' || filters.hiredTo !== '' ? 1 : 0)
     )
   }
