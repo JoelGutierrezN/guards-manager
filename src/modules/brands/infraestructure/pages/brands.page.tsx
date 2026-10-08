@@ -1,4 +1,5 @@
 import type { JSX } from 'react'
+import { useNavigate } from 'react-router'
 import { PlusSignIcon } from '@hugeicons/core-free-icons'
 import {
   Button,
@@ -10,14 +11,13 @@ import {
 import { BrandCard } from '../components/brand-card.component'
 import { BrandCardSkeleton } from '../components/brand-card-skeleton.component'
 import { NewBrandModal } from '../components/new-brand-modal.component'
+import { DeleteBrandModal } from '../components/delete-brand-modal.component'
+import { MergeBrandModal } from '../components/merge-brand-modal.component'
 import { useBrands } from '../../hooks/use-brands.hook'
 import { CreateBrandCard } from '../components/create-brand-card.component.tsx'
 
-interface Props {
-  onSelectBrand?: (name: string) => void
-}
-
-export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
+export function BrandsPage(): JSX.Element {
+  const navigate = useNavigate()
   const {
     state,
     showSkeletons,
@@ -28,15 +28,33 @@ export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
     openCreate,
     openEdit,
     saveBrand,
+    openDelete,
+    confirmDelete,
+    openMerge,
+    mergeBrand,
     editingBrand,
+    deletingBrand,
+    mergingBrand,
     modalKey,
     modalOpen,
+    deleteModalOpen,
+    mergeModalOpen,
     closeModal,
   } = useBrands()
   const [addToast, ToastHost] = useToasts()
 
   const handleSave = async (name: string): Promise<void> => {
     addToast(await saveBrand(name))
+  }
+
+  const handleConfirmDelete = async (): Promise<void> => {
+    const result = await confirmDelete()
+    if (result != null) addToast(result.message, result.succeeded ? 'success' : 'error')
+  }
+
+  const handleMerge = async (targetId: string): Promise<void> => {
+    const result = await mergeBrand(targetId)
+    if (result != null) addToast(result.message, result.succeeded ? 'success' : 'error')
   }
 
   return (
@@ -79,8 +97,10 @@ export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
                   <BrandCard
                     key={brand.id}
                     brand={brand}
-                    onOpen={() => onSelectBrand?.(brand.name)}
+                    onOpen={() => void navigate(`/models?brand=${encodeURIComponent(brand.id)}`)}
                     onEdit={() => openEdit(brand)}
+                    onDelete={() => openDelete(brand)}
+                    onMerge={() => openMerge(brand)}
                   />
                 ))}
           </div>
@@ -102,11 +122,33 @@ export function BrandsPage({ onSelectBrand }: Props): JSX.Element {
       )}
 
       <NewBrandModal
-        key={modalKey}
+        key={`form-${modalKey}`}
         open={modalOpen}
         editName={editingBrand?.name ?? null}
         onClose={closeModal}
         onSave={(name) => void handleSave(name)}
+      />
+
+      <DeleteBrandModal
+        open={deleteModalOpen}
+        brand={deletingBrand}
+        preview={state.deletionPreview}
+        previewStatus={state.deletionPreviewStatus}
+        deleting={state.deleting}
+        error={state.deleteError}
+        onClose={closeModal}
+        onConfirm={() => void handleConfirmDelete()}
+      />
+
+      {/* `modalKey` remonta el modal en cada apertura: el destino elegido antes no sobrevive. */}
+      <MergeBrandModal
+        key={`merge-${modalKey}`}
+        open={mergeModalOpen}
+        brand={mergingBrand}
+        merging={state.merging}
+        error={state.mergeError}
+        onClose={closeModal}
+        onConfirm={(targetId) => void handleMerge(targetId)}
       />
 
       {ToastHost}

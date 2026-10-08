@@ -58,6 +58,11 @@ export function useEmployees() {
     void load(requestRef.current)
   }, [load])
 
+  const applyRowUpdate = useCallback(
+    (employee: Employee) => dispatch({ type: 'ROW_UPDATED', employee }),
+    [],
+  )
+
   const setPage = useCallback(
     (nextPage: number) => dispatch({ type: 'SET_PAGE', page: nextPage }),
     [],
@@ -155,6 +160,7 @@ export function useEmployees() {
     state,
     kpis,
     reloadList,
+    applyRowUpdate,
     setPage,
     setQuery,
     clearQuery,

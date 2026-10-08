@@ -13,6 +13,7 @@ import { NewAssignmentSuccess } from '../components/new-assignment/new-assignmen
 import { NewAssignmentUnitsStep } from '../components/new-assignment/new-assignment-units-step.component'
 import { NewAssignmentErrorHelper } from '../helpers/new-assignment-error.helper'
 import { NewAssignmentNavigationHelper } from '../helpers/new-assignment-navigation.helper'
+import { SignNavigationHelper } from '../helpers/sign-navigation.helper'
 
 const EMPLOYEE_HELP = 'Elige un empleado activo para continuar.'
 const UNITS_HELP = 'Agrega al menos una unidad al resguardo.'
@@ -67,6 +68,11 @@ export function NewAssignmentPage(): JSX.Element {
     void navigate(NewAssignmentNavigationHelper.custodyPath(state.createdCustody.id))
   }, [navigate, state.createdCustody])
 
+  const handleSignCustody = useCallback(() => {
+    if (state.createdCustody === null) return
+    void navigate(SignNavigationHelper.custodySignPath(state.createdCustody.id))
+  }, [navigate, state.createdCustody])
+
   const handleNewAssignment = useCallback(() => {
     restart()
     units.reset()
@@ -87,6 +93,7 @@ export function NewAssignmentPage(): JSX.Element {
         {isDone && state.createdCustody !== null ? (
           <NewAssignmentSuccess
             custody={state.createdCustody}
+            onSign={handleSignCustody}
             onViewCustody={handleViewCustody}
             onNewAssignment={handleNewAssignment}
           />

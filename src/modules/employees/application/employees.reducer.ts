@@ -64,6 +64,8 @@ export function employeesReducer(state: EmployeesState, action: EmployeesAction)
                 email: employee.email,
                 phone: employee.phone,
                 status: employee.status,
+                hireDate: employee.hireDate,
+                hiredAt: employee.hiredAt,
               }
             : row,
         ),

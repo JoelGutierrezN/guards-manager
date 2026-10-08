@@ -12,6 +12,7 @@ import { KpiCard } from '../../../shared/infraestructure/components/ui/kpi-card'
 import type { Custody } from '../../domain/custody.entity'
 import { useCustodies } from '../../hooks/use-custodies.hook'
 import { CustodiesTable } from '../components/custodies-table.component'
+import { SignNavigationHelper } from '../helpers/sign-navigation.helper'
 
 const NEW_ASSIGNMENT_PATH = '/newAssignment'
 
@@ -22,6 +23,10 @@ export function CustodiesPage(): JSX.Element {
 
   const handleOpenCustody = (custody: Custody): void => {
     void navigate(`/assignments/${custody.id}`)
+  }
+
+  const handleSignCustody = (custodyId: string): void => {
+    void navigate(SignNavigationHelper.custodySignPath(custodyId))
   }
 
   const goToNewAssignment = (): void => {
@@ -71,6 +76,7 @@ export function CustodiesPage(): JSX.Element {
         onReload={reloadList}
         onClearQuery={clearQuery}
         onOpen={handleOpenCustody}
+        onSign={handleSignCustody}
       />
     </div>
   )

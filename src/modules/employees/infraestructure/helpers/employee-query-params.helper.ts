@@ -26,6 +26,7 @@ export class EmployeeQueryParamsHelper {
       status: EmployeeQueryParamsHelper.statusFrom(params.status),
       roleIds: EmployeeQueryParamsHelper.listFrom(params.roles),
       withTools: EmployeeQueryParamsHelper.flagFrom(params['with-tools']),
+      withAlerts: EmployeeQueryParamsHelper.flagFrom(params['with-alerts']),
       hiredFrom: EmployeeQueryParamsHelper.dateFrom(params['hired-from']),
       hiredTo: EmployeeQueryParamsHelper.dateFrom(params['hired-to']),
     }
@@ -40,6 +41,7 @@ export class EmployeeQueryParamsHelper {
       status: filters.status !== 'todos' ? filters.status : undefined,
       roles: filters.roleIds.length > 0 ? filters.roleIds.join(',') : undefined,
       'with-tools': filters.withTools ? true : undefined,
+      'with-alerts': filters.withAlerts ? true : undefined,
       'hired-from': filters.hiredFrom !== '' ? filters.hiredFrom : undefined,
       'hired-to': filters.hiredTo !== '' ? filters.hiredTo : undefined,
     }
@@ -69,6 +71,7 @@ export class EmployeeQueryParamsHelper {
     if (filters.status !== 'todos') params.set('status', filters.status)
     if (filters.roleIds.length > 0) params.set('role_id', filters.roleIds.join(','))
     if (filters.withTools) params.set('assignment', 'with_tools')
+    if (filters.withAlerts) params.set('with_alerts', '1')
     if (filters.hiredFrom !== '') params.set('hired_from', filters.hiredFrom)
     if (filters.hiredTo !== '') params.set('hired_to', filters.hiredTo)
   }

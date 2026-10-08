@@ -27,6 +27,9 @@ export function CustodySummaryCard({ custody }: Props): JSX.Element {
         <CustodySummaryRow label="Firma">
           <CustodySignatureChip signedAt={custody.signedAt} />
         </CustodySummaryRow>
+        {custody.signature != null && (
+          <CustodySummaryRow label="Firmó">{custody.signature.signerName}</CustodySummaryRow>
+        )}
         <CustodySummaryRow label="Registrado">
           {CustodyDateHelper.dateTime(custody.createdAt)}
         </CustodySummaryRow>

@@ -4,9 +4,11 @@ import type { Brand } from '../../domain/brand.entity'
 import type { BrandPage } from '../../domain/brand-page.model'
 import type { CreateBrandInput, UpdateBrandInput } from '../../domain/brand-input.model'
 import type { BrandSelectOption } from '../../domain/brand-select.model'
+import type { BrandDeletionPreview } from '../../domain/brand-deletion-preview.model'
 import type { BrandCollectionDto } from '../dto/brand-collection.dto'
 import type { BrandSelectDto } from '../dto/brand-select.dto'
 import type { BrandDto } from '../dto/brand.dto'
+import type { BrandDeletionPreviewDto } from '../dto/brand-deletion-preview.dto'
 import { BrandMapper } from '../mappers/brand.mapper'
 
 class BrandRepositoryImpl implements BrandRepositoryContract {
@@ -43,6 +45,24 @@ class BrandRepositoryImpl implements BrandRepositoryContract {
   async update(id: string, input: UpdateBrandInput): Promise<Brand> {
     const response = await this.datasource.put<BrandDto>(`/brands/${id}`, input)
     return BrandMapper.toBrand(response)
+  }
+
+  async deletionPreview(id: string): Promise<BrandDeletionPreview> {
+    const response = await this.datasource.get<BrandDeletionPreviewDto>(
+      `/brands/${id}/deletion-preview`,
+    )
+    return BrandMapper.toBrandDeletionPreview(response)
+  }
+
+  async merge(id: string, targetId: string): Promise<Brand> {
+    const response = await this.datasource.post<BrandDto>(`/brands/${id}/merge`, {
+      target_id: targetId,
+    })
+    return BrandMapper.toBrand(response)
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.datasource.delete(`/brands/${id}`)
   }
 }
 
