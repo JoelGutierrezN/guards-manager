@@ -45,6 +45,7 @@ export class NewAssignmentMapper {
     return {
       id: dto.id,
       consecutive: dto.consecutive,
+      serial: dto.serial ?? null,
       condition: dto.condition,
       product: NewAssignmentMapper.toStockProduct(dto.id, dto.product),
     }

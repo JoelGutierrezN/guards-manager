@@ -14,6 +14,7 @@ export interface StockUnitCustody {
 export interface ToolUnit {
   id: string
   consecutive: string
+  serial: string | null
   condition: ItemCondition
   status: StockUnitStatus
   custody: StockUnitCustody | null

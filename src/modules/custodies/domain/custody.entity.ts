@@ -45,6 +45,7 @@ export interface CustodyItem {
   id: string
   condition: ItemCondition
   notes: string | null
+  serialAtAssignment: string | null
   isReturned: boolean
   returnedAt: string | null
   stock: CustodyItemStock

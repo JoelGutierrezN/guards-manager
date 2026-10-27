@@ -15,6 +15,7 @@ interface Props {
   error: NewAssignmentErrorReport | null
   disabled: boolean
   onItemConditionChange: (stockId: string, condition: ItemCondition) => void
+  onItemSerialChange: (stockId: string, serial: string) => void
   onItemNotesChange: (stockId: string, notes: string) => void
   onRemoveItem: (stockId: string) => void
   onNotesChange: (notes: string) => void
@@ -28,6 +29,7 @@ export function NewAssignmentConfirmStep({
   disabled,
   onItemConditionChange,
   onItemNotesChange,
+  onItemSerialChange,
   onRemoveItem,
   onNotesChange,
 }: Props): JSX.Element {
@@ -39,7 +41,7 @@ export function NewAssignmentConfirmStep({
   return (
     <NewAssignmentPanel
       title="Confirmación"
-      hint="Revisa la condición con la que entregas cada unidad y agrega notas si hace falta."
+      hint="Completa las series faltantes y revisa la condición de entrega de cada unidad."
     >
       <div className="flex flex-col gap-4">
         {employee !== null && <NewAssignmentEmployeeCard employee={employee} />}
@@ -53,6 +55,7 @@ export function NewAssignmentConfirmStep({
               disabled={disabled}
               onConditionChange={onItemConditionChange}
               onNotesChange={onItemNotesChange}
+              onSerialChange={onItemSerialChange}
               onRemove={onRemoveItem}
             />
           ))}

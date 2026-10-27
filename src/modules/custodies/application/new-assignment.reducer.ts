@@ -52,6 +52,16 @@ export function newAssignmentReducer(
           action.payload.notes,
         ),
       }
+    case 'ITEM_SERIAL_CHANGED':
+      return {
+        ...state,
+        cart: NewAssignmentCartHelper.withSerial(
+          state.cart,
+          action.payload.stockId,
+          action.payload.serial,
+        ),
+        error: null,
+      }
     case 'NOTES_CHANGED':
       return { ...state, notes: action.payload }
     case 'SUBMIT_START':

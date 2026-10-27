@@ -17,6 +17,9 @@ export function CustodyItemRow({ item }: Props): JSX.Element {
       </td>
       <td className="px-3 py-2.5 align-middle font-mono text-[12px] font-medium text-ink-2">
         {item.stock.consecutive}
+        <span className="mt-1 block text-[11px] text-muted">
+          Serie de entrega: {item.serialAtAssignment ?? 'Sin registro histórico'}
+        </span>
       </td>
       <td className="px-3 py-2.5 align-middle">
         <Chip tone={ItemConditionHelper.tone(item.condition)} size="sm">

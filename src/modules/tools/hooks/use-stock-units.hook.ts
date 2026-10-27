@@ -110,6 +110,13 @@ export function useStockUnits(productId: string | null, open: boolean) {
     loadTab,
   ])
 
+  const updateUnit = useCallback(
+    (unit: ToolUnit) => {
+      dispatch({ type: 'CONDITION_UPDATED', tab: state.activeTab, unit })
+    },
+    [state.activeTab],
+  )
+
   return {
     state,
     activeTabState,
@@ -120,5 +127,6 @@ export function useStockUnits(productId: string | null, open: boolean) {
     openDelete,
     closeDelete,
     confirmDelete,
+    updateUnit,
   }
 }

@@ -39,7 +39,11 @@ export class CustodyApi {
     const response = await this.context.post(CustodyApi.endpoint('/custodies'), {
       data: {
         employee_id: employeeId,
-        items: stocks.map((stock) => ({ stock_id: stock.id, condition: 'BUENO' })),
+        items: stocks.map((stock) => ({
+          stock_id: stock.id,
+          condition: 'BUENO',
+          serial: `E2E-${stock.id}`,
+        })),
       },
     })
     return CustodyApi.readJson<CreatedCustody>(response, 'POST /custodies')

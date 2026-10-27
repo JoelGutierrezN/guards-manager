@@ -23,6 +23,7 @@ export class StockUnitMapper {
     return {
       id: dto.id,
       consecutive: dto.consecutive,
+      serial: dto.serial ?? null,
       condition: dto.condition,
       status: dto.status,
       custody: dto.custody ? StockUnitMapper.toCustody(dto.custody) : null,

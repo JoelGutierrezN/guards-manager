@@ -1,6 +1,6 @@
 import { type JSX, useMemo } from 'react'
 import { Delete02Icon } from '@hugeicons/core-free-icons'
-import { IconButton, Select } from '../../../shared/infraestructure/components/ui'
+import { Button, IconButton, Select } from '../../../shared/infraestructure/components/ui'
 import type { SelectOption } from '../../../shared/infraestructure/components/ui'
 import { ITEM_CONDITIONS, ITEM_CONDITION_MAP } from '../../../shared/domain/item-condition.model'
 import type { ItemCondition } from '../../../shared/domain/item-condition.model'
@@ -11,6 +11,7 @@ interface Props {
   unit: ToolUnit
   pending: boolean
   onConditionChange: (unit: ToolUnit, condition: ItemCondition) => void
+  onCorrectSerial: (unit: ToolUnit) => void
   onDelete: (unit: ToolUnit) => void
 }
 
@@ -24,6 +25,7 @@ export function ToolStockUnitRow({
   pending,
   onConditionChange,
   onDelete,
+  onCorrectSerial,
 }: Props): JSX.Element {
   const rowClassName = useMemo(
     () =>
@@ -35,7 +37,12 @@ export function ToolStockUnitRow({
 
   return (
     <tr>
-      <td className={`${rowClassName} font-mono font-medium text-ink`}>{unit.consecutive}</td>
+      <td className={`${rowClassName} font-mono font-medium text-ink`}>
+        {unit.consecutive}
+        <span className="mt-1 block max-w-48 break-all text-[11px] font-normal text-muted">
+          {unit.serial ?? 'Sin serie'}
+        </span>
+      </td>
       <td className={rowClassName}>
         <Select
           value={unit.condition}
@@ -50,6 +57,15 @@ export function ToolStockUnitRow({
         {StockUnitDateHelper.format(unit.createdAt)}
       </td>
       <td className={`${rowClassName} w-px whitespace-nowrap text-right`}>
+        <Button
+          size="sm"
+          variant="ghost"
+          disabled={pending}
+          onClick={() => onCorrectSerial(unit)}
+          aria-label={`Corregir serie de ${unit.consecutive}`}
+        >
+          Corregir serie
+        </Button>
         <IconButton
           icon={Delete02Icon}
           tip="Eliminar unidad"

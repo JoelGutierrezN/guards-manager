@@ -14,6 +14,7 @@ export interface StockUnitCustodyDto {
 export interface StockUnitDto {
   id: string
   consecutive: string
+  serial: string | null
   condition: ItemCondition
   status: StockUnitStatus
   custody: StockUnitCustodyDto | null

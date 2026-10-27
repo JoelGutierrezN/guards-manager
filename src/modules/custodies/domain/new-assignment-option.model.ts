@@ -20,6 +20,7 @@ export interface AssignmentStockProduct {
 export interface AvailableStock {
   id: string
   consecutive: string
+  serial: string | null
   condition: ItemCondition
   product: AssignmentStockProduct
 }

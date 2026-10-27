@@ -51,6 +51,16 @@ test('@fase-2 crear un resguardo con 2 unidades y verlo en el listado y en el ex
 
   await page.getByRole('button', { name: 'Continuar' }).click()
   await page.getByRole('button', { name: 'Crear resguardo' }).click()
+  await expect(page.getByText('Captura el número de serie de esta unidad.')).toHaveCount(2)
+  const serialInputs = page.getByRole('textbox', { name: /Número de serie de IV-/ })
+  const firstSerial = UniqueName.for('SERIE-UNO').toUpperCase()
+  const secondSerial = UniqueName.for('SERIE-DOS').toUpperCase()
+  await serialInputs.nth(0).fill(firstSerial)
+  await serialInputs.nth(1).fill(firstSerial.toLowerCase())
+  await page.getByRole('button', { name: 'Crear resguardo' }).click()
+  await expect(page.getByText('La serie está repetida en este resguardo.')).toHaveCount(2)
+  await serialInputs.nth(1).fill(secondSerial)
+  await page.getByRole('button', { name: 'Crear resguardo' }).click()
 
   const successHeading = page.getByRole('heading', { name: 'Resguardo creado' })
   await expect(successHeading).toBeVisible()

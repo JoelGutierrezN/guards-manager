@@ -36,6 +36,7 @@ export function NewAssignmentPage(): JSX.Element {
     clearCart,
     setItemCondition,
     setItemNotes,
+    setItemSerial,
     setNotes,
     restart,
     submit,
@@ -135,6 +136,7 @@ export function NewAssignmentPage(): JSX.Element {
                 disabled={isSubmitting}
                 onItemConditionChange={setItemCondition}
                 onItemNotesChange={setItemNotes}
+                onItemSerialChange={setItemSerial}
                 onRemoveItem={removeUnit}
                 onNotesChange={setNotes}
               />

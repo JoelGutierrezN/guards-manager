@@ -14,6 +14,7 @@ export interface NewAssignmentCartItem {
   stock: AvailableStock
   condition: ItemCondition
   notes: string
+  serial: string
 }
 
 export interface NewAssignmentState {
@@ -38,6 +39,7 @@ export type NewAssignmentAction =
   | { type: 'CART_CLEARED' }
   | { type: 'ITEM_CONDITION_CHANGED'; payload: { stockId: string; condition: ItemCondition } }
   | { type: 'ITEM_NOTES_CHANGED'; payload: { stockId: string; notes: string } }
+  | { type: 'ITEM_SERIAL_CHANGED'; payload: { stockId: string; serial: string } }
   | { type: 'NOTES_CHANGED'; payload: string }
   | { type: 'SUBMIT_START' }
   | { type: 'SUBMIT_SUCCESS'; payload: CustodyDetail }

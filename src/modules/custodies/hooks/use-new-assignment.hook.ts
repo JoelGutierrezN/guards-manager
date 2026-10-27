@@ -34,6 +34,7 @@ interface NewAssignmentResult {
   clearCart: () => void
   setItemCondition: (stockId: string, condition: ItemCondition) => void
   setItemNotes: (stockId: string, notes: string) => void
+  setItemSerial: (stockId: string, serial: string) => void
   setNotes: (notes: string) => void
   restart: () => void
   submit: () => Promise<CustodyDetail | null>
@@ -120,6 +121,10 @@ export function useNewAssignment(): NewAssignmentResult {
     dispatch({ type: 'ITEM_NOTES_CHANGED', payload: { stockId, notes } })
   }, [])
 
+  const setItemSerial = useCallback((stockId: string, serial: string) => {
+    dispatch({ type: 'ITEM_SERIAL_CHANGED', payload: { stockId, serial } })
+  }, [])
+
   const setNotes = useCallback((notes: string) => {
     dispatch({ type: 'NOTES_CHANGED', payload: notes })
   }, [])
@@ -130,6 +135,20 @@ export function useNewAssignment(): NewAssignmentResult {
 
   const submit = useCallback(async (): Promise<CustodyDetail | null> => {
     if (employee === null || cart.length === 0 || status !== 'editing') return null
+
+    const itemErrors = NewAssignmentCartHelper.serialErrors(cart)
+    if (Object.keys(itemErrors).length > 0) {
+      dispatch({
+        type: 'SUBMIT_ERROR',
+        payload: {
+          message: 'Revisa las series marcadas.',
+          reasons: [],
+          fieldErrors: {},
+          itemErrors,
+        },
+      })
+      return null
+    }
 
     const stockIds = NewAssignmentCartHelper.stockIds(cart)
     dispatch({ type: 'SUBMIT_START' })
@@ -177,6 +196,7 @@ export function useNewAssignment(): NewAssignmentResult {
     clearCart,
     setItemCondition,
     setItemNotes,
+    setItemSerial,
     setNotes,
     restart,
     submit,

@@ -39,8 +39,17 @@ export class CustodyMapper {
       items: input.items.map((item) => {
         const notes = item.notes?.trim() ?? ''
         return notes === ''
-          ? { stock_id: item.stockId, condition: item.condition }
-          : { stock_id: item.stockId, condition: item.condition, notes }
+          ? {
+              stock_id: item.stockId,
+              condition: item.condition,
+              ...(item.serial !== undefined ? { serial: item.serial } : {}),
+            }
+          : {
+              stock_id: item.stockId,
+              condition: item.condition,
+              notes,
+              ...(item.serial !== undefined ? { serial: item.serial } : {}),
+            }
       }),
     }
     const notes = input.notes?.trim() ?? ''
@@ -88,6 +97,7 @@ export class CustodyMapper {
       id: dto.id,
       condition: dto.condition,
       notes: dto.notes ?? null,
+      serialAtAssignment: dto.serialAtAssignment ?? null,
       isReturned: dto.isReturned,
       returnedAt: dto.returnedAt ?? null,
       stock: CustodyMapper.toItemStock(dto),

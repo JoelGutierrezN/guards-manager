@@ -48,6 +48,7 @@ export interface CustodyItemDto {
   id: string
   condition: ItemCondition
   notes: string | null
+  serialAtAssignment: string | null
   isReturned: boolean
   returnedAt: string | null
   /** Red de seguridad del API: viaja siempre, incluso si la unidad fue dada de baja. */
@@ -107,6 +108,7 @@ export interface CustodyCollectionDto {
 
 export interface CustodyItemRequestDto {
   stock_id: string
+  serial?: string
   condition: ItemCondition
   notes?: string
 }

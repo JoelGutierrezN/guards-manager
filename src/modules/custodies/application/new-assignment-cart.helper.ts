@@ -35,6 +35,34 @@ export class NewAssignmentCartHelper {
     return cart.map((item) => (item.stock.id === stockId ? { ...item, notes } : item))
   }
 
+  static withSerial(
+    cart: NewAssignmentCartItem[],
+    stockId: string,
+    serial: string,
+  ): NewAssignmentCartItem[] {
+    return cart.map((item) =>
+      item.stock.id === stockId && item.stock.serial === null ? { ...item, serial } : item,
+    )
+  }
+
+  static serialErrors(cart: NewAssignmentCartItem[]): Record<string, string> {
+    const errors: Record<string, string> = {}
+    const serialCounts = new Map<string, number>()
+    cart.forEach((item) => {
+      const serial = (item.stock.serial ?? item.serial).trim().toUpperCase()
+      if (serial !== '') serialCounts.set(serial, (serialCounts.get(serial) ?? 0) + 1)
+    })
+    cart.forEach((item) => {
+      const serial = (item.stock.serial ?? item.serial).trim().toUpperCase()
+      if (serial === '') errors[item.stock.id] = 'Captura el número de serie de esta unidad.'
+      else if (serial.length > 255)
+        errors[item.stock.id] = 'La serie no puede superar 255 caracteres.'
+      else if ((serialCounts.get(serial) ?? 0) > 1)
+        errors[item.stock.id] = 'La serie está repetida en este resguardo.'
+    })
+    return errors
+  }
+
   static contains(cart: NewAssignmentCartItem[], stockId: string): boolean {
     return cart.some((item) => item.stock.id === stockId)
   }
@@ -46,6 +74,7 @@ export class NewAssignmentCartHelper {
   static toInputItems(cart: NewAssignmentCartItem[]): CreateCustodyItemInput[] {
     return cart.map((item) => ({
       stockId: item.stock.id,
+      ...(item.stock.serial === null ? { serial: item.serial.trim().toUpperCase() } : {}),
       condition: item.condition,
       notes: item.notes.trim() === '' ? null : item.notes.trim(),
     }))
@@ -57,6 +86,7 @@ export class NewAssignmentCartHelper {
       stock,
       condition: ItemConditionHelper.isBad(stock.condition) ? FALLBACK_CONDITION : stock.condition,
       notes: '',
+      serial: '',
     }
   }
 }

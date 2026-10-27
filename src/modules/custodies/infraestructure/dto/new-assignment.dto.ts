@@ -16,6 +16,7 @@ export interface AssignmentProductCollectionDto {
 export interface AvailableStockDto {
   id: string
   consecutive: string
+  serial: string | null
   condition: ItemCondition
   product?: AssignmentProductDto | null
 }
